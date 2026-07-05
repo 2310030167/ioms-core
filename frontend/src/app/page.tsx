@@ -229,16 +229,16 @@ export default function Home() {
             <div className="w-12 h-12 rounded-xl bg-[#171324] border border-[#362B4C] flex items-center justify-center text-[#A855F7] mb-4">
               <Activity className="w-6 h-6 animate-pulse" />
             </div>
-            <h2 className="text-xl font-bold text-white tracking-wide">IOMS Cloud Node</h2>
+            <h2 className="text-xl font-bold text-white tracking-wide">IOMS Cloud</h2>
             <p className="text-xs text-[#6A6185] mt-1">{isSu ? "Register Cluster Account" : "Supabase Cluster Authenticator"}</p>
           </div>
           <form onSubmit={isSu ? su : li} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-[#A29DB8] uppercase mb-1.5">Identity Protocol</label>
+              <label className="block text-xs font-medium text-[#A29DB8] uppercase mb-1.5">EMAIL</label>
               <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#8B5CF6] font-mono" placeholder="name@domain.com" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#A29DB8] uppercase mb-1.5">Access Cipher</label>
+              <label className="block text-xs font-medium text-[#A29DB8] uppercase mb-1.5">PASSWORD</label>
               <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#8B5CF6] font-mono" placeholder="••••••••••••" />
             </div>
             {er && <div className="text-xs text-rose-400 font-medium bg-rose-500/5 border border-rose-500/20 rounded-lg p-2.5 text-center">{er}</div>}
