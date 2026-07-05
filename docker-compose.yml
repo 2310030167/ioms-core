@@ -1,0 +1,51 @@
+
+
+services:
+  ioms-backend:
+    image: ghcr.io/muchobien/pocketbase:latest
+    container_name: ioms-pb
+    command: serve --http=0.0.0.0:8090 --dir=/pb_data --origins=http://localhost:3000
+    ports:
+      - "8090:8090"
+    volumes:
+      - ./backend:/pb_data
+      - ./backend/pb_hooks:/pb_hooks
+    restart: always
+    networks:
+      - ioms-net
+
+  ioms-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ioms-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_PB_URL=http://localhost:8090
+    volumes:
+      - ./frontend:/app
+    command: npm run dev
+    depends_on:
+      - ioms-backend
+    restart: always
+    networks:
+      - ioms-net
+
+  ioms-automation:
+    image: docker.io/n8nio/n8n:latest
+    container_name: ioms-n8n
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+    restart: always
+    networks:
+      - ioms-net
+
+volumes:
+  n8n_data:
+
+networks:
+  ioms-net:
+    driver: bridge
