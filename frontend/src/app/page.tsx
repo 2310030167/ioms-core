@@ -30,9 +30,6 @@ export default function Home() {
     ...(rl === "admin" ? [{ id: "team", label: "Team Roles", icon: Users }] : [])
   ];
 
-  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
-  tk.forEach(t => { if (tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
-
   useEffect(() => {
     sb.auth.getSession().then(({ data: { session } }) => {
       setAu(session?.user ?? null);
@@ -277,6 +274,9 @@ export default function Home() {
       </div>
     );
   }
+
+  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
+  tk.forEach(t => { if (tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
 
   return (
     <div className="flex h-screen w-screen bg-[#09070F] text-[#E4E6ED] font-sans selection:bg-[#2C213D] overflow-hidden relative">
