@@ -21,6 +21,7 @@ export default function Home() {
   const [bp, setBp] = useState<any[]>([]);
   const [rl, setRl] = useState<string>("viewer");
   const [us, setUs] = useState<any[]>([]);
+  const [ln, setLn] = useState<any[]>([]);
   const [mo, setMo] = useState(false);
 
   const lk = [
@@ -50,6 +51,7 @@ export default function Home() {
       .on("postgres_changes", { event: "*", schema: "public", table: "projects" }, () => { if (act) gd(); })
       .on("postgres_changes", { event: "*", schema: "public", table: "tasks" }, () => { if (act) gd(); })
       .on("postgres_changes", { event: "*", schema: "public", table: "user_roles" }, () => { if (act) gd(); })
+      .on("postgres_changes", { event: "*", schema: "public", table: "user_logins" }, () => { if (act) gd(); })
       .subscribe();
     return () => {
       act = false;
@@ -80,6 +82,10 @@ export default function Home() {
           if (uData) {
             setUs(uData);
             setSt(prev => ({ ...prev, team: uData.length }));
+          }
+          if (rData.role === "admin") {
+            const { data: lData } = await sb.from("user_logins").select("*").order("logged_at", { ascending: false }).limit(50);
+            if (lData) setLn(lData);
           }
         }
       }
@@ -122,6 +128,9 @@ export default function Home() {
       setEr(error.message);
       setTs({ msg: "Validation failure.", type: "err" });
     } else {
+      if (data?.user?.email) {
+        await sb.from("user_logins").insert([{ email: data.user.email }]);
+      }
       setFm({ email: "", password: "" });
       await gd();
       setTs({ msg: "Session initialized.", type: "ok" });
@@ -131,9 +140,9 @@ export default function Home() {
   const lo = async () => {
     await sb.auth.signOut();
     setPj([]);
-    tk.length = 0;
     setTk([]);
     setUs([]);
+    setLn([]);
     setRl("viewer");
     setTb("dash");
     setSt({ pipeline: 0, tasks: 0, team: 1 });
@@ -361,42 +370,63 @@ export default function Home() {
             
             <div className="bg-[#110E1A] border border-[#231C30] rounded-xl p-4 md:p-6 overflow-hidden">
               {tb === "team" ? (
-                <div>
-                  <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#231C30]/40">
-                    <h2 className="text-xs md:text-sm font-bold text-white uppercase tracking-wider">Cluster Role Configuration</h2>
-                    {rl === "admin" && <button onClick={() => setMd("user")} className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 font-semibold shadow-md active:scale-[0.98] transition-all"><Plus className="w-4 h-4" /> Provision Operator</button>}
+                <div className="space-y-8">
+                  <div>
+                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#231C30]/40">
+                      <h2 className="text-xs md:text-sm font-bold text-white uppercase tracking-wider">Cluster Role Configuration</h2>
+                      {rl === "admin" && <button onClick={() => setMd("user")} className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 font-semibold shadow-md active:scale-[0.98] transition-all"><Plus className="w-4 h-4" /> Provision Operator</button>}
+                    </div>
+                    <div className="w-full overflow-x-auto">
+                      <table className="w-full text-left text-sm min-w-[500px]">
+                        <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Operator Identity</th><th className="pb-3 font-semibold">Clearance Level</th><th className="pb-3 text-right font-semibold">Purge</th></tr></thead>
+                        <tbody className="divide-y divide-[#231C30]/40">
+                          {us.map(u => (
+                            <tr key={u.id} className="text-white hover:bg-[#171324]/30 transition-colors">
+                              <td className="py-3.5 font-mono text-xs">{u?.email}</td>
+                              <td className="py-3.5">
+                                <select disabled={u?.id === au?.id} value={u?.role} onChange={async (e) => {
+                                  const v = e.target.value;
+                                  setUs(prev => prev.map(x => x.id === u.id ? { ...x, role: v } : x));
+                                  await sb.from("user_roles").update({ role: v }).eq("id", u.id);
+                                  pn("operator_role_updated", { operator: u.email, role: v });
+                                  await gd();
+                                }} className="bg-[#171324] text-xs border border-[#362B4C] px-2.5 py-1.5 rounded-lg text-white font-mono focus:outline-none focus:border-[#8B5CF6] disabled:opacity-40">
+                                  {["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                                </select>
+                              </td>
+                              <td className="py-3.5 text-right">
+                                {u?.id !== au?.id ? (
+                                  <button onClick={() => setCf({ id: u.id, type: "user", name: u.email })} className="text-[#6A6185] hover:text-rose-400 p-1.5 rounded transition-colors">
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                ) : (
+                                  <span className="text-[10px] text-[#6A6185] font-mono pr-2">SELF</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                  <div className="w-full overflow-x-auto">
-                    <table className="w-full text-left text-sm min-w-[500px]">
-                      <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Operator Identity</th><th className="pb-3 font-semibold">Clearance Level</th><th className="pb-3 text-right font-semibold">Purge</th></tr></thead>
-                      <tbody className="divide-y divide-[#231C30]/40">
-                        {us.map(u => (
-                          <tr key={u.id} className="text-white hover:bg-[#171324]/30 transition-colors">
-                            <td className="py-3.5 font-mono text-xs">{u?.email}</td>
-                            <td className="py-3.5">
-                              <select disabled={u?.id === au?.id} value={u?.role} onChange={async (e) => {
-                                const v = e.target.value;
-                                setUs(prev => prev.map(x => x.id === u.id ? { ...x, role: v } : x));
-                                await sb.from("user_roles").update({ role: v }).eq("id", u.id);
-                                pn("operator_role_updated", { operator: u.email, role: v });
-                                await gd();
-                              }} className="bg-[#171324] text-xs border border-[#362B4C] px-2.5 py-1.5 rounded-lg text-white font-mono focus:outline-none focus:border-[#8B5CF6] disabled:opacity-40">
-                                {["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
-                              </select>
-                            </td>
-                            <td className="py-3.5 text-right">
-                              {u?.id !== au?.id ? (
-                                <button onClick={() => setCf({ id: u.id, type: "user", name: u.email })} className="text-[#6A6185] hover:text-rose-400 p-1.5 rounded transition-colors">
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              ) : (
-                                <span className="text-[10px] text-[#6A6185] font-mono pr-2">SELF</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#231C30]/40">
+                      <h2 className="text-xs md:text-sm font-bold text-white uppercase tracking-wider">Daily Access Audit Registry</h2>
+                    </div>
+                    <div className="w-full overflow-x-auto">
+                      <table className="w-full text-left text-sm min-w-[500px]">
+                        <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Operator Identity</th><th className="pb-3 text-right font-semibold">Session Initialization Timestamp</th></tr></thead>
+                        <tbody className="divide-y divide-[#231C30]/40">
+                          {ln.length === 0 ? <tr><td colSpan={2} className="py-6 text-center text-xs font-mono text-[#6A6185]">NO AUDIT LOGS COMMITTED</td></tr> : ln.map(l => (
+                            <tr key={l.id} className="text-white hover:bg-[#171324]/30 transition-colors">
+                              <td className="py-3.5 font-mono text-xs">{l.email}</td>
+                              <td className="py-3.5 text-right font-mono text-xs text-[#A29DB8]">{new Date(l.logged_at).toLocaleString()}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               ) : (
