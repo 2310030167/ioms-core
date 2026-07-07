@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogIn, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Copy, Users, Menu } from "lucide-react";
+import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogIn, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Copy, Users, Menu, Clock, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import { sb } from "../lib/sb";
 
 export default function Home() {
@@ -83,10 +83,8 @@ export default function Home() {
             setUs(uData);
             setSt(prev => ({ ...prev, team: uData.length }));
           }
-          if (rData.role === "admin") {
-            const { data: lData } = await sb.from("user_logins").select("*").order("logged_at", { ascending: false }).limit(50);
-            if (lData) setLn(lData);
-          }
+          const { data: lData } = await sb.from("user_logins").select("*").order("logged_at", { ascending: false }).limit(50);
+          if (lData) setLn(lData);
         }
       }
       
@@ -129,7 +127,7 @@ export default function Home() {
       setTs({ msg: "Validation failure.", type: "err" });
     } else {
       if (data?.user?.email) {
-        await sb.from("user_logins").insert([{ email: data.user.email }]);
+        await sb.from("user_logins").insert([{ email: data.user.email, action: "LOGIN" }]);
       }
       setFm({ email: "", password: "" });
       await gd();
@@ -138,6 +136,9 @@ export default function Home() {
   };
 
   const lo = async () => {
+    if (au?.email) {
+      await sb.from("user_logins").insert([{ email: au.email, action: "LOGOUT" }]);
+    }
     await sb.auth.signOut();
     setPj([]);
     setTk([]);
@@ -412,15 +413,21 @@ export default function Home() {
 
                   <div>
                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#231C30]/40">
-                      <h2 className="text-xs md:text-sm font-bold text-white uppercase tracking-wider">Daily Access Audit Registry</h2>
+                      <h2 className="text-xs md:text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2"><Clock className="w-4 h-4 text-[#8B5CF6]" /> System Access Status Wedge</h2>
                     </div>
                     <div className="w-full overflow-x-auto">
                       <table className="w-full text-left text-sm min-w-[500px]">
-                        <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Operator Identity</th><th className="pb-3 text-right font-semibold">Session Initialization Timestamp</th></tr></thead>
+                        <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Operator Identity</th><th className="pb-3 font-semibold">Activity Event</th><th className="pb-3 text-right font-semibold">Timestamp</th></tr></thead>
                         <tbody className="divide-y divide-[#231C30]/40">
-                          {ln.length === 0 ? <tr><td colSpan={2} className="py-6 text-center text-xs font-mono text-[#6A6185]">NO AUDIT LOGS COMMITTED</td></tr> : ln.map(l => (
+                          {ln.length === 0 ? <tr><td colSpan={3} className="py-6 text-center text-xs font-mono text-[#6A6185]">NO AUDIT LOGS COMMITTED</td></tr> : ln.map(l => (
                             <tr key={l.id} className="text-white hover:bg-[#171324]/30 transition-colors">
                               <td className="py-3.5 font-mono text-xs">{l.email}</td>
+                              <td className="py-3.5">
+                                <span className={`inline-flex items-center gap-1 text-[10px] font-bold font-mono px-2 py-0.5 rounded ${l.action === "LOGIN" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border border-amber-500/20"}`}>
+                                  {l.action === "LOGIN" ? <ArrowDownLeft className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3" />}
+                                  {l.action}
+                                </span>
+                              </td>
                               <td className="py-3.5 text-right font-mono text-xs text-[#A29DB8]">{new Date(l.logged_at).toLocaleString()}</td>
                             </tr>
                           ))}
