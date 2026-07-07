@@ -387,8 +387,8 @@ export default function Home() {
       <main className="flex-1 flex flex-col bg-transparent overflow-hidden relative z-10">
         <header className="h-14 border-b border-purple-950/30 flex items-center justify-between px-4 md:px-6 flex-shrink-0 backdrop-blur-md bg-[#05040B]/40">
           <div className="flex items-center gap-3">
-            <button onClick={() => setMo(true)} className="p-1.5 text-zinc-400 hover:text-white lg:hidden rounded-lg bg-purple-950/40 border border-purple-900/30"><Menu className="w-4 h-4" /></button>
-            <h1 className="text-xs font-bold tracking-wide uppercase text-purple-400/80">
+            <button onClick={() => { setMo(true); }} className="p-1.5 text-zinc-400 hover:text-white lg:hidden rounded-lg bg-purple-950/40 border border-purple-900/30"><Menu className="w-4 h-4" /></button>
+            <h1 className="text-xs font-extrabold tracking-wide uppercase text-purple-400/80">
               {tb === "team" ? "Team Roles" : tb === "reports" ? "Individual Reports" : tb} Hub
             </h1>
           </div>
@@ -399,27 +399,35 @@ export default function Home() {
           <div className="max-w-6xl mx-auto space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[{ t: "Total Projects", v: ld ? "..." : st.pipeline }, { t: "Total Tasks", v: ld ? "..." : st.tasks }, { t: "Your Account Role", v: ld ? "..." : rl.toUpperCase() }].map((c, i) => (
-                <div key={i} className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.03)] border-b-[5px] border-purple-950/60 p-4 rounded-2xl backdrop-blur-sm transform hover:translate-y-[-2px] transition-all duration-200"><h3 className="text-[10px] font-bold text-purple-400/40 uppercase tracking-wider">{c.t}</h3><p className="text-2xl font-black text-zinc-100 mt-1 tracking-tight">{c.v}</p></div>
+                <div key={i} className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.03)] border-b-[5px] border-purple-955/60 p-4 rounded-2xl backdrop-blur-sm transform hover:translate-y-[-2px] transition-all duration-200"><h3 className="text-[10px] font-bold text-purple-400/40 uppercase tracking-wider">{c.t}</h3><p className="text-2xl font-black text-zinc-100 mt-1 tracking-tight">{c.v}</p></div>
               ))}
             </div>
             
             {tb === "dash" && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-4 md:p-5 lg:col-span-2 overflow-x-auto backdrop-blur-sm">
-                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-purple-900/20 min-w-[500px]"><h3 className="text-xs font-bold text-purple-400/60 uppercase tracking-wider">Task Status Tracker</h3><div className="text-purple-500/60 font-mono text-[9px] tracking-widest">DATA_REFRESH_OK</div></div>
-                  <div className="grid grid-cols-7 gap-2 min-w-[500px]">
-                    {Object.entries(tM).map(([stVal, count]) => (
-                      <div key={stVal} className="bg-purple-950/5 border border-purple-900/10 p-2.5 rounded-xl text-center flex flex-col justify-between shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]">
-                        <span className="text-[9px] text-purple-400/40 uppercase truncate font-bold font-mono block">{stVal.replace("_", " ")}</span>
-                        <div className="w-full bg-purple-950/20 h-16 mt-2 rounded-lg relative flex items-end justify-center overflow-hidden border border-purple-900/10"><div style={{ height: `${Math.min(count * 20, 100)}%` }} className="w-2.5 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t shadow-[0_0_12px_rgba(168,85,247,0.5)] transition-all duration-500"></div></div>
-                        <span className="text-xs font-mono font-bold text-white mt-1.5 block">{count}</span>
-                      </div>
-                    ))}
+                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-6 lg:col-span-2 overflow-x-auto backdrop-blur-sm">
+                  <div className="flex items-center justify-between pb-3 mb-5 border-b border-purple-900/20 min-w-[500px]"><h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Task Status Tracker</h3><div className="text-purple-500/60 font-mono text-[9px] tracking-widest">DATA_REFRESH_OK</div></div>
+                  <div className="grid grid-cols-7 gap-3 min-w-[500px]">
+                    {Object.entries(tM).map(([stVal, count]) => {
+                      const maxTasks = Math.max(...Object.values(tM), 1);
+                      const pct = Math.min((count / maxTasks) * 100, 100);
+                      return (
+                        <div key={stVal} className="bg-purple-950/20 border border-purple-900/30 px-2 py-4 rounded-2xl text-center flex flex-col justify-between items-center shadow-[0_10px_25px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.02)] border-b-[3px] border-purple-950/80 hover:scale-[1.03] hover:border-purple-500/30 transition-all duration-200 group">
+                          <span className="text-[10px] font-bold tracking-wide text-purple-300/70 group-hover:text-purple-300 uppercase truncate w-full transition-colors font-mono">{stVal.replace("_", " ")}</span>
+                          <div className="w-3.5 bg-purple-950/40 h-28 my-3 rounded-full relative flex items-end justify-center overflow-hidden shadow-[inset_0_2px_5px_rgba(0,0,0,0.7)] border border-purple-900/20">
+                            <div style={{ height: `${Math.max(pct, count > 0 ? 8 : 0)}%` }} className="w-full bg-gradient-to-t from-purple-700 via-purple-500 to-fuchsia-400 rounded-full transition-all duration-700 ease-out shadow-[0_0_15px_rgba(168,85,247,0.6)] relative">
+                              <div className="absolute top-0 left-0 right-0 h-1 bg-white/40 rounded-full blur-[1px]"></div>
+                            </div>
+                          </div>
+                          <span className="text-sm font-black text-zinc-100 group-hover:text-purple-300 transition-colors font-mono">{count}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-4 md:p-5 backdrop-blur-sm">
+                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-5 backdrop-blur-sm">
                   <div className="pb-3 mb-3 border-b border-purple-900/20"><h3 className="text-xs font-bold text-purple-400/60 uppercase tracking-wider">Quick Templates</h3></div>
-                  <div className="space-y-1.5 max-h-[148px] overflow-y-auto pr-0.5">
+                  <div className="space-y-1.5 max-h-[168px] overflow-y-auto pr-0.5">
                     {bp.length === 0 ? <div className="text-center text-[11px] font-mono text-purple-500/40 py-6">NO TEMPLATES CONFIGURED</div> : bp.map(b => (
                       <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-purple-950/5 border border-purple-900/10 p-2 rounded-xl flex items-center justify-between gap-2 group transition-colors shadow-sm ${rl !== "viewer" ? "cursor-pointer hover:border-purple-800/60" : ""}`}>
                         <span className="text-xs text-zinc-300 truncate font-semibold">{b.name}</span>
@@ -490,7 +498,7 @@ export default function Home() {
             )}
             
             {tb !== "reports" && (
-              <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-4 md:p-5 overflow-hidden backdrop-blur-sm">
+              <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-5 overflow-hidden backdrop-blur-sm">
                 {tb === "team" ? (
                   <div className="space-y-8">
                     <div>
@@ -559,7 +567,7 @@ export default function Home() {
                   <div>
                     <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
                       <h2 className="text-xs font-medium text-purple-400/70 uppercase tracking-wider">Item Management</h2>
-                      {tb !== "dash" && (rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition-all shadow-sm active:scale-[0.98] shadow-purple-950/40"><Plus className="w-3.5 h-3.5" /> Create New {tb === "proj" ? "Project" : "Task"}</button>}
+                      {tb !== "dash" && (rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-lg flex items-center gap-1 font-bold transition-all shadow-md border-b-2 border-purple-800 active:border-b-0 active:translate-y-px"><Plus className="w-3.5 h-3.5" /> Create New {tb === "proj" ? "Project" : "Task"}</button>}
                     </div>
                     {ld ? <div className="text-center py-8 font-mono text-purple-400/40 animate-pulse tracking-wide text-xs">LOADING DATA ENTRIES...</div> : tb === "dash" || tb === "proj" ? (
                       pj.length === 0 ? <div className="text-center py-8 text-xs text-purple-400/40 font-mono">NO PROJECTS FOUND</div> : (
@@ -627,9 +635,9 @@ export default function Home() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
           <div className="bg-[#0D0A16] border border-purple-900/40 rounded-2xl max-w-sm w-full p-5 shadow-2xl">
             <h3 className="font-bold text-xs text-zinc-100 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-purple-400" /> Confirm Deletion</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">Are you sure you want to permanently delete <span className="text-purple-300 font-mono bg-purple-950/40 px-1 py-0.5 rounded border border-purple-900/30">"{cf.name}"</span> from the system layer?</p>
+            <p className="text-xs text-zinc-400 leading-relaxed">Are you sure you want to permanently delete <span className="text-zinc-200 font-bold bg-zinc-900 px-1 py-0.5 rounded border border-purple-955/30">"{cf.name}"</span> from the system layer?</p>
             <div className="flex justify-end gap-2 mt-4">
-              <button onClick={() => setCf(null)} className="px-3.5 py-1.5 text-xs font-semibold bg-purple-950/40 border border-purple-900/40 hover:bg-purple-900/60 text-zinc-300 rounded-xl transition-colors">Cancel</button>
+              <button onClick={() => setCf(null)} className="px-3.5 py-1.5 text-xs font-semibold bg-purple-950/40 border border-purple-900/40 hover:bg-purple-900/20 text-purple-300 rounded-xl transition-colors">Cancel</button>
               <button onClick={ep} className="px-3.5 py-1.5 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white rounded-xl shadow-md border-b-2 border-rose-800 active:border-b-0 active:translate-y-px transition-all">Delete Item</button>
             </div>
           </div>
