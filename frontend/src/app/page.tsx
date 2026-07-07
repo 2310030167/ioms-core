@@ -259,26 +259,28 @@ export default function Home() {
 
   if (!au) {
     return (
-      <div className="min-h-screen w-screen bg-[#000000] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-zinc-800">
-        <div className="w-full max-w-[380px] bg-zinc-950/40 border border-zinc-900 rounded-3xl p-8 backdrop-blur-xl shadow-2xl relative z-10">
+      <div className="min-h-screen w-screen bg-[#07050F] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-purple-900/10 blur-[140px] pointer-events-none"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-900/10 blur-[140px] pointer-events-none"></div>
+        <div className="w-full max-w-[380px] bg-purple-950/10 border border-purple-900/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_24px_80px_rgba(0,0,0,0.7)] relative z-10">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-white mb-4">
-              <Activity className="w-6 h-6 stroke-[1.5]" />
+            <div className="w-12 h-12 rounded-2xl bg-purple-950/40 border border-purple-800/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_0_20px_rgba(147,51,234,0.1)]">
+              <Activity className="w-5 h-5 stroke-[1.5]" />
             </div>
             <h2 className="text-lg font-semibold text-zinc-100 tracking-tight text-center">IOMS Console</h2>
-            <p className="text-[10px] text-zinc-500 mt-1 font-mono uppercase tracking-widest">Authorization Required</p>
+            <p className="text-[10px] text-purple-400/60 mt-1 font-mono uppercase tracking-widest">Secure Core Authorization</p>
           </div>
           <form onSubmit={li} className="space-y-4">
             <div>
               <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Identity</label>
-              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-500 font-mono transition-colors" placeholder="operator@enterprise.com" />
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 font-mono transition-colors" placeholder="operator@enterprise.com" />
             </div>
             <div>
               <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Access Cipher</label>
-              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-500 font-mono transition-colors" placeholder="••••••••••••" />
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 font-mono transition-colors" placeholder="••••••••••••" />
             </div>
-            {er && <div className="text-xs text-red-400 font-mono bg-red-950/20 border border-red-900/30 rounded-xl p-2.5 text-center">{er}</div>}
-            <button type="submit" className="w-full bg-zinc-100 hover:bg-white text-zinc-950 text-xs font-semibold py-3 rounded-xl transition-all active:scale-[0.99] tracking-wide mt-2">
+            {er && <div className="text-xs text-purple-300 font-mono bg-purple-950/40 border border-purple-900/50 rounded-xl p-2.5 text-center">{er}</div>}
+            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold py-3 rounded-xl transition-all active:scale-[0.99] tracking-wide mt-2 shadow-[0_0_30px_rgba(124,58,237,0.3)]">
               INITIALIZE NODE
             </button>
           </form>
@@ -288,80 +290,82 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-[#000000] text-zinc-300 font-sans selection:bg-zinc-800 overflow-hidden relative">
+    <div className="flex h-screen w-screen bg-[#05040B] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
+      <div className="absolute top-[-30%] right-[-10%] w-[800px] h-[800px] rounded-full bg-purple-950/10 blur-[160px] pointer-events-none"></div>
+      
       {ts && (
-        <div className="fixed top-5 right-5 z-50 max-w-xs w-[calc(100vw-2rem)] bg-zinc-950/80 border border-zinc-800/80 backdrop-blur-md rounded-xl p-3.5 shadow-2xl flex items-start gap-2.5 animate-in fade-in slide-in-from-top-3">
-          {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-zinc-100 mt-0.5 flex-shrink-0" /> : <AlertTriangle className="w-4 h-4 text-zinc-400 mt-0.5 flex-shrink-0" />}
-          <div className="flex-1"><p className="text-xs font-medium text-zinc-100">{ts.msg}</p></div>
+        <div className="fixed top-5 right-5 z-50 max-w-xs w-[calc(100vw-2rem)] bg-purple-950/20 border border-purple-900/40 backdrop-blur-md rounded-xl p-3.5 shadow-2xl flex items-start gap-2.5 animate-in fade-in slide-in-from-top-3">
+          {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" /> : <AlertTriangle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />}
+          <div className="flex-1"><p className="text-xs font-medium text-zinc-200">{ts.msg}</p></div>
         </div>
       )}
       
       <div className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
       
-      <aside className={`fixed inset-y-0 left-0 w-60 bg-zinc-950 border-r border-zinc-900/80 flex flex-col justify-between z-40 transition-transform duration-300 lg:static lg:translate-x-0 ${mo ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 w-60 bg-[#0A0713]/80 border-r border-purple-950/40 backdrop-blur-xl flex flex-col justify-between z-40 transition-transform duration-300 lg:static lg:translate-x-0 ${mo ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-5 flex flex-col h-full overflow-y-auto">
           <div className="flex items-center justify-between mb-6 px-1">
-            <div className="flex items-center gap-2.5"><Activity className="w-5 h-5 text-white stroke-[1.5]" /><span className="font-semibold text-sm text-zinc-100 tracking-tight">IOMS Node</span></div>
+            <div className="flex items-center gap-2.5"><Activity className="w-5 h-5 text-purple-400 stroke-[1.5]" /><span className="font-semibold text-sm text-zinc-100 tracking-tight">IOMS Node</span></div>
             <button onClick={() => setMo(false)} className="lg:hidden p-1 text-zinc-500 hover:text-white"><X className="w-4 h-4" /></button>
           </div>
-          <div className="mb-4 p-3 bg-zinc-900/30 border border-zinc-900 rounded-xl">
+          <div className="mb-4 p-3 bg-purple-950/10 border border-purple-900/20 rounded-xl backdrop-blur-sm">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 flex-shrink-0"><User className="w-3 h-3" /></div>
+              <div className="w-6 h-6 rounded-md bg-purple-950 border border-purple-900/40 flex items-center justify-center text-purple-400 flex-shrink-0"><User className="w-3 h-3" /></div>
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-medium text-zinc-200 truncate">{au?.email}</p>
-                <p className="text-[9px] font-mono text-zinc-500 uppercase tracking-wider">{rl}</p>
+                <p className="text-[9px] font-mono text-purple-400/60 uppercase tracking-wider">{rl}</p>
               </div>
             </div>
-            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-medium text-zinc-400 bg-zinc-900/60 border border-zinc-800/80 hover:bg-zinc-800 hover:text-white transition-colors"><LogOut className="w-3 h-3" /> Terminate</button>
+            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-medium text-purple-300 bg-purple-950/40 border border-purple-900/30 hover:bg-purple-900/60 hover:text-white transition-colors"><LogOut className="w-3 h-3" /> Terminate</button>
           </div>
           <nav className="space-y-0.5 flex-1">
             {lk.map(l => (
-              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${tb === l.id ? "bg-zinc-900 text-zinc-100 font-semibold" : "text-zinc-500 hover:bg-zinc-900/40 hover:text-zinc-300"}`}>
-                <l.icon className={`w-3.5 h-3.5 ${tb === l.id ? "text-white" : "text-zinc-500"}`} />{l.label}
+              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${tb === l.id ? "bg-purple-950/40 text-purple-300 font-semibold border-l-2 border-purple-500 pl-2.5" : "text-zinc-500 hover:bg-purple-950/10 hover:text-zinc-300"}`}>
+                <l.icon className={`w-3.5 h-3.5 ${tb === l.id ? "text-purple-400" : "text-zinc-500"}`} />{l.label}
               </button>
             ))}
           </nav>
         </div>
       </aside>
       
-      <main className="flex-1 flex flex-col min-w-0 bg-[#000000] overflow-hidden">
-        <header className="h-14 border-b border-zinc-900 flex items-center justify-between px-4 md:px-6 flex-shrink-0">
+      <main className="flex-1 flex flex-col bg-transparent overflow-hidden">
+        <header className="h-14 border-b border-purple-950/30 flex items-center justify-between px-4 md:px-6 flex-shrink-0 backdrop-blur-md bg-[#05040B]/40">
           <div className="flex items-center gap-3">
-            <button onClick={() => setMo(true)} className="p-1.5 text-zinc-400 hover:text-white lg:hidden rounded-lg bg-zinc-950 border border-zinc-900"><Menu className="w-4 h-4" /></button>
-            <h1 className="text-xs font-medium tracking-wide uppercase text-zinc-400">{tb} Console</h1>
+            <button onClick={() => setMo(true)} className="p-1.5 text-zinc-400 hover:text-white lg:hidden rounded-lg bg-purple-950/40 border border-purple-900/30"><Menu className="w-4 h-4" /></button>
+            <h1 className="text-xs font-medium tracking-wide uppercase text-purple-400/80">{tb} Console</h1>
           </div>
-          <div className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-zinc-400 animate-pulse"></span><span className="text-[9px] font-mono text-zinc-600 tracking-widest">ONLINE</span></div>
+          <div className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-purple-400 animate-pulse"></span><span className="text-[9px] font-mono text-purple-500/40 tracking-widest">ONLINE</span></div>
         </header>
         
         <section className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-6xl mx-auto space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[{ t: "Pipeline", v: ld ? "..." : st.pipeline }, { t: "Tasks", v: ld ? "..." : st.tasks }, { t: "Access Tier", v: ld ? "..." : rl.toUpperCase() }].map((c, i) => (
-                <div key={i} className="bg-zinc-950/40 border border-zinc-900 p-4 rounded-xl"><h3 className="text-[10px] font-medium text-zinc-500 uppercase tracking-wider">{c.t}</h3><p className="text-xl font-semibold text-zinc-100 mt-1 tracking-tight">{c.v}</p></div>
+              {[{ t: "Pipeline Matrix", v: ld ? "..." : st.pipeline }, { t: "Active Tasks", v: ld ? "..." : st.tasks }, { t: "Clearance Tier", v: ld ? "..." : rl.toUpperCase() }].map((c, i) => (
+                <div key={i} className="bg-purple-950/10 border border-purple-900/20 shadow-sm p-4 rounded-xl backdrop-blur-sm"><h3 className="text-[10px] font-medium text-purple-400/50 uppercase tracking-wider">{c.t}</h3><p className="text-xl font-semibold text-zinc-100 mt-1 tracking-tight">{c.v}</p></div>
               ))}
             </div>
             
             {tb === "dash" && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="bg-zinc-950/40 border border-zinc-900 rounded-xl p-4 md:p-5 lg:col-span-2 overflow-x-auto">
-                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-zinc-900/60 min-w-[500px]"><h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Metrics Engine</h3><div className="text-zinc-500 font-mono text-[9px] tracking-widest">SYNC_LIVE</div></div>
+                <div className="bg-purple-950/10 border border-purple-900/20 shadow-sm rounded-xl p-4 md:p-5 lg:col-span-2 overflow-x-auto backdrop-blur-sm">
+                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-purple-900/20 min-w-[500px]"><h3 className="text-xs font-medium text-purple-400/60 uppercase tracking-wider">Metrics Engine</h3><div className="text-purple-500/60 font-mono text-[9px] tracking-widest">SYNC_LIVE</div></div>
                   <div className="grid grid-cols-7 gap-2 min-w-[500px]">
                     {Object.entries(tM).map(([stVal, count]) => (
-                      <div key={stVal} className="bg-zinc-950/20 border border-zinc-900/60 p-2 rounded-xl text-center flex flex-col justify-between">
-                        <span className="text-[9px] text-zinc-500 uppercase truncate font-mono tracking-tighter block">{stVal.replace("_", " ")}</span>
-                        <div className="w-full bg-zinc-900/20 h-16 mt-2 rounded-md relative flex items-end justify-center overflow-hidden"><div style={{ height: `${Math.min(count * 20, 100)}%` }} className="w-1.5 bg-zinc-400 rounded-t-sm transition-all duration-300"></div></div>
-                        <span className="text-xs font-mono font-medium text-zinc-200 mt-1 block">{count}</span>
+                      <div key={stVal} className="bg-purple-950/5 border border-purple-900/10 p-2 rounded-xl text-center flex flex-col justify-between">
+                        <span className="text-[9px] text-purple-400/50 uppercase truncate font-mono tracking-tighter block">{stVal.replace("_", " ")}</span>
+                        <div className="w-full bg-purple-950/10 h-16 mt-2 rounded-md relative flex items-end justify-center overflow-hidden"><div style={{ height: `${Math.min(count * 20, 100)}%` }} className="w-2 md:w-3 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-sm transition-all duration-500"></div></div>
+                        <span className="text-xs font-mono font-bold text-white mt-1.5 block">{count}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-                <div className="bg-zinc-950/40 border border-zinc-900 rounded-xl p-4 md:p-5">
-                  <div className="pb-3 mb-3 border-b border-zinc-900/60"><h3 className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Blueprints</h3></div>
+                <div className="bg-purple-950/10 border border-purple-900/20 shadow-sm rounded-xl p-4 md:p-5 backdrop-blur-sm">
+                  <div className="pb-3 mb-3 border-b border-purple-900/20"><h3 className="text-xs font-medium text-purple-400/60 uppercase tracking-wider">Blueprints</h3></div>
                   <div className="space-y-1.5 max-h-[148px] overflow-y-auto pr-0.5">
-                    {bp.length === 0 ? <div className="text-center text-[11px] font-mono text-zinc-600 py-6">NO TEMPLATES</div> : bp.map(b => (
-                      <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-zinc-950/20 border border-zinc-900/60 p-2 rounded-lg flex items-center justify-between gap-2 group transition-colors ${rl !== "viewer" ? "cursor-pointer hover:border-zinc-800" : ""}`}>
+                    {bp.length === 0 ? <div className="text-center text-[11px] font-mono text-purple-500/40 py-6">NO TEMPLATES</div> : bp.map(b => (
+                      <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-purple-950/5 border border-purple-900/10 p-2 rounded-lg flex items-center justify-between gap-2 group transition-colors ${rl !== "viewer" ? "cursor-pointer hover:border-purple-800/60" : ""}`}>
                         <span className="text-xs text-zinc-300 truncate font-medium">{b.name}</span>
-                        {(rl === "admin" || rl === "operator") && <button onClick={(e) => dbp(b.id, e)} className="text-zinc-600 hover:text-zinc-400 p-0.5 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>}
+                        {(rl === "admin" || rl === "operator") && <button onClick={(e) => dbp(b.id, e)} className="text-purple-400/40 hover:text-purple-400 p-0.5 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
                     ))}
                   </div>
@@ -369,20 +373,20 @@ export default function Home() {
               </div>
             )}
             
-            <div className="bg-zinc-950/40 border border-zinc-900 rounded-xl p-4 md:p-5 overflow-hidden">
+            <div className="bg-purple-950/10 border border-purple-900/20 shadow-sm rounded-xl p-4 md:p-5 overflow-hidden backdrop-blur-sm">
               {tb === "team" ? (
                 <div className="space-y-8">
                   <div>
-                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-900/60">
-                      <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Clearance Registry</h2>
-                      {rl === "admin" && <button onClick={() => setMd("user")} className="bg-zinc-100 hover:bg-white text-zinc-950 text-[11px] px-3 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition-all shadow-sm active:scale-[0.98]"><Plus className="w-3.5 h-3.5" /> Provision Operator</button>}
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
+                      <h2 className="text-xs font-medium text-purple-400/70 uppercase tracking-wider">Clearance Registry</h2>
+                      {rl === "admin" && <button onClick={() => setMd("user")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition-all shadow-sm active:scale-[0.98] shadow-purple-950/40"><Plus className="w-3.5 h-3.5" /> Provision Operator</button>}
                     </div>
                     <div className="w-full overflow-x-auto">
                       <table className="w-full text-left text-xs min-w-[500px]">
-                        <thead><tr className="text-zinc-500 border-b border-zinc-900 font-mono uppercase tracking-wider"><th className="pb-2 font-medium">Operator</th><th className="pb-2 font-medium">Access Tier</th><th className="pb-2 text-right font-medium">Purge</th></tr></thead>
-                        <tbody className="divide-y divide-zinc-900/40">
+                        <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-mono uppercase tracking-wider"><th className="pb-2 font-medium">Operator</th><th className="pb-2 font-medium">Access Tier</th><th className="pb-2 text-right font-medium">Purge</th></tr></thead>
+                        <tbody className="divide-y divide-purple-900/10">
                           {us.map(u => (
-                            <tr key={u.id} className="text-zinc-300 hover:bg-zinc-900/20 transition-colors">
+                            <tr key={u.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
                               <td className="py-3 font-mono text-zinc-200">{u?.email}</td>
                               <td className="py-3">
                                 <select disabled={u?.id === au?.id} value={u?.role} onChange={async (e) => {
@@ -391,15 +395,15 @@ export default function Home() {
                                   await sb.from("user_roles").update({ role: v }).eq("id", u.id);
                                   pn("operator_role_updated", { operator: u.email, role: v });
                                   await gd();
-                                }} className="bg-zinc-900 text-xs border border-zinc-800 px-2 py-1 rounded-md text-zinc-200 font-mono focus:outline-none focus:border-zinc-700 disabled:opacity-40">
+                                }} className="bg-purple-950/40 text-xs border border-purple-900/30 px-2 py-1 rounded-md text-zinc-200 font-mono focus:outline-none focus:border-purple-700 disabled:opacity-40">
                                   {["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
                                 </select>
                               </td>
                               <td className="py-3 text-right">
                                 {u?.id !== au?.id ? (
-                                  <button onClick={() => setCf({ id: u.id, type: "user", name: u.email })} className="text-zinc-600 hover:text-zinc-400 p-1 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
+                                  <button onClick={() => setCf({ id: u.id, type: "user", name: u.email })} className="text-purple-400/40 hover:text-purple-400 p-1 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>
                                 ) : (
-                                  <span className="text-[10px] text-zinc-600 font-mono pr-1">SELF</span>
+                                  <span className="text-[10px] text-purple-500/30 font-mono pr-1">SELF</span>
                                 )}
                               </td>
                             </tr>
@@ -410,18 +414,18 @@ export default function Home() {
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-900/60">
-                      <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wider flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-zinc-500" /> Access Telemetry</h2>
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
+                      <h2 className="text-xs font-medium text-purple-400/70 uppercase tracking-wider flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-purple-400/50" /> Access Telemetry</h2>
                     </div>
                     <div className="w-full overflow-x-auto">
                       <table className="w-full text-left text-xs min-w-[500px]">
-                        <thead><tr className="text-zinc-500 border-b border-zinc-900 font-mono uppercase tracking-wider"><th className="pb-2 font-medium">Operator</th><th className="pb-2 font-medium">Event</th><th className="pb-2 text-right font-medium">Timestamp</th></tr></thead>
-                        <tbody className="divide-y divide-zinc-900/40">
-                          {ln.length === 0 ? <tr><td colSpan={3} className="py-4 text-center font-mono text-zinc-600">NO MATRIX LOGS</td></tr> : ln.map(l => (
-                            <tr key={l.id} className="text-zinc-300 hover:bg-zinc-900/20 transition-colors">
+                        <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-mono uppercase tracking-wider"><th className="pb-2 font-medium">Operator</th><th className="pb-2 font-medium">Event</th><th className="pb-2 text-right font-medium">Timestamp</th></tr></thead>
+                        <tbody className="divide-y divide-purple-900/10">
+                          {ln.length === 0 ? <tr><td colSpan={3} className="py-4 text-center font-mono text-purple-500/30">NO MATRIX LOGS</td></tr> : ln.map(l => (
+                            <tr key={l.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
                               <td className="py-3 font-mono text-zinc-200">{l.email}</td>
                               <td className="py-3">
-                                <span className={`inline-flex items-center gap-1 text-[9px] font-medium font-mono px-2 py-0.5 rounded-md border ${l.action === "LOGIN" ? "bg-zinc-900 text-zinc-200 border-zinc-800" : "bg-zinc-950 text-zinc-500 border-zinc-900"}`}>
+                                <span className={`inline-flex items-center gap-1 text-[9px] font-medium font-mono px-2 py-0.5 rounded-md border ${l.action === "LOGIN" ? "bg-purple-950 text-purple-300 border-purple-900/40" : "bg-purple-950/20 text-purple-500 border-purple-950"}`}>
                                   {l.action === "LOGIN" ? <ArrowDownLeft className="w-2.5 h-3" /> : <ArrowUpRight className="w-2.5 h-3" />}
                                   {l.action}
                                 </span>
@@ -436,31 +440,31 @@ export default function Home() {
                 </div>
               ) : (
                 <div>
-                  <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-900/60">
-                    <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Gateway Processing</h2>
-                    {tb !== "dash" && (rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-zinc-100 hover:bg-white text-zinc-950 text-[11px] px-3 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition-all shadow-sm active:scale-[0.98]"><Plus className="w-3.5 h-3.5" /> Build {tb}</button>}
+                  <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
+                    <h2 className="text-xs font-medium text-purple-400/70 uppercase tracking-wider">Gateway Processing</h2>
+                    {tb !== "dash" && (rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition-all shadow-sm active:scale-[0.98] shadow-purple-950/40"><Plus className="w-3.5 h-3.5" /> Build {tb}</button>}
                   </div>
-                  {ld ? <div className="text-center py-8 font-mono text-zinc-600 animate-pulse tracking-wide text-xs">SYNCHRONIZING REPOSITORY CLUSTER...</div> : tb === "dash" || tb === "proj" ? (
-                    pj.length === 0 ? <div className="text-center py-8 text-xs text-zinc-600 font-mono">NO ACTIVE PROJECT MATRIX FOUND</div> : (
+                  {ld ? <div className="text-center py-8 font-mono text-purple-400/40 animate-pulse tracking-wide text-xs">SYNCHRONIZING REPOSITORY CLUSTER...</div> : tb === "dash" || tb === "proj" ? (
+                    pj.length === 0 ? <div className="text-center py-8 text-xs text-purple-400/40 font-mono">NO ACTIVE PROJECT MATRIX FOUND</div> : (
                       <div className="w-full overflow-x-auto">
-                        <table className="w-full text-left text-sm min-w-[550px]">
-                          <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Project Registry Descriptor</th><th className="pb-3 font-semibold">Execution Status</th>{rl === "admin" && <th className="pb-3 text-right font-semibold">Purge</th>}</tr></thead>
-                          <tbody className="divide-y divide-[#231C30]/40">
+                        <table className="w-full text-left text-xs min-w-[550px]">
+                          <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-mono uppercase tracking-wider"><th className="pb-2 font-medium">Project Matrix Identifier</th><th className="pb-2 font-medium">Execution Assignment</th>{rl === "admin" && <th className="pb-2 text-right font-medium">Purge</th>}</tr></thead>
+                          <tbody className="divide-y divide-purple-900/10">
                             {pj.map(p => (
-                              <tr key={p.id} className="text-white hover:bg-[#171324]/30 transition-colors">
-                                <td className="py-3.5 font-medium text-xs md:text-sm">{p.name}</td>
-                                <td className="py-3.5">
+                              <tr key={p.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+                                <td className="py-3 font-medium text-zinc-100">{p.name}</td>
+                                <td className="py-3">
                                   <select disabled={rl === "viewer"} value={p.status} onChange={async (e) => {
                                     const v = e.target.value;
                                     setPj(prev => prev.map(x => x.id === p.id ? { ...x, status: v } : x));
                                     await sb.from("projects").update({ status: v }).eq("id", p.id);
                                     pn("project_status_updated", { id: p.id, name: p.name, status: v });
                                     await gd();
-                                  }} className="bg-[#171324] text-xs border border-[#362B4C] px-2 py-1 rounded-lg text-white focus:outline-none focus:border-[#8B5CF6] disabled:opacity-50">
+                                  }} className="bg-purple-950/40 text-xs border border-purple-900/30 px-2 py-1 rounded-lg text-zinc-200 focus:outline-none focus:border-purple-700 disabled:opacity-50">
                                     {["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}
                                   </select>
                                 </td>
-                                {rl === "admin" && <td className="py-3.5 text-right"><button onClick={() => setCf({ id: p.id, type: "proj", name: p.name })} className="text-[#6A6185] hover:text-rose-400 p-1.5 rounded transition-colors"><Trash2 className="w-4 h-4" /></button></td>}
+                                {rl === "admin" && <td className="py-3 text-right"><button onClick={() => setCf({ id: p.id, type: "proj", name: p.name })} className="text-purple-400/40 hover:text-purple-400 p-1 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button></td>}
                               </tr>
                             ))}
                           </tbody>
@@ -468,27 +472,27 @@ export default function Home() {
                       </div>
                     )
                   ) : (
-                    tk.length === 0 ? <div className="text-center py-10 text-xs text-[#6A6185] font-mono">NO ACTIVE TASK RECORDS FOUND</div> : (
+                    tk.length === 0 ? <div className="text-center py-8 text-xs text-purple-400/40 font-mono">NO ACTIVE TASK RECORDS FOUND</div> : (
                       <div className="w-full overflow-x-auto">
-                        <table className="w-full text-left text-sm min-w-[550px]">
-                          <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Task Registry Description</th><th className="pb-3 font-semibold">Assigned Node</th><th className="pb-3 font-semibold">Execution State</th>{rl === "admin" && <th className="pb-3 text-right font-semibold">Purge</th>}</tr></thead>
-                          <tbody className="divide-y divide-[#231C30]/40">
+                        <table className="w-full text-left text-xs min-w-[550px]">
+                          <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-mono uppercase tracking-wider"><th className="pb-2 font-medium">Task Matrix Specification</th><th className="pb-2 font-medium">Assigned Operator</th><th className="pb-2 font-medium">Operational State</th>{rl === "admin" && <th className="pb-2 text-right font-medium">Purge</th>}</tr></thead>
+                          <tbody className="divide-y divide-purple-900/10">
                             {tk.map(t => (
-                              <tr key={t.id} className="text-white hover:bg-[#171324]/30 transition-colors">
-                                <td className="py-3.5 font-medium text-xs md:text-sm">{t.title}</td>
-                                <td className="py-3.5 font-mono text-xs text-zinc-400">{t.assigned_to || "Unassigned"}</td>
-                                <td className="py-3.5">
+                              <tr key={t.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+                                <td className="py-3 font-medium text-zinc-100">{t.title}</td>
+                                <td className="py-3 font-mono text-zinc-400">{t.assigned_to || "Unassigned"}</td>
+                                <td className="py-3">
                                   <select disabled={rl === "viewer" && t.assigned_to !== au?.email} value={t.status} onChange={async (e) => {
                                     const v = e.target.value;
                                     setTk(prev => prev.map(x => x.id === t.id ? { ...x, status: v } : x));
                                     await sb.from("tasks").update({ status: v }).eq("id", t.id);
                                     pn("task_status_updated", { id: t.id, title: t.title, status: v, assigned_to: t.assigned_to });
                                     await gd();
-                                  }} className="bg-[#171324] text-xs border border-[#362B4C] px-2 py-1 rounded-lg text-white focus:outline-none focus:border-[#8B5CF6] disabled:opacity-50">
+                                  }} className="bg-purple-950/40 text-xs border border-purple-900/30 px-2 py-1 rounded-lg text-zinc-200 focus:outline-none focus:border-purple-700 disabled:opacity-50">
                                     {["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
                                   </select>
                                 </td>
-                                {rl === "admin" && <td className="py-3.5 text-right"><button onClick={() => setCf({ id: t.id, type: "task", name: t.title })} className="text-[#6A6185] hover:text-rose-400 p-1.5 rounded transition-colors"><Trash2 className="w-4 h-4" /></button></td>}
+                                {rl === "admin" && <td className="py-3 text-right"><button onClick={() => setCf({ id: t.id, type: "task", name: t.title })} className="text-purple-400/40 hover:text-purple-400 p-1 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button></td>}
                               </tr>
                             ))}
                           </tbody>
@@ -505,12 +509,12 @@ export default function Home() {
       
       {cf && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
-          <div className="bg-zinc-950 border border-zinc-900 rounded-2xl max-w-sm w-full p-5 shadow-2xl">
-            <h3 className="font-medium text-xs text-zinc-100 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-zinc-400" /> Confirm Destruction</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">Confirm absolute deletion of entry <span className="text-zinc-200 font-mono bg-zinc-900 px-1 py-0.5 rounded border border-zinc-800">"{cf.name}"</span> from cloud cluster registries?</p>
+          <div className="bg-[#0D0A16] border border-purple-900/40 rounded-2xl max-w-sm w-full p-5 shadow-2xl">
+            <h3 className="font-medium text-xs text-zinc-100 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-purple-400" /> Confirm Destruction</h3>
+            <p className="text-xs text-zinc-400 leading-relaxed">Confirm absolute deletion of entry <span className="text-purple-300 font-mono bg-purple-950/40 px-1 py-0.5 rounded border border-purple-900/30">"{cf.name}"</span> from cloud cluster registries?</p>
             <div className="flex justify-end gap-2 mt-4">
-              <button onClick={() => setCf(null)} className="px-3.5 py-1.5 text-xs font-semibold bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-zinc-300 rounded-xl transition-colors">Abort</button>
-              <button onClick={ep} className="px-3.5 py-1.5 text-xs font-semibold bg-zinc-100 hover:bg-white text-zinc-950 rounded-xl transition-colors">Purge Node</button>
+              <button onClick={() => setCf(null)} className="px-3.5 py-1.5 text-xs font-semibold bg-purple-950/40 border border-purple-900/30 hover:bg-purple-900/60 text-zinc-300 rounded-xl transition-colors">Abort</button>
+              <button onClick={ep} className="px-3.5 py-1.5 text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white rounded-xl transition-colors">Purge Node</button>
             </div>
           </div>
         </div>
@@ -518,27 +522,27 @@ export default function Home() {
       
       {md && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
-          <div className="bg-zinc-950 border border-zinc-900 rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl">
-            <header className="p-3.5 border-b border-zinc-900 flex items-center justify-between bg-zinc-900/20"><h3 className="font-semibold text-zinc-100 text-xs uppercase tracking-wider">Initialize Pipeline Entry</h3><button onClick={() => setMd(null)} className="text-zinc-500 hover:text-white p-0.5 rounded-md"><X className="w-4 h-4" /></button></header>
+          <div className="bg-[#0D0A16] border border-purple-900/40 rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl">
+            <header className="p-3.5 border-b border-purple-900/20 flex items-center justify-between bg-purple-950/10"><h3 className="font-semibold text-zinc-100 text-xs uppercase tracking-wider">Initialize Pipeline Entry</h3><button onClick={() => setMd(null)} className="text-zinc-500 hover:text-white p-0.5 rounded-md"><X className="w-4 h-4" /></button></header>
             {md === "proj" ? (
               <form onSubmit={ap} className="p-5 space-y-3.5">
-                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Structural Handle</label><input required type="text" value={pf.name} onChange={e => setPf({...pf, name: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-3 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600" placeholder="e.g., Core Storage Deployment" /></div>
-                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Execution Assignment</label><select value={pf.status} onChange={e => setPf({...pf, status: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-zinc-600">{["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}</select></div>
-                <div className="grid grid-cols-2 gap-2 pt-1"><button type="button" onClick={() => sbp("proj")} className="bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-zinc-300 py-2 rounded-xl flex items-center justify-center gap-1 hover:bg-zinc-800 transition-colors"><Copy className="w-3 h-3" /> Blueprint</button><button type="submit" className="bg-zinc-100 hover:bg-white font-semibold text-zinc-950 text-[11px] py-2 rounded-xl transition-colors">Commit Entry</button></div>
+                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Structural Handle</label><input required type="text" value={pf.name} onChange={e => setPf({...pf, name: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-600" placeholder="e.g., Core Storage Deployment" /></div>
+                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Execution Assignment</label><select value={pf.status} onChange={e => setPf({...pf, status: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600">{["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}</select></div>
+                <div className="grid grid-cols-2 gap-2 pt-1"><button type="button" onClick={() => sbp("proj")} className="bg-purple-950/40 border border-purple-900/30 text-[11px] font-medium text-purple-300 py-2 rounded-xl flex items-center justify-center gap-1 hover:bg-purple-900/60 transition-colors"><Copy className="w-3 h-3" /> Blueprint</button><button type="submit" className="bg-purple-600 hover:bg-purple-500 font-semibold text-white text-[11px] py-2 rounded-xl transition-colors">Commit Entry</button></div>
               </form>
             ) : md === "task" ? (
               <form onSubmit={at} className="p-5 space-y-3.5">
-                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Task Specification</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-3 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600" placeholder="e.g., Run Integration Diagnostics" /></div>
-                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Execution Phase</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-zinc-600">{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
-                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Target Node Assignment</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-zinc-600"><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u?.email}>{u?.email}</option>)}</select></div>
-                <div className="grid grid-cols-2 gap-2 pt-1"><button type="button" onClick={() => sbp("task")} className="bg-zinc-900 border border-zinc-800 text-[11px] font-medium text-zinc-300 py-2 rounded-xl flex items-center justify-center gap-1 hover:bg-zinc-800 transition-colors"><Copy className="w-3 h-3" /> Blueprint</button><button type="submit" className="bg-zinc-100 hover:bg-white font-semibold text-zinc-950 text-[11px] py-2 rounded-xl transition-colors">Commit Node</button></div>
+                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Task Specification</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-600" placeholder="e.g., Run Integration Diagnostics" /></div>
+                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Execution Phase</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600">{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
+                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Target Node Assignment</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600"><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u?.email}>{u?.email}</option>)}</select></div>
+                <div className="grid grid-cols-2 gap-2 pt-1"><button type="button" onClick={() => sbp("task")} className="bg-purple-950/40 border border-purple-900/30 text-[11px] font-medium text-purple-300 py-2 rounded-xl flex items-center justify-center gap-1 hover:bg-purple-900/60 transition-colors"><Copy className="w-3 h-3" /> Blueprint</button><button type="submit" className="bg-purple-600 hover:bg-purple-500 font-semibold text-white text-[11px] py-2 rounded-xl transition-colors">Commit Node</button></div>
               </form>
             ) : (
               <form onSubmit={cu} className="p-5 space-y-3.5">
-                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Identity Handle (Email)</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-3 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600" placeholder="operator@enterprise.com" /></div>
-                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Access Cipher (Password)</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-3 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600" placeholder="••••••••••••" /></div>
-                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Clearance Tier</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-zinc-600">{["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
-                <button type="submit" className="w-full bg-zinc-100 hover:bg-white font-semibold text-zinc-950 text-xs py-2.5 rounded-xl transition-colors mt-2">Initialize Profile</button>
+                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Identity Handle (Email)</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-600" placeholder="operator@enterprise.com" /></div>
+                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Access Cipher (Password)</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-600" placeholder="••••••••••••" /></div>
+                <div><label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1">Clearance Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600">{["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-semibold text-white text-xs py-2.5 rounded-xl transition-colors mt-2">Initialize Profile</button>
               </form>
             )}
           </div>
