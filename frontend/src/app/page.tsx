@@ -30,6 +30,9 @@ export default function Home() {
     ...(rl === "admin" ? [{ id: "team", label: "Team Roles", icon: Users }] : [])
   ];
 
+  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
+  tk.forEach(t => { if (tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
+
   useEffect(() => {
     sb.auth.getSession().then(({ data: { session } }) => {
       setAu(session?.user ?? null);
@@ -242,6 +245,38 @@ export default function Home() {
     }
     setCf(null);
   };
+
+  if (!au) {
+    return (
+      <div className="min-h-screen w-screen bg-[#06040A] flex flex-col items-center justify-center font-sans p-4 selection:bg-[#2C213D] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#140E24_1px,transparent_1px),linear-gradient(to_bottom,#140E24_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60"></div>
+        <div className="w-full max-w-md bg-[#110E1A] border border-[#231C30] rounded-2xl p-6 md:p-10 shadow-2xl relative z-10 transition-all">
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#8B5CF6] to-transparent"></div>
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-14 h-14 rounded-xl bg-[#171324] border border-[#362B4C] flex items-center justify-center text-[#A855F7] mb-4 shadow-inner">
+              <Activity className="w-7 h-7 animate-pulse" />
+            </div>
+            <h2 className="text-2xl font-extrabold text-white tracking-wider text-center">IOMS PLATFORM NODE</h2>
+            <p className="text-xs text-[#7C749B] mt-1.5 font-mono uppercase tracking-widest">Secure Gateway Authorization</p>
+          </div>
+          <form onSubmit={li} className="space-y-5">
+            <div>
+              <label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-2">Identity Protocol</label>
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] font-mono transition-all" placeholder="operator@enterprise.com" />
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-2">Access Cipher</label>
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] font-mono transition-all" placeholder="••••••••••••" />
+            </div>
+            {er && <div className="text-xs text-rose-400 font-mono bg-rose-500/5 border border-rose-500/20 rounded-xl p-3 text-center">{er}</div>}
+            <button type="submit" className="w-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-sm font-bold py-3.5 rounded-xl transition-all duration-150 active:scale-[0.99] shadow-lg shadow-purple-900/20 flex items-center justify-center gap-2">
+              <LogIn className="w-4 h-4" /> INITIALIZE CONSOLE
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-screen bg-[#09070F] text-[#E4E6ED] font-sans selection:bg-[#2C213D] overflow-hidden relative">
