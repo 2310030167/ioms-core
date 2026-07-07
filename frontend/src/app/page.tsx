@@ -275,8 +275,8 @@ export default function Home() {
     );
   }
 
-  const taskMatrix = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
-  tk.forEach(t => { if (taskMatrix[t.status as keyof typeof taskMatrix] !== undefined) taskMatrix[t.status as keyof typeof taskMatrix]++; });
+  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
+  tk.forEach(t => { if (tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
 
   return (
     <div className="flex h-screen w-screen bg-[#09070F] text-[#E4E6ED] font-sans selection:bg-[#2C213D] overflow-hidden relative">
@@ -337,7 +337,7 @@ export default function Home() {
                 <div className="bg-[#110E1A] border border-[#231C30] rounded-xl p-4 md:p-6 lg:col-span-2 overflow-x-auto">
                   <div className="flex items-center justify-between border-b border-[#231C30]/40 pb-3 mb-4 min-w-[500px]"><h3 className="text-xs font-bold text-white uppercase tracking-wider">Workload Engine</h3><div className="text-emerald-400 font-mono text-[9px] tracking-widest">REALTIME_SYNC_OK</div></div>
                   <div className="grid grid-cols-7 gap-2 md:gap-4 min-w-[500px]">
-                    {Object.entries(taskMatrix).map(([stVal, count]) => (
+                    {Object.entries(tM).map(([stVal, count]) => (
                       <div key={stVal} className="bg-[#09070F] border border-[#231C30] p-2 md:p-3 rounded-xl text-center flex flex-col justify-between">
                         <span className="text-[9px] text-[#A29DB8] uppercase truncate font-mono tracking-tighter block">{stVal.replace("_", " ")}</span>
                         <div className="w-full bg-[#171324] h-20 mt-2 rounded-lg relative flex items-end justify-center overflow-hidden"><div style={{ height: `${Math.min(count * 20, 100)}%` }} className="w-2 md:w-3 bg-gradient-to-t from-[#6D28D9] to-[#8B5CF6] rounded-t-sm transition-all duration-500"></div></div>
@@ -375,9 +375,15 @@ export default function Home() {
                           <tr key={u.id} className="text-white hover:bg-[#171324]/30 transition-colors">
                             <td className="py-3.5 font-mono text-xs">{u.email}</td>
                             <td className="py-3.5">
-                              <span className="text-xs font-mono bg-[#171324] border border-[#362B4C] px-3 py-1.5 rounded-md text-purple-400 uppercase tracking-wider">
-                                {u.role}
-                              </span>
+                              <select disabled={u.id === au?.id} value={u.role} onChange={async (e) => {
+                                const v = e.target.value;
+                                setUs(prev => prev.map(x => x.id === u.id ? { ...x, role: v } : x));
+                                await sb.from("user_roles").update({ role: v }).eq("id", u.id);
+                                pn("operator_role_updated", { operator: u.email, role: v });
+                                await gd();
+                              }} className="bg-[#171324] text-xs border border-[#362B4C] px-2.5 py-1.5 rounded-lg text-white font-mono focus:outline-none focus:border-[#8B5CF6] disabled:opacity-40">
+                                {["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
+                              </select>
                             </td>
                             <td className="py-3.5 text-right">
                               {u.id !== au?.id ? (
