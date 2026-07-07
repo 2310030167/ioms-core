@@ -310,14 +310,56 @@ export default function Home() {
     setCf(null);
   };
 
+  if (!au) {
+    return (
+      <div className="min-h-screen w-screen bg-[#07050F] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-purple-900/10 blur-[140px] pointer-events-none"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-900/10 blur-[140px] pointer-events-none"></div>
+        <div className="w-full max-w-[380px] bg-purple-950/30 border border-purple-800/20 rounded-3xl p-8 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.05)] border-b-4 border-purple-900/60 relative z-10">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_8px_16px_rgba(147,51,234,0.25)]">
+              <Activity className="w-5 h-5 stroke-[1.5]" />
+            </div>
+            <h2 className="text-xl font-bold text-zinc-100 tracking-tight text-center">Welcome Back</h2>
+            <p className="text-[11px] text-purple-300/60 mt-1 uppercase tracking-wider">Sign in to your account</p>
+          </div>
+          <form onSubmit={li} className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label>
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 font-mono transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" placeholder="yourname@domain.com" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Password</label>
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 font-mono transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" placeholder="••••••••••••" />
+            </div>
+            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-2.5 text-center shadow-inner">{er}</div>}
+            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl tracking-wide mt-2 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] transition-all shadow-lg shadow-purple-950/50">
+              SIGN IN
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
+  tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
+
   return (
-    <div className="flex h-screen w-screen bg-[#050409] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
+    <div className="flex h-screen w-screen bg-[#05040B] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
       <AmbientCanvas />
       
-      <div className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
+      {ts && (
+        <div className="fixed top-5 right-5 z-50 max-w-xs w-[calc(100vw-2rem)] bg-purple-950/40 border border-purple-800/40 backdrop-blur-md rounded-xl p-3.5 shadow-2xl flex items-start gap-2.5 animate-in fade-in slide-in-from-top-3">
+          {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" /> : <AlertTriangle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />}
+          <div className="flex-1"><p className="text-xs font-medium text-zinc-200">{ts.msg}</p></div>
+        </div>
+      )}
       
-      <aside className={`fixed inset-y-0 left-0 w-60 bg-[#0A0713]/90 border-r border-purple-950/50 backdrop-blur-xl flex flex-col justify-between z-40 transition-transform duration-300 lg:static lg:translate-x-0 shadow-[4px_0_30px_rgba(0,0,0,0.5)] ${mo ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="p-5 flex flex-col h-full overflow-y-auto relative z-10">
+      <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
+      
+      <aside className={`fixed inset-y-0 left-0 w-64 bg-[#0A0713]/90 border-r border-purple-950/50 backdrop-blur-xl flex flex-col justify-between z-40 transition-transform duration-300 lg:static lg:translate-x-0 shadow-[4px_0_30px_rgba(0,0,0,0.5)] ${mo ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className="p-6 overflow-y-auto flex-1 relative z-10">
           <div className="flex items-center justify-between mb-6 px-1">
             <div className="flex items-center gap-2.5"><Activity className="w-5 h-5 text-purple-400 stroke-[1.5]" /><span className="font-extrabold text-sm text-zinc-100 tracking-tight">IOMS Central</span></div>
             <button onClick={() => setMo(false)} className="lg:hidden p-1 text-zinc-500 hover:text-white"><X className="w-4 h-4" /></button>
@@ -369,7 +411,7 @@ export default function Home() {
                     {Object.entries(tM).map(([stVal, count]) => (
                       <div key={stVal} className="bg-purple-950/5 border border-purple-900/10 p-2.5 rounded-xl text-center flex flex-col justify-between shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]">
                         <span className="text-[9px] text-purple-400/40 uppercase truncate font-bold font-mono block">{stVal.replace("_", " ")}</span>
-                        <div className="w-full bg-purple-950/20 h-16 mt-2 rounded-lg relative flex items-end justify-center overflow-hidden border border-purple-900/10"><div style={{ height: `${Math.min(count * 20, 100)}%` }} className="w-2.5 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t shadow-[0_0_12px_rgba(168,85,247,0.5)] transition-all duration-300"></div></div>
+                        <div className="w-full bg-purple-950/20 h-16 mt-2 rounded-lg relative flex items-end justify-center overflow-hidden border border-purple-900/10"><div style={{ height: `${Math.min(count * 20, 100)}%` }} className="w-2.5 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t shadow-[0_0_12px_rgba(168,85,247,0.5)] transition-all duration-500"></div></div>
                         <span className="text-xs font-mono font-bold text-white mt-1.5 block">{count}</span>
                       </div>
                     ))}
@@ -583,11 +625,11 @@ export default function Home() {
       
       {cf && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
-          <div className="bg-zinc-950 border border-purple-900/40 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
+          <div className="bg-[#0D0A16] border border-purple-900/40 rounded-2xl max-w-sm w-full p-5 shadow-2xl">
             <h3 className="font-bold text-xs text-zinc-100 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-purple-400" /> Confirm Deletion</h3>
-            <p className="text-xs text-zinc-400 leading-relaxed">Are you sure you want to permanently delete <span className="text-zinc-200 font-bold bg-zinc-900 px-1 py-0.5 rounded border border-purple-955/30">"{cf.name}"</span> from the system layer?</p>
+            <p className="text-xs text-zinc-400 leading-relaxed">Are you sure you want to permanently delete <span className="text-purple-300 font-mono bg-purple-950/40 px-1 py-0.5 rounded border border-purple-900/30">"{cf.name}"</span> from the system layer?</p>
             <div className="flex justify-end gap-2 mt-4">
-              <button onClick={() => setCf(null)} className="px-3.5 py-1.5 text-xs font-semibold bg-purple-950/40 border border-purple-900/40 hover:bg-purple-900/20 text-purple-300 rounded-xl transition-colors">Cancel</button>
+              <button onClick={() => setCf(null)} className="px-3.5 py-1.5 text-xs font-semibold bg-purple-950/40 border border-purple-900/40 hover:bg-purple-900/60 text-zinc-300 rounded-xl transition-colors">Cancel</button>
               <button onClick={ep} className="px-3.5 py-1.5 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white rounded-xl shadow-md border-b-2 border-rose-800 active:border-b-0 active:translate-y-px transition-all">Delete Item</button>
             </div>
           </div>
@@ -595,7 +637,7 @@ export default function Home() {
       )}
       
       {md && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
           <div className="bg-[#110E1A] border border-purple-900/30 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border-b-4 border-purple-950">
             <header className="p-3.5 border-b border-purple-900/20 flex items-center justify-between bg-purple-950/10"><h3 className="font-bold text-zinc-100 text-xs uppercase tracking-wider">Create Entry</h3><button onClick={() => setMd(null)} className="text-zinc-500 hover:text-white p-0.5 rounded-md"><X className="w-4 h-4" /></button></header>
             {md === "proj" ? (
