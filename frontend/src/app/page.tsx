@@ -4,67 +4,55 @@ import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogIn, L
 import { sb } from "../lib/sb";
 
 function AmbientCanvas() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    if (typeof window === "undefined" || !containerRef.current) return;
-    let THREE: any;
-    let s: any, c: any, r: any, m: any;
-    let act = true;
-    import("three").then((threeLib) => {
-      THREE = threeLib;
-      if (!containerRef.current || !act) return;
-      const w = containerRef.current.clientWidth;
-      const h = containerRef.current.clientHeight;
-      s = new THREE.Scene();
-      c = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
-      r = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      r.setSize(w, h);
-      r.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      containerRef.current.appendChild(r.domElement);
-      const geo = new THREE.BufferGeometry();
-      const cnt = 60;
-      const pos = new Float32Array(cnt * 3);
-      for (let i = 0; i < cnt * 3; i++) {
-        pos[i] = (Math.random() - 0.5) * 12;
-      }
-      geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      m = new THREE.PointsMaterial({
-        color: 0xaa80ff,
-        size: 0.08,
-        transparent: true,
-        opacity: 0.4,
-        blending: THREE.AdditiveBlending,
-      });
-      const p = new THREE.Points(geo, m);
-      s.add(p);
-      c.position.z = 5;
-      const anim = () => {
-        if (!act) return;
-        requestAnimationFrame(anim);
-        p.rotation.y += 0.0015;
-        p.rotation.x += 0.0008;
-        r.render(s, c);
-      };
-      anim();
-    });
-    const handleResize = () => {
-      if (!containerRef.current || !c || !r) return;
-      const w = containerRef.current.clientWidth;
-      const h = containerRef.current.clientHeight;
-      c.aspect = w / h;
-      c.updateProjectionMatrix();
-      r.setSize(w, h);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    let animationFrameId: number;
+    const resizeCanvas = () => {
+      canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
+      canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
     };
-    window.addEventListener("resize", handleResize);
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    const pArr: Array<{ x: number; y: number; r: number; sX: number; sY: number; o: number }> = [];
+    const pCount = 50;
+    for (let i = 0; i < pCount; i++) {
+      pArr.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 1,
+        sX: (Math.random() - 0.5) * 0.4,
+        sY: (Math.random() - 0.5) * 0.4,
+        o: Math.random() * 0.5 + 0.2
+      });
+    }
+    const render = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      pArr.forEach((p) => {
+        p.x += p.sX;
+        p.y += p.sY;
+        if (p.x < 0 || p.x > canvas.width) p.sX *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.sY *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(168, 85, 247, ${p.o})`;
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = "#a855f7";
+        ctx.fill();
+      });
+      ctx.shadowBlur = 0;
+      animationFrameId = requestAnimationFrame(render);
+    };
+    render();
     return () => {
-      act = false;
-      window.removeEventListener("resize", handleResize);
-      if (r && r.domElement && containerRef.current) {
-        try { containerRef.current.removeChild(r.domElement); } catch (e) {}
-      }
+      window.removeEventListener("resize", resizeCanvas);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
-  return <div ref={containerRef} className="absolute inset-0 pointer-events-none z-0" />;
+  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-60" />;
 }
 
 export default function Home() {
@@ -192,14 +180,14 @@ export default function Home() {
     const { data, error } = await sb.auth.signInWithPassword({ email: fm.email, password: fm.password });
     if (error) {
       setEr(error.message);
-      setTs({ msg: "Login credentials are invalid.", type: "err" });
+      setTs({ msg: "Login details are incorrect.", type: "err" });
     } else {
       if (data?.user?.email) {
         await sb.from("user_logins").insert([{ email: data.user.email, action: "LOGIN" }]);
       }
       setFm({ email: "", password: "" });
       await gd();
-      setTs({ msg: "Authentication successful.", type: "ok" });
+      setTs({ msg: "Successfully logged in.", type: "ok" });
     }
   };
 
@@ -216,7 +204,7 @@ export default function Home() {
     setTb("dash");
     setSu(null);
     setSt({ pipeline: 0, tasks: 0, team: 1 });
-    setTs({ msg: "Session closed cleanly.", type: "ok" });
+    setTs({ msg: "Logged out successfully.", type: "ok" });
     setMo(false);
   };
 
@@ -232,10 +220,10 @@ export default function Home() {
       pn("operator_provisioned", { id: "SYSTEM", name: uf.em, status: uf.rl });
       setUf({ em: "", pw: "", rl: "viewer" });
       setMd(null);
-      setTs({ msg: "New profile created.", type: "ok" });
+      setTs({ msg: "New team member account added.", type: "ok" });
       await gd();
     } else {
-      setTs({ msg: d.err || "Failed to create new account.", type: "err" });
+      setTs({ msg: d.err || "Failed to create account.", type: "err" });
     }
   };
 
@@ -246,7 +234,7 @@ export default function Home() {
       pn("project_created", data);
       setPf({ name: "", status: "New" });
       setMd(null);
-      setTs({ msg: "Project has been saved.", type: "ok" });
+      setTs({ msg: "Project created successfully.", type: "ok" });
       await gd();
     }
   };
@@ -258,7 +246,7 @@ export default function Home() {
       pn("task_created", data);
       setTf({ title: "", status: "Todo", as: "" });
       setMd(null);
-      setTs({ msg: "Task has been saved.", type: "ok" });
+      setTs({ msg: "Task saved successfully.", type: "ok" });
       await gd();
     }
   };
@@ -272,7 +260,7 @@ export default function Home() {
     setBp(u);
     localStorage.setItem("ioms_blueprints", JSON.stringify(u));
     setMd(null);
-    setTs({ msg: "Quick template saved.", type: "ok" });
+    setTs({ msg: "Template blueprint saved.", type: "ok" });
   };
 
   const abp = (b: any) => {
@@ -290,7 +278,7 @@ export default function Home() {
     const u = bp.filter(x => x.id !== id);
     setBp(u);
     localStorage.setItem("ioms_blueprints", JSON.stringify(u));
-    setTs({ msg: "Template removed.", type: "ok" });
+    setTs({ msg: "Template blueprint deleted.", type: "ok" });
   };
 
   const ep = async () => {
@@ -304,79 +292,37 @@ export default function Home() {
       const d = await res.json();
       if (d.ok) {
         pn("operator_purged", { id: cf.id, name: cf.name });
-        setTs({ msg: "Account dropped from database.", type: "ok" });
+        setTs({ msg: "User account deleted.", type: "ok" });
         if (su === cf.name) setSu(null);
         await gd();
       } else {
-        setTs({ msg: d.err || "Failed to drop account.", type: "err" });
+        setTs({ msg: d.err || "Failed to remove user.", type: "err" });
       }
     } else {
       const tbl = cf.type === "proj" ? "projects" : "tasks";
       const { error } = await sb.from(tbl).delete().eq("id", cf.id);
       if (!error) {
         pn(cf.type === "proj" ? "project_purged" : "task_purged", { id: cf.id, name: cf.name });
-        setTs({ msg: "Item removed.", type: "ok" });
+        setTs({ msg: "Item deleted from database.", type: "ok" });
         await gd();
       }
     }
     setCf(null);
   };
 
-  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
-  tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
-
-  if (!au) {
-    return (
-      <div className="min-h-screen w-screen bg-[#06040C] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
-        <div className="absolute top-[-25%] left-[-15%] w-[700px] h-[700px] rounded-full bg-purple-900/10 blur-[150px] pointer-events-none"></div>
-        <div className="absolute bottom-[-25%] right-[-15%] w-[700px] h-[700px] rounded-full bg-indigo-950/20 blur-[150px] pointer-events-none"></div>
-        <div className="w-full max-w-[390px] bg-purple-950/10 border border-purple-900/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[6px] border-purple-950/80 relative z-10 transform scale-100 hover:scale-[1.01] transition-transform duration-300">
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_10px_25px_rgba(147,51,234,0.25),inset_0_1px_2px_rgba(255,255,255,0.1)]">
-              <Activity className="w-6 h-6 stroke-[1.5]" />
-            </div>
-            <h2 className="text-2xl font-black text-zinc-100 tracking-tight text-center">IOMS Portal</h2>
-            <p className="text-[11px] text-purple-400/70 mt-1 uppercase font-semibold tracking-wider">Secure Access Protocol</p>
-          </div>
-          <form onSubmit={li} className="space-y-4">
-            <div>
-              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Email Address</label>
-              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="name@domain.com" />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Password</label>
-              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="••••••••••••" />
-            </div>
-            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
-            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-xl tracking-wide mt-3 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] shadow-xl shadow-purple-950/60 transition-all">
-              ENTER SYSTEM
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex h-screen w-screen bg-[#050409] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
       <AmbientCanvas />
       
-      {ts && (
-        <div className="fixed top-5 right-5 z-50 max-w-xs w-[calc(100vw-2rem)] bg-[#0C0916]/90 border border-purple-800/40 backdrop-blur-md rounded-xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex items-start gap-2.5 animate-in fade-in slide-in-from-top-3">
-          {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" /> : <AlertTriangle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />}
-          <div className="flex-1"><p className="text-xs font-semibold text-zinc-200">{ts.msg}</p></div>
-        </div>
-      )}
-      
       <div className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
       
-      <aside className={`fixed inset-y-0 left-0 w-60 bg-[#070510]/85 border-r border-purple-950/40 backdrop-blur-xl flex flex-col justify-between z-40 transition-transform duration-300 lg:static lg:translate-x-0 shadow-[4px_0_30px_rgba(0,0,0,0.5)] ${mo ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 w-60 bg-[#0A0713]/90 border-r border-purple-950/50 backdrop-blur-xl flex flex-col justify-between z-40 transition-transform duration-300 lg:static lg:translate-x-0 shadow-[4px_0_30px_rgba(0,0,0,0.5)] ${mo ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-5 flex flex-col h-full overflow-y-auto relative z-10">
           <div className="flex items-center justify-between mb-6 px-1">
             <div className="flex items-center gap-2.5"><Activity className="w-5 h-5 text-purple-400 stroke-[1.5]" /><span className="font-extrabold text-sm text-zinc-100 tracking-tight">IOMS Central</span></div>
             <button onClick={() => setMo(false)} className="lg:hidden p-1 text-zinc-500 hover:text-white"><X className="w-4 h-4" /></button>
           </div>
-          <div className="mb-4 p-3 bg-purple-950/10 border border-purple-900/20 rounded-xl backdrop-blur-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)] border-b-2 border-purple-950/60">
+          <div className="mb-4 p-3 bg-purple-950/20 border border-purple-900/30 rounded-xl backdrop-blur-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)] border-b-2 border-purple-955/60">
             <div className="flex items-center gap-2 mb-2.5">
               <div className="w-6 h-6 rounded-md bg-purple-950 border border-purple-900/40 flex items-center justify-center text-purple-400 flex-shrink-0 shadow-inner"><User className="w-3 h-3" /></div>
               <div className="min-w-0 flex-1">
@@ -397,14 +343,14 @@ export default function Home() {
       </aside>
       
       <main className="flex-1 flex flex-col bg-transparent overflow-hidden relative z-10">
-        <header className="h-14 border-b border-purple-950/30 flex items-center justify-between px-4 md:px-6 flex-shrink-0 backdrop-blur-md bg-[#05040B]/30">
+        <header className="h-14 border-b border-purple-950/30 flex items-center justify-between px-4 md:px-6 flex-shrink-0 backdrop-blur-md bg-[#05040B]/40">
           <div className="flex items-center gap-3">
-            <button onClick={() => { setMo(true); }} className="p-1.5 text-zinc-400 hover:text-white lg:hidden rounded-lg bg-purple-950/40 border border-purple-900/30"><Menu className="w-4 h-4" /></button>
-            <h1 className="text-xs font-extrabold tracking-wide uppercase text-purple-400/80">
+            <button onClick={() => setMo(true)} className="p-1.5 text-zinc-400 hover:text-white lg:hidden rounded-lg bg-purple-950/40 border border-purple-900/30"><Menu className="w-4 h-4" /></button>
+            <h1 className="text-xs font-bold tracking-wide uppercase text-purple-400/80">
               {tb === "team" ? "Team Roles" : tb === "reports" ? "Individual Reports" : tb} Hub
             </h1>
           </div>
-          <div className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-purple-400 animate-pulse"></span><span className="text-[9px] font-mono text-purple-500/40 tracking-widest">LIVE DATA CONNECT</span></div>
+          <div className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-purple-400 animate-pulse"></span><span className="text-[9px] font-mono text-purple-500/40 tracking-widest">SYSTEM ACTIVE</span></div>
         </header>
         
         <section className="flex-1 overflow-y-auto p-4 md:p-6">
@@ -418,7 +364,7 @@ export default function Home() {
             {tb === "dash" && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-4 md:p-5 lg:col-span-2 overflow-x-auto backdrop-blur-sm">
-                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-purple-900/20 min-w-[500px]"><h3 className="text-xs font-bold text-purple-400/60 uppercase tracking-wider">Task Status Tracker</h3><div className="text-purple-500/60 font-mono text-[9px] tracking-widest">AUTO_REFRESH_ON</div></div>
+                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-purple-900/20 min-w-[500px]"><h3 className="text-xs font-bold text-purple-400/60 uppercase tracking-wider">Task Status Tracker</h3><div className="text-purple-500/60 font-mono text-[9px] tracking-widest">DATA_REFRESH_OK</div></div>
                   <div className="grid grid-cols-7 gap-2 min-w-[500px]">
                     {Object.entries(tM).map(([stVal, count]) => (
                       <div key={stVal} className="bg-purple-950/5 border border-purple-900/10 p-2.5 rounded-xl text-center flex flex-col justify-between shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)]">
@@ -432,8 +378,8 @@ export default function Home() {
                 <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-4 md:p-5 backdrop-blur-sm">
                   <div className="pb-3 mb-3 border-b border-purple-900/20"><h3 className="text-xs font-bold text-purple-400/60 uppercase tracking-wider">Quick Templates</h3></div>
                   <div className="space-y-1.5 max-h-[148px] overflow-y-auto pr-0.5">
-                    {bp.length === 0 ? <div className="text-center text-[11px] font-mono text-purple-500/40 py-6">NO TEMPLATES CONFIGURATION</div> : bp.map(b => (
-                      <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-purple-950/5 border border-purple-900/10 p-2 rounded-xl flex items-center justify-between gap-2 group transition-colors shadow-sm ${rl !== "viewer" ? "cursor-pointer hover:border-purple-800/50" : ""}`}>
+                    {bp.length === 0 ? <div className="text-center text-[11px] font-mono text-purple-500/40 py-6">NO TEMPLATES CONFIGURED</div> : bp.map(b => (
+                      <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-purple-950/5 border border-purple-900/10 p-2 rounded-xl flex items-center justify-between gap-2 group transition-colors shadow-sm ${rl !== "viewer" ? "cursor-pointer hover:border-purple-800/60" : ""}`}>
                         <span className="text-xs text-zinc-300 truncate font-semibold">{b.name}</span>
                         {(rl === "admin" || rl === "operator") && <button onClick={(e) => dbp(b.id, e)} className="text-purple-400/40 hover:text-purple-400 p-0.5 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>}
                       </div>
@@ -476,10 +422,10 @@ export default function Home() {
                         </div>
                       </div>
 
-                      <p className="text-[10px] font-bold text-purple-400/50 uppercase tracking-wider mb-2 flex-shrink-0">Recent Login / Logout Times</p>
+                      <p className="text-[10px] font-bold text-purple-400/50 uppercase tracking-wider mb-2 flex-shrink-0">Activity Logs</p>
                       <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
                         {ln.filter(l => l.email === su).length === 0 ? (
-                          <div className="text-center text-[11px] font-mono text-purple-500/30 py-8">NO LOGIN EVENTS TRACKED</div>
+                          <div className="text-center text-[11px] font-mono text-purple-500/30 py-8">NO LOGS FOUND</div>
                         ) : ln.filter(l => l.email === su).map(l => (
                           <div key={l.id} className="bg-purple-950/5 border border-purple-900/10 rounded-xl p-3 flex items-center justify-between gap-4 shadow-sm">
                             <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-md border ${l.action === "LOGIN" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"}`}>
@@ -494,7 +440,7 @@ export default function Home() {
                   ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-purple-900/20 rounded-2xl">
                       <FileText className="w-8 h-8 text-purple-500/30 stroke-[1.5] mb-2" />
-                      <p className="text-xs font-semibold text-purple-400/50 uppercase tracking-wider">Select an account from the left panel to load individual tracking metrics.</p>
+                      <p className="text-xs font-semibold text-purple-400/50 uppercase tracking-wider">Select a team member to load records.</p>
                     </div>
                   )}
                 </div>
@@ -507,7 +453,7 @@ export default function Home() {
                   <div className="space-y-8">
                     <div>
                       <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
-                        <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Team Management</h2>
+                        <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Team List & Options</h2>
                         {rl === "admin" && <button onClick={() => setMd("user")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold transition-all shadow-md border-b-2 border-purple-800 active:border-b-0 active:translate-y-px"><Plus className="w-3.5 h-3.5" /> Add Team Member</button>}
                       </div>
                       <div className="w-full overflow-x-auto">
@@ -570,8 +516,8 @@ export default function Home() {
                 ) : (
                   <div>
                     <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
-                      <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Item Management</h2>
-                      {tb !== "dash" && (rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold transition-all shadow-md border-b-2 border-purple-800 active:border-b-0 active:translate-y-px"><Plus className="w-3.5 h-3.5" /> Create New {tb === "proj" ? "Project" : "Task"}</button>}
+                      <h2 className="text-xs font-medium text-purple-400/70 uppercase tracking-wider">Item Management</h2>
+                      {tb !== "dash" && (rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-lg flex items-center gap-1 font-semibold transition-all shadow-sm active:scale-[0.98] shadow-purple-950/40"><Plus className="w-3.5 h-3.5" /> Create New {tb === "proj" ? "Project" : "Task"}</button>}
                     </div>
                     {ld ? <div className="text-center py-8 font-mono text-purple-400/40 animate-pulse tracking-wide text-xs">LOADING DATA ENTRIES...</div> : tb === "dash" || tb === "proj" ? (
                       pj.length === 0 ? <div className="text-center py-8 text-xs text-purple-400/40 font-mono">NO PROJECTS FOUND</div> : (
@@ -589,7 +535,7 @@ export default function Home() {
                                       await sb.from("projects").update({ status: v }).eq("id", p.id);
                                       pn("project_status_updated", { id: p.id, name: p.name, status: v });
                                       await gd();
-                                  }} className="bg-purple-950/50 text-xs border border-purple-900/30 px-2.5 py-1 rounded-lg text-zinc-200 font-semibold focus:outline-none focus:border-purple-600 shadow-inner">
+                                    }} className="bg-purple-950/50 text-xs border border-purple-900/30 px-2.5 py-1 rounded-lg text-zinc-200 font-semibold focus:outline-none focus:border-purple-600 shadow-inner">
                                       {["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}
                                     </select>
                                   </td>
