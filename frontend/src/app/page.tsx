@@ -131,6 +131,7 @@ export default function Home() {
   const lo = async () => {
     await sb.auth.signOut();
     setPj([]);
+    tk.length = 0;
     setTk([]);
     setUs([]);
     setRl("viewer");
@@ -242,7 +243,39 @@ export default function Home() {
   };
 
   const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
-  tk.forEach(t => { if (tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
+  tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
+
+  if (!au) {
+    return (
+      <div className="min-h-screen w-screen bg-[#06040A] flex flex-col items-center justify-center font-sans p-4 selection:bg-[#2C213D] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#140E24_1px,transparent_1px),linear-gradient(to_bottom,#140E24_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60"></div>
+        <div className="w-full max-w-md bg-[#110E1A] border border-[#231C30] rounded-2xl p-6 md:p-10 shadow-2xl relative z-10 transition-all">
+          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#8B5CF6] to-transparent"></div>
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-14 h-14 rounded-xl bg-[#171324] border border-[#362B4C] flex items-center justify-center text-[#A855F7] mb-4 shadow-inner">
+              <Activity className="w-7 h-7 animate-pulse" />
+            </div>
+            <h2 className="text-2xl font-extrabold text-white tracking-wider text-center">IOMS PLATFORM NODE</h2>
+            <p className="text-xs text-[#7C749B] mt-1.5 font-mono uppercase tracking-widest">Secure Gateway Authorization</p>
+          </div>
+          <form onSubmit={li} className="space-y-5">
+            <div>
+              <label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-2">Identity Protocol</label>
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] font-mono transition-all" placeholder="operator@enterprise.com" />
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-2">Access Cipher</label>
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] font-mono transition-all" placeholder="••••••••••••" />
+            </div>
+            {er && <div className="text-xs text-rose-400 font-mono bg-rose-500/5 border border-rose-500/20 rounded-xl p-3 text-center">{er}</div>}
+            <button type="submit" className="w-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-sm font-bold py-3.5 rounded-xl transition-all duration-150 active:scale-[0.99] shadow-lg shadow-purple-900/20 flex items-center justify-center gap-2">
+              <LogIn className="w-4 h-4" /> INITIALIZE CONSOLE
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-screen bg-[#09070F] text-[#E4E6ED] font-sans selection:bg-[#2C213D] overflow-hidden relative">
@@ -265,7 +298,7 @@ export default function Home() {
             <div className="flex items-center gap-2.5 mb-3 p-1">
               <div className="w-8 h-8 rounded-lg bg-[#221B38] border border-[#362B4C] flex items-center justify-center text-[#8B5CF6] flex-shrink-0"><User className="w-4 h-4" /></div>
               <div className="min-w-0 flex-1">
-                <p className="text-[11px] font-bold text-white truncate">{au.email}</p>
+                <p className="text-[11px] font-bold text-white truncate">{au?.email}</p>
                 <p className="text-[9px] font-mono text-purple-400 uppercase tracking-wider">{rl}</p>
               </div>
             </div>
@@ -339,9 +372,9 @@ export default function Home() {
                       <tbody className="divide-y divide-[#231C30]/40">
                         {us.map(u => (
                           <tr key={u.id} className="text-white hover:bg-[#171324]/30 transition-colors">
-                            <td className="py-3.5 font-mono text-xs">{u.email}</td>
+                            <td className="py-3.5 font-mono text-xs">{u?.email}</td>
                             <td className="py-3.5">
-                              <select disabled={u.id === au?.id} value={u.role} onChange={async (e) => {
+                              <select disabled={u?.id === au?.id} value={u?.role} onChange={async (e) => {
                                 const v = e.target.value;
                                 setUs(prev => prev.map(x => x.id === u.id ? { ...x, role: v } : x));
                                 await sb.from("user_roles").update({ role: v }).eq("id", u.id);
@@ -352,7 +385,7 @@ export default function Home() {
                               </select>
                             </td>
                             <td className="py-3.5 text-right">
-                              {u.id !== au?.id ? (
+                              {u?.id !== au?.id ? (
                                 <button onClick={() => setCf({ id: u.id, type: "user", name: u.email })} className="text-[#6A6185] hover:text-rose-400 p-1.5 rounded transition-colors">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
@@ -462,7 +495,7 @@ export default function Home() {
               <form onSubmit={at} className="p-6 space-y-4">
                 <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Task Operational Title</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]" placeholder="e.g., Run System Integration Sweep" /></div>
                 <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Task Execution State</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]">{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
-                <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Assign Team Operator</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]"><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u.email}>{u.email}</option>)}</select></div>
+                <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Assign Team Operator</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]"><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u?.email}>{u?.email}</option>)}</select></div>
                 <div className="grid grid-cols-2 gap-3 pt-2"><button type="button" onClick={() => sbp("task")} className="bg-[#171324] border border-[#362B4C] text-xs font-semibold text-[#A29DB8] py-2.5 rounded-xl flex items-center justify-center gap-1.5 hover:bg-[#231C30] transition-colors"><Copy className="w-3.5 h-3.5" /> Save Template</button><button type="submit" className="bg-[#7C3AED] hover:bg-[#6D28D9] font-semibold text-white text-xs py-2.5 rounded-xl transition-colors shadow-md">Commit Node</button></div>
               </form>
             ) : (
