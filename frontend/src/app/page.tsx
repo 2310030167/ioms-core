@@ -17,6 +17,7 @@ export default function Home() {
   const [cf, setCf] = useState<{ id: string; type: "proj" | "task"; name: string } | null>(null);
   const [pf, setPf] = useState({ name: "", status: "New" });
   const [tf, setTf] = useState({ title: "", status: "Todo" });
+  const [uf, setUf] = useState({ em: "", pw: "", rl: "viewer" });
   const [bp, setBp] = useState<any[]>([]);
   const [rl, setRl] = useState<string>("viewer");
   const [us, setUs] = useState<any[]>([]);
@@ -139,6 +140,25 @@ export default function Home() {
     setSt({ pipeline: 0, tasks: 0, team: 1 });
     setTs({ msg: "Session terminated.", type: "ok" });
     setMo(false);
+  };
+
+  const cu = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await fetch("/api/user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(uf)
+    });
+    const d = await res.json();
+    if (d.ok) {
+      pn("operator_provisioned", { id: "SYSTEM", name: uf.em, status: uf.rl });
+      setUf({ em: "", pw: "", rl: "viewer" });
+      setMd(null);
+      setTs({ msg: "Identity provisioned.", type: "ok" });
+      await gd();
+    } else {
+      setTs({ msg: d.err || "Provisioning error.", type: "err" });
+    }
   };
 
   const ap = async (e: React.FormEvent) => {
@@ -329,6 +349,7 @@ export default function Home() {
                 <div>
                   <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#231C30]/40">
                     <h2 className="text-xs md:text-sm font-bold text-white uppercase tracking-wider">Cluster Role Configuration</h2>
+                    {rl === "admin" && <button onClick={() => setMd("user")} className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-xs px-3.5 py-2 rounded-lg flex items-center gap-1.5 font-semibold shadow-md active:scale-[0.98] transition-all"><Plus className="w-4 h-4" /> Provision Operator</button>}
                   </div>
                   <div className="w-full overflow-x-auto">
                     <table className="w-full text-left text-sm min-w-[500px]">
@@ -445,11 +466,18 @@ export default function Home() {
                 <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Pipeline State Assignment</label><select value={pf.status} onChange={e => setPf({...pf, status: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]">{["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}</select></div>
                 <div className="grid grid-cols-2 gap-3 pt-2"><button type="button" onClick={() => sbp("proj")} className="bg-[#171324] border border-[#362B4C] text-xs font-semibold text-[#A29DB8] py-2.5 rounded-xl flex items-center justify-center gap-1.5 hover:bg-[#231C30] transition-colors"><Copy className="w-3.5 h-3.5" /> Save Template</button><button type="submit" className="bg-[#7C3AED] hover:bg-[#6D28D9] font-semibold text-white text-xs py-2.5 rounded-xl transition-colors shadow-md">Commit Cluster</button></div>
               </form>
-            ) : (
+            ) : md === "task" ? (
               <form onSubmit={at} className="p-6 space-y-4">
                 <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Task Operational Title</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]" placeholder="e.g., Run System Integration Sweep" /></div>
                 <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Task Execution State</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]">{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
                 <div className="grid grid-cols-2 gap-3 pt-2"><button type="button" onClick={() => sbp("task")} className="bg-[#171324] border border-[#362B4C] text-xs font-semibold text-[#A29DB8] py-2.5 rounded-xl flex items-center justify-center gap-1.5 hover:bg-[#231C30] transition-colors"><Copy className="w-3.5 h-3.5" /> Save Template</button><button type="submit" className="bg-[#7C3AED] hover:bg-[#6D28D9] font-semibold text-white text-xs py-2.5 rounded-xl transition-colors shadow-md">Commit Node</button></div>
+              </form>
+            ) : (
+              <form onSubmit={cu} className="p-6 space-y-4">
+                <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Identity Protocol (Email)</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]" placeholder="operator@enterprise.com" /></div>
+                <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Access Cipher (Password)</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]" placeholder="••••••••••••" /></div>
+                <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Clearance Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]">{["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <button type="submit" className="w-full bg-[#7C3AED] hover:bg-[#6D28D9] font-semibold text-white text-xs py-3 rounded-xl transition-colors shadow-md mt-2">Initialize Profile Node</button>
               </form>
             )}
           </div>
