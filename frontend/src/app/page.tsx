@@ -16,7 +16,7 @@ export default function Home() {
   const [ts, setTs] = useState<{ msg: string; type: "ok" | "err" } | null>(null);
   const [cf, setCf] = useState<{ id: string; type: "proj" | "task" | "user"; name: string } | null>(null);
   const [pf, setPf] = useState({ name: "", status: "New" });
-  const [tf, setTf] = useState({ title: "", status: "Todo" });
+  const [tf, setTf] = useState({ title: "", status: "Todo", as: "" });
   const [uf, setUf] = useState({ em: "", pw: "", rl: "viewer" });
   const [bp, setBp] = useState<any[]>([]);
   const [rl, setRl] = useState<string>("viewer");
@@ -76,12 +76,10 @@ export default function Home() {
         const { data: rData } = await sb.from("user_roles").select("role").eq("id", uId).maybeSingle();
         if (rData) {
           setRl(rData.role);
-          if (rData.role === "admin") {
-            const { data: uData } = await sb.from("user_roles").select("*").order("email", { ascending: true });
-            if (uData) {
-              setUs(uData);
-              setSt(prev => ({ ...prev, team: uData.length }));
-            }
+          const { data: uData } = await sb.from("user_roles").select("*").order("email", { ascending: true });
+          if (uData) {
+            setUs(uData);
+            setSt(prev => ({ ...prev, team: uData.length }));
           }
         }
       }
@@ -105,7 +103,7 @@ export default function Home() {
       if (v === "operator_role_updated") {
         msgDetails = `• Target: ${d.operator}\n• New Role: ${d.role}`;
       } else {
-        msgDetails = `• ID: ${d.id || ""}\n• Name: ${d.name || d.title || ""}\n• Status/State: ${d.status || ""}`;
+        msgDetails = `• ID: ${d.id || ""}\n• Name: ${d.name || d.title || ""}\n• Status/State: ${d.status || ""}\n• Assigned: ${d.assigned_to || "None"}`;
       }
       const txt = `📊 IOMS CORE EVENT TELEMETRY\n━━━━━━━━━━━━━━\n🔹 Event: ${v}\n👤 Operator: ${au?.email}\n📅 2026-07-07\n━━━━━━━━━━━━━━\n📦 Data Context:\n${msgDetails}`;
       fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
@@ -175,10 +173,10 @@ export default function Home() {
 
   const at = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await sb.from("tasks").insert([{ title: tf.title, status: tf.status }]).select().single();
+    const { data, error } = await sb.from("tasks").insert([{ title: tf.title, status: tf.status, assigned_to: tf.as || null }]).select().single();
     if (!error && data) {
       pn("task_created", data);
-      setTf({ title: "", status: "Todo" });
+      setTf({ title: "", status: "Todo", as: "" });
       setMd(null);
       setTs({ msg: "Task written.", type: "ok" });
       await gd();
@@ -202,7 +200,7 @@ export default function Home() {
       setPf({ name: b.name, status: b.status });
       setMd("proj");
     } else {
-      setTf({ title: b.name, status: b.status });
+      setTf({ title: b.name, status: b.status, as: "" });
       setMd("task");
     }
   };
@@ -242,38 +240,6 @@ export default function Home() {
     }
     setCf(null);
   };
-
-  if (!au) {
-    return (
-      <div className="min-h-screen w-screen bg-[#06040A] flex flex-col items-center justify-center font-sans p-4 selection:bg-[#2C213D] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#140E24_1px,transparent_1px),linear-gradient(to_bottom,#140E24_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60"></div>
-        <div className="w-full max-w-md bg-[#110E1A] border border-[#231C30] rounded-2xl p-6 md:p-10 shadow-2xl relative z-10 transition-all">
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#8B5CF6] to-transparent"></div>
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 rounded-xl bg-[#171324] border border-[#362B4C] flex items-center justify-center text-[#A855F7] mb-4 shadow-inner">
-              <Activity className="w-7 h-7 animate-pulse" />
-            </div>
-            <h2 className="text-2xl font-extrabold text-white tracking-wider text-center">IOMS PLATFORM NODE</h2>
-            <p className="text-xs text-[#7C749B] mt-1.5 font-mono uppercase tracking-widest">Secure Gateway Authorization</p>
-          </div>
-          <form onSubmit={li} className="space-y-5">
-            <div>
-              <label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-2">Identity Protocol</label>
-              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] font-mono transition-all" placeholder="operator@enterprise.com" />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-2">Access Cipher</label>
-              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] font-mono transition-all" placeholder="••••••••••••" />
-            </div>
-            {er && <div className="text-xs text-rose-400 font-mono bg-rose-500/5 border border-rose-500/20 rounded-xl p-3 text-center">{er}</div>}
-            <button type="submit" className="w-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-sm font-bold py-3.5 rounded-xl transition-all duration-150 active:scale-[0.99] shadow-lg shadow-purple-900/20 flex items-center justify-center gap-2">
-              <LogIn className="w-4 h-4" /> INITIALIZE CONSOLE
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
 
   const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
   tk.forEach(t => { if (tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
@@ -437,17 +403,18 @@ export default function Home() {
                     tk.length === 0 ? <div className="text-center py-10 text-xs text-[#6A6185] font-mono">NO ACTIVE TASK RECORDS FOUND</div> : (
                       <div className="w-full overflow-x-auto">
                         <table className="w-full text-left text-sm min-w-[550px]">
-                          <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Task Registry Description</th><th className="pb-3 font-semibold">Operational State</th>{rl === "admin" && <th className="pb-3 text-right font-semibold">Purge</th>}</tr></thead>
+                          <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Task Registry Description</th><th className="pb-3 font-semibold">Assigned Operator</th><th className="pb-3 font-semibold">Operational State</th>{rl === "admin" && <th className="pb-3 text-right font-semibold">Purge</th>}</tr></thead>
                           <tbody className="divide-y divide-[#231C30]/40">
                             {tk.map(t => (
                               <tr key={t.id} className="text-white hover:bg-[#171324]/30 transition-colors">
                                 <td className="py-3.5 font-medium text-xs md:text-sm">{t.title}</td>
+                                <td className="py-3.5 font-mono text-xs text-[#A29DB8]">{t.assigned_to || "Unassigned"}</td>
                                 <td className="py-3.5">
-                                  <select disabled={rl === "viewer"} value={t.status} onChange={async (e) => {
+                                  <select disabled={rl === "viewer" && t.assigned_to !== au?.email} value={t.status} onChange={async (e) => {
                                     const v = e.target.value;
                                     setTk(prev => prev.map(x => x.id === t.id ? { ...x, status: v } : x));
                                     await sb.from("tasks").update({ status: v }).eq("id", t.id);
-                                    pn("task_status_updated", { id: t.id, title: t.title, status: v });
+                                    pn("task_status_updated", { id: t.id, title: t.title, status: v, assigned_to: t.assigned_to });
                                     await gd();
                                   }} className="bg-[#171324] text-xs border border-[#362B4C] px-2 py-1 rounded-lg text-white focus:outline-none focus:border-[#8B5CF6] disabled:opacity-50">
                                     {["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
@@ -495,6 +462,7 @@ export default function Home() {
               <form onSubmit={at} className="p-6 space-y-4">
                 <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Task Operational Title</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]" placeholder="e.g., Run System Integration Sweep" /></div>
                 <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Task Execution State</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]">{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
+                <div><label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-1.5">Assign Team Operator</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-[#8B5CF6]"><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u.email}>{u.email}</option>)}</select></div>
                 <div className="grid grid-cols-2 gap-3 pt-2"><button type="button" onClick={() => sbp("task")} className="bg-[#171324] border border-[#362B4C] text-xs font-semibold text-[#A29DB8] py-2.5 rounded-xl flex items-center justify-center gap-1.5 hover:bg-[#231C30] transition-colors"><Copy className="w-3.5 h-3.5" /> Save Template</button><button type="submit" className="bg-[#7C3AED] hover:bg-[#6D28D9] font-semibold text-white text-xs py-2.5 rounded-xl transition-colors shadow-md">Commit Node</button></div>
               </form>
             ) : (
