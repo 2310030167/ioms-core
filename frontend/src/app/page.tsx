@@ -14,7 +14,7 @@ export default function Home() {
   const [ld, setLd] = useState(true);
   const [md, setMd] = useState<string | null>(null);
   const [ts, setTs] = useState<{ msg: string; type: "ok" | "err" } | null>(null);
-  const [cf, setCf] = useState<{ id: string; type: "proj" | "task"; name: string } | null>(null);
+  const [cf, setCf] = useState<{ id: string; type: "proj" | "task" | "user"; name: string } | null>(null);
   const [pf, setPf] = useState({ name: "", status: "New" });
   const [tf, setTf] = useState({ title: "", status: "Todo" });
   const [uf, setUf] = useState({ em: "", pw: "", rl: "viewer" });
@@ -217,50 +217,31 @@ export default function Home() {
 
   const ep = async () => {
     if (!cf) return;
-    const tbl = cf.type === "proj" ? "projects" : "tasks";
-    const { error } = await sb.from(tbl).delete().eq("id", cf.id);
-    if (!error) {
-      pn(cf.type === "proj" ? "project_purged" : "task_purged", { id: cf.id, name: cf.name });
-      setTs({ msg: "Record destroyed.", type: "ok" });
-      await gd();
+    if (cf.type === "user") {
+      const res = await fetch("/api/user", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: cf.id })
+      });
+      const d = await res.json();
+      if (d.ok) {
+        pn("operator_purged", { id: cf.id, name: cf.name });
+        setTs({ msg: "Operator matrix dropped.", type: "ok" });
+        await gd();
+      } else {
+        setTs({ msg: d.err || "Purge error.", type: "err" });
+      }
+    } else {
+      const tbl = cf.type === "proj" ? "projects" : "tasks";
+      const { error } = await sb.from(tbl).delete().eq("id", cf.id);
+      if (!error) {
+        pn(cf.type === "proj" ? "project_purged" : "task_purged", { id: cf.id, name: cf.name });
+        setTs({ msg: "Record destroyed.", type: "ok" });
+        await gd();
+      }
     }
     setCf(null);
   };
-
-  if (!au) {
-    return (
-      <div className="min-h-screen w-screen bg-[#06040A] flex flex-col items-center justify-center font-sans p-4 selection:bg-[#2C213D] relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#140E24_1px,transparent_1px),linear-gradient(to_bottom,#140E24_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60"></div>
-        <div className="w-full max-w-md bg-[#110E1A] border border-[#231C30] rounded-2xl p-6 md:p-10 shadow-2xl relative z-10 transition-all">
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#8B5CF6] to-transparent"></div>
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 rounded-xl bg-[#171324] border border-[#362B4C] flex items-center justify-center text-[#A855F7] mb-4 shadow-inner">
-              <Activity className="w-7 h-7 animate-pulse" />
-            </div>
-            <h2 className="text-2xl font-extrabold text-white tracking-wider text-center">IOMS PLATFORM NODE</h2>
-            <p className="text-xs text-[#7C749B] mt-1.5 font-mono uppercase tracking-widest">Secure Gateway Authorization</p>
-          </div>
-          <form onSubmit={li} className="space-y-5">
-            <div>
-              <label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-2">Identity Protocol</label>
-              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] font-mono transition-all" placeholder="operator@enterprise.com" />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-[#A29DB8] uppercase tracking-wider mb-2">Access Cipher</label>
-              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#06040A] border border-[#231C30] rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#8B5CF6] focus:ring-1 focus:ring-[#8B5CF6] font-mono transition-all" placeholder="••••••••••••" />
-            </div>
-            {er && <div className="text-xs text-rose-400 font-mono bg-rose-500/5 border border-rose-500/20 rounded-xl p-3 text-center">{er}</div>}
-            <button type="submit" className="w-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-sm font-bold py-3.5 rounded-xl transition-all duration-150 active:scale-[0.99] shadow-lg shadow-purple-900/20 flex items-center justify-center gap-2">
-              <LogIn className="w-4 h-4" /> INITIALIZE CONSOLE
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
-  tk.forEach(t => { if (tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
 
   return (
     <div className="flex h-screen w-screen bg-[#09070F] text-[#E4E6ED] font-sans selection:bg-[#2C213D] overflow-hidden relative">
@@ -353,15 +334,24 @@ export default function Home() {
                   </div>
                   <div className="w-full overflow-x-auto">
                     <table className="w-full text-left text-sm min-w-[500px]">
-                      <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Operator Identity</th><th className="pb-3 text-right font-semibold">Clearance Level</th></tr></thead>
+                      <thead><tr className="text-[#6A6185] border-b border-[#231C30] text-xs font-mono uppercase tracking-wider"><th className="pb-3 font-semibold">Operator Identity</th><th className="pb-3 font-semibold">Clearance Level</th><th className="pb-3 text-right font-semibold">Purge</th></tr></thead>
                       <tbody className="divide-y divide-[#231C30]/40">
                         {us.map(u => (
                           <tr key={u.id} className="text-white hover:bg-[#171324]/30 transition-colors">
                             <td className="py-3.5 font-mono text-xs">{u.email}</td>
-                            <td className="py-3.5 text-right">
+                            <td className="py-3.5">
                               <span className="text-xs font-mono bg-[#171324] border border-[#362B4C] px-3 py-1.5 rounded-md text-purple-400 uppercase tracking-wider">
                                 {u.role}
                               </span>
+                            </td>
+                            <td className="py-3.5 text-right">
+                              {u.id !== au?.id ? (
+                                <button onClick={() => setCf({ id: u.id, type: "user", name: u.email })} className="text-[#6A6185] hover:text-rose-400 p-1.5 rounded transition-colors">
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              ) : (
+                                <span className="text-[10px] text-[#6A6185] font-mono pr-2">SELF</span>
+                              )}
                             </td>
                           </tr>
                         ))}
