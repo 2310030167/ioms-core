@@ -359,15 +359,9 @@ export default function Home() {
                           <tr key={u.id} className="text-white hover:bg-[#171324]/30 transition-colors">
                             <td className="py-3.5 font-mono text-xs">{u.email}</td>
                             <td className="py-3.5 text-right">
-                              <select disabled={u.id === au.id} value={u.role} onChange={async (e) => {
-                                const v = e.target.value;
-                                setUs(prev => prev.map(x => x.id === u.id ? { ...x, role: v } : x));
-                                await sb.from("user_roles").update({ role: v }).eq("id", u.id);
-                                pn("operator_role_updated", { operator: u.email, role: v });
-                                await gd();
-                              }} className="bg-[#171324] text-xs border border-[#362B4C] px-2.5 py-1.5 rounded-lg text-white font-mono focus:outline-none focus:border-[#8B5CF6] disabled:opacity-40">
-                                {["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
-                              </select>
+                              <span className="text-xs font-mono bg-[#171324] border border-[#362B4C] px-3 py-1.5 rounded-md text-purple-400 uppercase tracking-wider">
+                                {u.role}
+                              </span>
                             </td>
                           </tr>
                         ))}
