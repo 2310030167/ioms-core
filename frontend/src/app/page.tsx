@@ -338,9 +338,48 @@ export default function Home() {
   const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
   tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
 
+  if (!au) {
+    return (
+      <div className="min-h-screen w-screen bg-[#07050F] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
+        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-purple-900/10 blur-[140px] pointer-events-none"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-900/10 blur-[140px] pointer-events-none"></div>
+        <div className="w-full max-w-[380px] bg-purple-950/30 border border-purple-800/20 rounded-3xl p-8 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.05)] border-b-4 border-purple-900/60 relative z-10">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-12 h-12 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_8px_16px_rgba(147,51,234,0.25)]">
+              <Activity className="w-5 h-5 stroke-[1.5]" />
+            </div>
+            <h2 className="text-xl font-bold text-zinc-100 tracking-tight text-center">Welcome Back</h2>
+            <p className="text-[11px] text-purple-300/60 mt-1 uppercase tracking-wider">Sign in to your account</p>
+          </div>
+          <form onSubmit={li} className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label>
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 font-mono transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" placeholder="yourname@domain.com" />
+            </div>
+            <div>
+              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Password</label>
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 font-mono transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" placeholder="••••••••••••" />
+            </div>
+            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-2.5 text-center shadow-inner">{er}</div>}
+            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl tracking-wide mt-2 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] transition-all shadow-lg shadow-purple-950/50">
+              SIGN IN
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen w-screen bg-[#050409] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
+    <div className="flex h-screen w-screen bg-[#05040B] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
       <AmbientCanvas />
+      
+      {ts && (
+        <div className="fixed top-5 right-5 z-50 max-w-xs w-[calc(100vw-2rem)] bg-purple-950/40 border border-purple-800/40 backdrop-blur-md rounded-xl p-3.5 shadow-2xl flex items-start gap-2.5 animate-in fade-in slide-in-from-top-3">
+          {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" /> : <AlertTriangle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />}
+          <div className="flex-1"><p className="text-xs font-medium text-zinc-200">{ts.msg}</p></div>
+        </div>
+      )}
       
       <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
       
@@ -363,7 +402,7 @@ export default function Home() {
           <nav className="space-y-1 flex-1">
             {lk.map(l => (
               <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-purple-950/30 text-purple-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] border border-purple-900/20" : "text-zinc-500 hover:bg-purple-950/10 hover:text-zinc-300"}`}>
-                <l.icon className={`w-3.5 h-3.5 ${tb === l.id ? "text-purple-400" : "text-zinc-500"}`} handle="" />{l.label}
+                <l.icon className={`w-3.5 h-3.5 ${tb === l.id ? "text-purple-400" : "text-zinc-500"}`} />{l.label}
               </button>
             ))}
           </nav>
@@ -399,7 +438,7 @@ export default function Home() {
                         const maxTasks = Math.max(...Object.values(tM), 1);
                         const pct = Math.min((count / maxTasks) * 100, 100);
                         return (
-                          <div key={stVal} className="bg-purple-950/5 border border-purple-900/10 p-2.5 rounded-xl text-center flex flex-col justify-between items-center shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)] border-b-[3px] border-purple-950/80 hover:scale-[1.03] hover:border-purple-500/30 transition-all duration-200 group">
+                          <div key={stVal} className="bg-purple-950/5 border border-purple-900/10 p-2.5 rounded-xl text-center flex flex-col justify-between items-center shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)] border-b-[3px] border-purple-955/80 hover:scale-[1.03] hover:border-purple-500/30 transition-all duration-200 group">
                             <span className="text-[9px] font-bold tracking-wide text-purple-300/70 group-hover:text-purple-300 uppercase truncate w-full transition-colors font-mono">{stVal.replace("_", " ")}</span>
                             <div className="w-3.5 bg-purple-950/40 h-28 my-3 rounded-full relative flex items-end justify-center overflow-hidden shadow-[inset_0_2px_5px_rgba(0,0,0,0.7)] border border-purple-900/20">
                               <div style={{ height: `${Math.max(pct, count > 0 ? 8 : 0)}%` }} className="w-full bg-gradient-to-t from-purple-700 via-purple-500 to-fuchsia-400 rounded-full transition-all duration-700 ease-out shadow-[0_0_15px_rgba(168,85,247,0.6)] relative">
@@ -412,7 +451,7 @@ export default function Home() {
                       })}
                     </div>
                   </div>
-                  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12_30px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-5 backdrop-blur-sm">
+                  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-5 backdrop-blur-sm">
                     <div className="pb-3 mb-3 border-b border-purple-900/20"><h3 className="text-xs font-bold text-purple-400/60 uppercase tracking-wider">Quick Templates</h3></div>
                     <div className="space-y-1.5 max-h-[168px] overflow-y-auto pr-0.5">
                       {bp.length === 0 ? <div className="text-center text-[11px] font-mono text-purple-500/40 py-6">NO TEMPLATES CONFIGURED</div> : bp.map(b => (
@@ -469,7 +508,7 @@ export default function Home() {
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Select Team Member</h3>
                   <div className="space-y-2 overflow-y-auto flex-1 pr-1">
                     {us.map(u => (
-                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 ${su === u.email ? "bg-purple-950/40 border-purple-500/60 text-white shadow-[0_8px_20px_rgba(124,58,237,0.15),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[4px] border-purple-600" : "bg-purple-950/5 border-purple-900/20 text-zinc-400 hover:border-purple-900/60 hover:text-zinc-200 border-b-[4px] border-purple-950"}`}>
+                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 ${su === u.email ? "bg-purple-950/40 border-purple-500/60 text-white shadow-[0_8px_20px_rgba(124,58,237,0.15),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[4px] border-purple-600" : "bg-purple-950/5 border-purple-900/20 text-zinc-400 hover:border-purple-900/60 hover:text-zinc-200 border-b-[4px] border-purple-955"}`}>
                         <p className="text-xs font-bold truncate">{u.email}</p>
                         <p className="text-[9px] font-mono text-purple-400/60 mt-1 uppercase font-bold tracking-widest">{u.role}</p>
                       </div>
