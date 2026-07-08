@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogIn, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Copy, Users, Menu, Clock, ArrowUpRight, ArrowDownLeft, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee } from "lucide-react";
+import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogIn, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Copy, Users, Menu, Clock, ArrowUpRight, ArrowDownLeft, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, Shield } from "lucide-react";
 import { sb } from "../lib/sb";
 
 function AmbientCanvas() {
@@ -80,6 +80,7 @@ export default function Home() {
   const [wl, setWl] = useState<any[]>([]);
   const [cl, setCl] = useState<any[]>([]);
   const [fi, setFi] = useState<any[]>([]);
+  const [al, setAl] = useState<any[]>([]);
   const [mo, setMo] = useState(false);
   const [su, setSu] = useState<string | null>(null);
 
@@ -93,7 +94,8 @@ export default function Home() {
     ] : []),
     ...(rl === "admin" ? [
       { id: "team", label: "Team Roles", icon: Users },
-      { id: "reports", label: "Team Reports", icon: BarChart3 }
+      { id: "reports", label: "Team Reports", icon: BarChart3 },
+      { id: "audit", label: "Audit Ledger", icon: Shield }
     ] : [])
   ];
 
@@ -121,6 +123,7 @@ export default function Home() {
       .on("postgres_changes", { event: "*", schema: "public", table: "work_logs" }, () => { if (act) gd(); })
       .on("postgres_changes", { event: "*", schema: "public", table: "clients" }, () => { if (act) gd(); })
       .on("postgres_changes", { event: "*", schema: "public", table: "finance" }, () => { if (act) gd(); })
+      .on("postgres_changes", { event: "*", schema: "public", table: "audit_ledger" }, () => { if (act) gd(); })
       .subscribe();
     return () => {
       act = false;
@@ -160,6 +163,8 @@ export default function Home() {
           if (cData) setCl(cData);
           const { data: fData } = await sb.from("finance").select("*").order("created_at", { ascending: false });
           if (fData) setFi(fData);
+          const { data: aData } = await sb.from("audit_ledger").select("*").order("created_at", { ascending: false });
+          if (aData) setAl(aData);
         }
       }
       
@@ -172,6 +177,13 @@ export default function Home() {
       setLd(false);
     }
   }
+
+  const alog = async (act: string, tbl: string, tid: string, dtl: string) => {
+    if (!sb.auth.getUser()) return;
+    const { data: sD } = await sb.auth.getSession();
+    const em = sD.session?.user?.email || "system";
+    await sb.from("audit_ledger").insert([{ actor: em, action: act, target_table: tbl, target_id: tid, details: dtl }]);
+  };
 
   const pn = async (v: string, d: any) => {
     try {
@@ -203,6 +215,7 @@ export default function Home() {
     } else {
       if (data?.user?.email) {
         await sb.from("user_logins").insert([{ email: data.user.email, action: "LOGIN" }]);
+        await sb.from("audit_ledger").insert([{ actor: data.user.email, action: "AUTH_LOGIN", target_table: "auth", target_id: data.user.id, details: "User session established" }]);
       }
       setFm({ email: "", password: "" });
       await gd();
@@ -213,6 +226,7 @@ export default function Home() {
   const lo = async () => {
     if (au?.email) {
       await sb.from("user_logins").insert([{ email: au.email, action: "LOGOUT" }]);
+      await alog("AUTH_LOGOUT", "auth", au.id, "User session closed");
     }
     await sb.auth.signOut();
     setPj([]);
@@ -222,6 +236,7 @@ export default function Home() {
     setWl([]);
     setCl([]);
     setFi([]);
+    setAl([]);
     setRl("viewer");
     setTb("dash");
     setSu(null);
@@ -240,6 +255,7 @@ export default function Home() {
     const d = await res.json();
     if (d.ok) {
       pn("operator_provisioned", { id: "SYSTEM", name: uf.em, status: uf.rl });
+      await alog("PROVISION_USER", "user_roles", uf.em, `Account initialized with tier: ${uf.rl}`);
       setUf({ em: "", pw: "", rl: "viewer" });
       setMd(null);
       setTs({ msg: "New team member account added.", type: "ok" });
@@ -260,7 +276,8 @@ export default function Home() {
       hours: parseFloat(lf.hr)
     }]);
     if (!error) {
-      setLf({ cp: "", bl: "", pl: "", hr: "" });
+      await alog("SUBMIT_WORKLOG", "work_logs", au.email, `Logged: ${lf.hr} hours`);
+      setLf({ cp: "", blockers: "None", plan: "", hours: "" } as any);
       setTs({ msg: "Daily work log submitted successfully.", type: "ok" });
       await gd();
     } else {
@@ -272,6 +289,7 @@ export default function Home() {
     e.preventDefault();
     const { error } = await sb.from("clients").insert([{ name: cff.nm, email: cff.em, company: cff.co }]);
     if (!error) {
+      await alog("CREATE_CLIENT", "clients", cff.nm, `Client entity: ${cff.co || "Individual"}`);
       setCff({ nm: "", em: "", co: "" });
       setMd(null);
       setTs({ msg: "Client file saved successfully.", type: "ok" });
@@ -283,6 +301,7 @@ export default function Home() {
     e.preventDefault();
     const { error } = await sb.from("finance").insert([{ type: fff.ty, client_name: fff.cn, amount: parseFloat(fff.am), status: fff.st, description: fff.ds }]);
     if (!error) {
+      await alog("RECORD_TRANSACTION", "finance", fff.cn, `Type: ${fff.ty}, Gross: ${fff.am} INR`);
       setFff({ ty: "Invoice", cn: "", am: "", st: "Pending", ds: "" });
       setMd(null);
       setTs({ msg: "Ledger transaction recorded successfully.", type: "ok" });
@@ -295,6 +314,7 @@ export default function Home() {
     const { data, error } = await sb.from("projects").insert([{ name: pf.name, status: pf.status }]).select().single();
     if (!error && data) {
       pn("project_created", data);
+      await alog("CREATE_PROJECT", "projects", data.id, `Name: ${pf.name}`);
       setPf({ name: "", status: "New" });
       setMd(null);
       setTs({ msg: "Project created successfully.", type: "ok" });
@@ -307,6 +327,7 @@ export default function Home() {
     const { data, error } = await sb.from("tasks").insert([{ title: tf.title, status: tf.status, assigned_to: tf.as || null }]).select().single();
     if (!error && data) {
       pn("task_created", data);
+      await alog("CREATE_TASK", "tasks", data.id, `Title: ${tf.title}`);
       setTf({ title: "", status: "Todo", as: "" });
       setMd(null);
       setTs({ msg: "Task saved successfully.", type: "ok" });
@@ -355,6 +376,7 @@ export default function Home() {
       });
       const d = await res.json();
       if (d.ok) {
+        await alog("PURGE_USER", "user_roles", cf.id, `Target username: ${cf.name}`);
         setTs({ msg: "User account deleted.", type: "ok" });
         if (su === cf.name) setSu(null);
         await gd();
@@ -362,6 +384,7 @@ export default function Home() {
     } else {
       const { error } = await sb.from(tbl).delete().eq("id", cf.id);
       if (!error) {
+        await alog("DELETE_RECORD", tbl, cf.id, `Label identifier: ${cf.name}`);
         setTs({ msg: "Item deleted from database.", type: "ok" });
         await gd();
       }
@@ -376,7 +399,7 @@ export default function Home() {
     return (
       <div className="min-h-screen w-screen bg-[#050409] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
         <div className="absolute top-[-25%] left-[-15%] w-[700px] h-[700px] rounded-full bg-purple-900/10 blur-[150px] pointer-events-none"></div>
-        <div className="w-full max-w-[390px] bg-purple-950/10 border border-purple-900/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[6px] border-purple-955/80 relative z-10">
+        <div className="w-full max-w-[390px] bg-purple-955/10 border border-purple-900/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[6px] border-purple-955/80 relative z-10">
           <div className="flex flex-col items-center mb-8">
             <div className="w-14 h-14 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_10px_25px_rgba(147,51,234,0.25),inset_0_1px_2px_rgba(255,255,255,0.1)]">
               <Activity className="w-6 h-6 stroke-[1.5]" />
@@ -430,7 +453,7 @@ export default function Home() {
                 <p className="text-[9px] font-mono text-purple-400/70 font-bold uppercase tracking-wider">{rl}</p>
               </div>
             </div>
-            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 bg-purple-950/30 border border-purple-900/40 hover:bg-purple-900/50 hover:text-white border-b-2 border-purple-950 active:border-b-0 active:translate-y-px transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
+            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 bg-purple-950/30 border border-purple-900/40 hover:bg-purple-900/50 hover:text-white border-b-2 border-purple-955 active:border-b-0 active:translate-y-px transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
           </div>
           <nav className="space-y-1 flex-1">
             {lk.map(l => (
@@ -447,7 +470,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <button onClick={() => setMo(true)} className="p-1.5 text-zinc-400 hover:text-white lg:hidden rounded-lg bg-purple-955/40 border border-purple-900/30"><Menu className="w-4 h-4" /></button>
             <h1 className="text-xs font-bold tracking-wide uppercase text-purple-400/80">
-              {tb === "team" ? "Team Roles" : tb === "reports" ? "Individual Reports" : tb === "clients" ? "Clients Panel" : tb === "finance" ? "Finance Ledger" : tb} Hub
+              {tb === "team" ? "Team Roles" : tb === "reports" ? "Individual Reports" : tb === "clients" ? "Clients Panel" : tb === "finance" ? "Finance Ledger" : tb === "audit" ? "Audit Log Ledger" : tb} Hub
             </h1>
           </div>
           <div className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-purple-400 animate-pulse"></span><span className="text-[9px] font-mono text-purple-500/40 tracking-widest">SYSTEM ACTIVE</span></div>
@@ -585,6 +608,39 @@ export default function Home() {
               </div>
             )}
             
+            {tb === "audit" && rl === "admin" && (
+              <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
+                  <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Security Audit Ledger Logs</h2>
+                  <div className="text-[10px] font-mono text-purple-500/60 tracking-widest">LIVE_STREAM_ACTIVE</div>
+                </div>
+                <div className="w-full overflow-x-auto">
+                  <table className="w-full text-left text-xs min-w-[700px]">
+                    <thead>
+                      <tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider">
+                        <th className="pb-2">Timestamp</th>
+                        <th className="pb-2">Actor</th>
+                        <th className="pb-2">Action</th>
+                        <th className="pb-2">Target Engine</th>
+                        <th className="pb-2">Parameters Context</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-purple-900/10 font-mono text-[11px]">
+                      {al.length === 0 ? <tr><td colSpan={5} className="py-4 text-center text-purple-500/40">NO TELEMETRY TRANSACTION ENTRIES RECORDED</td></tr> : al.map(log => (
+                        <tr key={log.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+                          <td className="py-3 text-zinc-500">{new Date(log.created_at).toLocaleString()}</td>
+                          <td className="py-3 text-purple-400 font-semibold">{log.actor}</td>
+                          <td className="py-3"><span className="px-1.5 py-0.5 rounded bg-purple-950/30 text-purple-200 border border-purple-900/40 text-[10px]">{log.action}</span></td>
+                          <td className="py-3 text-zinc-400">{log.target_table}</td>
+                          <td className="py-3 text-zinc-400 truncate max-w-xs" title={log.details}>{log.details || "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            
             {tb === "reports" && rl === "admin" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
@@ -599,7 +655,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
+                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Activity Breakdown</h3>
                   {su ? (
                     <div className="flex-1 flex flex-col overflow-hidden">
@@ -645,7 +701,7 @@ export default function Home() {
                           {ln.filter(l => l.email === su).length === 0 ? (
                             <div className="text-center text-[11px] font-mono text-purple-500/30 py-4">NO LOGINS LOGGED</div>
                           ) : ln.filter(l => l.email === su).map(l => (
-                            <div key={l.id} className="bg-purple-950/5 border border-purple-900/10 rounded-xl p-2.5 flex items-center justify-between gap-4 shadow-sm mb-1.5">
+                            <div key={l.id} className="bg-purple-955/5 border border-purple-900/10 rounded-xl p-2.5 flex items-center justify-between gap-4 shadow-sm mb-1.5">
                               <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-md border ${l.action === "LOGIN" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"}`}>
                                 {l.action === "LOGIN" ? <ArrowDownLeft className="w-2.5 h-3" /> : <ArrowUpRight className="w-2.5 h-3" />}
                                 {l.action}
@@ -666,21 +722,21 @@ export default function Home() {
               </div>
             )}
             
-            {tb !== "reports" && tb !== "clients" && tb !== "finance" && (
+            {tb !== "reports" && tb !== "clients" && tb !== "finance" && tb !== "audit" && (
               <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-5 overflow-hidden backdrop-blur-sm">
                 {tb === "team" ? (
                   <div className="space-y-8">
                     <div>
                       <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
                         <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Team List & Options</h2>
-                        {rl === "admin" && <button onClick={() => setMd("user")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold transition-all shadow-md border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all"><Plus className="w-3.5 h-3.5" /> Add Team Member</button>}
+                        {rl === "admin" && <button onClick={() => setMd("user")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold transition-all shadow-md border-b-2 border-purple-800 active:border-b-0 active:translate-y-px"><Plus className="w-3.5 h-3.5" /> Add Team Member</button>}
                       </div>
                       <div className="w-full overflow-x-auto">
                         <table className="w-full text-left text-xs min-w-[500px]">
                           <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider"><th className="pb-2">User Email</th><th className="pb-2">Permission Tier</th><th className="pb-2 text-right">Options</th></tr></thead>
                           <tbody className="divide-y divide-purple-900/10">
                             {us.map(u => (
-                              <tr key={u.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+                              <tr key={u.id} className="text-zinc-300 hover:bg-purple-955/5 transition-colors">
                                 <td className="py-3 font-medium text-zinc-200">{u?.email}</td>
                                 <td className="py-3">
                                   <select disabled={u?.id === au?.id} value={u?.role} onChange={async (e) => {
@@ -688,6 +744,7 @@ export default function Home() {
                                     setUs(prev => prev.map(x => x.id === u.id ? { ...x, role: v } : x));
                                     await sb.from("user_roles").update({ role: v }).eq("id", u.id);
                                     pn("operator_role_updated", { operator: u.email, role: v });
+                                    await alog("ALTER_ROLE", "user_roles", u.id, `Modified permission vector to: ${v}`);
                                     await gd();
                                   }} className="bg-purple-950/50 text-xs border border-purple-900/30 px-2.5 py-1 rounded-lg text-zinc-200 font-semibold focus:outline-none focus:border-purple-600 shadow-inner">
                                     {["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
@@ -716,7 +773,7 @@ export default function Home() {
                           <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider"><th className="pb-2">User Email</th><th className="pb-2">Action Status</th><th className="pb-2 text-right">Date & Time</th></tr></thead>
                           <tbody className="divide-y divide-purple-900/10">
                             {ln.length === 0 ? <tr><td colSpan={3} className="py-4 text-center font-semibold text-purple-500/30">NO ACTIVITY TRACKED YET</td></tr> : ln.map(l => (
-                              <tr key={l.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+                              <tr key={l.id} className="text-zinc-300 hover:bg-purple-955/5 transition-colors">
                                 <td className="py-3 font-medium text-zinc-200">{l.email}</td>
                                 <td className="py-3">
                                   <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-md border ${l.action === "LOGIN" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"}`}>
@@ -745,7 +802,7 @@ export default function Home() {
                             <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-mono uppercase tracking-wider"><th className="pb-2">Project Name</th><th className="pb-2">Status State</th>{rl === "admin" && <th className="pb-2 text-right">Remove</th>}</tr></thead>
                             <tbody className="divide-y divide-purple-900/10">
                               {pj.map(p => (
-                                <tr key={p.id} className="text-white hover:bg-purple-950/5 transition-colors">
+                                <tr key={p.id} className="text-white hover:bg-purple-955/5 transition-colors">
                                   <td className="py-3.5 font-semibold text-xs md:text-sm text-zinc-200">{p.name}</td>
                                   <td className="py-3.5">
                                     <select disabled={rl === "viewer"} value={p.status} onChange={async (e) => {
@@ -753,6 +810,7 @@ export default function Home() {
                                       setPj(prev => prev.map(x => x.id === p.id ? { ...x, status: v } : x));
                                       await sb.from("projects").update({ status: v }).eq("id", p.id);
                                       pn("project_status_updated", { id: p.id, name: p.name, status: v });
+                                      await alog("ALTER_PROJECT_STATE", "projects", p.id, `Status update: ${v}`);
                                       await gd();
                                     }} className="bg-purple-955/50 text-xs border border-purple-900/30 px-2.5 py-1 rounded-lg text-zinc-200 font-semibold focus:outline-none focus:border-purple-600 shadow-inner">
                                       {["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}
@@ -771,7 +829,7 @@ export default function Home() {
                           <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider"><th className="pb-2">Task Title</th><th className="pb-2">Assigned Employee</th><th className="pb-2">Progress Status</th>{rl === "admin" && <th className="pb-2 text-right">Remove</th>}</tr></thead>
                           <tbody className="divide-y divide-purple-900/10">
                             {tk.map(t => (
-                              <tr key={t.id} className="text-white hover:bg-purple-950/5 transition-colors">
+                              <tr key={t.id} className="text-white hover:bg-purple-955/5 transition-colors">
                                 <td className="py-3.5 font-semibold text-xs md:text-sm text-zinc-200">{t.title}</td>
                                 <td className="py-3.5 font-medium text-xs text-zinc-400">{t.assigned_to || "Unassigned"}</td>
                                 <td className="py-3.5">
@@ -780,6 +838,7 @@ export default function Home() {
                                     setTk(prev => prev.map(x => x.id === t.id ? { ...x, status: v } : x));
                                     await sb.from("tasks").update({ status: v }).eq("id", t.id);
                                     pn("task_status_updated", { id: t.id, title: t.title, status: v, assigned_to: t.assigned_to });
+                                    await alog("ALTER_TASK_STATE", "tasks", t.id, `Status update: ${v}`);
                                     await gd();
                                   }} className="bg-purple-955/50 text-xs border border-purple-900/30 px-2.5 py-1 rounded-lg text-zinc-200 font-semibold focus:outline-none focus:border-purple-600 shadow-inner">
                                     {["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
@@ -850,9 +909,9 @@ export default function Home() {
               </form>
             ) : (
               <form onSubmit={cu} className="p-5 space-y-4">
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-purple-95 gate/20 border border-purple-900/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-purple-95 gate/20 border border-purple-900/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-purple-95 gate/20 border border-purple-900/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
                 <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all mt-2">Create Account</button>
               </form>
             )}
