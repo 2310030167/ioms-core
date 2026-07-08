@@ -18,7 +18,7 @@ function AmbientCanvas() {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     const pArr: Array<{ x: number; y: number; r: number; sX: number; sY: number; o: number }> = [];
-    const pCount = 50;
+    const pCount = 60;
     for (let i = 0; i < pCount; i++) {
       pArr.push({
         x: Math.random() * canvas.width,
@@ -39,7 +39,7 @@ function AmbientCanvas() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(168, 85, 247, ${p.o})`;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 12;
         ctx.shadowColor = "#a855f7";
         ctx.fill();
       });
@@ -52,7 +52,7 @@ function AmbientCanvas() {
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
-  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-60" />;
+  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-50" />;
 }
 
 export default function Home() {
@@ -335,6 +335,9 @@ export default function Home() {
     setCf(null);
   };
 
+  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
+  tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
+
   if (!au) {
     return (
       <div className="min-h-screen w-screen bg-[#07050F] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
@@ -367,9 +370,6 @@ export default function Home() {
     );
   }
 
-  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
-  tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
-
   return (
     <div className="flex h-screen w-screen bg-[#05040B] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
       <AmbientCanvas />
@@ -390,11 +390,11 @@ export default function Home() {
                 <p className="text-[9px] font-mono text-purple-400/70 font-bold uppercase tracking-wider">{rl}</p>
               </div>
             </div>
-            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 bg-purple-950/30 border border-purple-900/40 hover:bg-purple-900/50 hover:text-white border-b-2 border-purple-955 active:border-b-0 active:translate-y-px transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
+            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 bg-purple-950/30 border border-purple-900/40 hover:bg-purple-900/50 hover:text-white border-b-2 border-purple-950 active:border-b-0 active:translate-y-px transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
           </div>
           <nav className="space-y-1 flex-1">
             {lk.map(l => (
-              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-purple-950/40 text-purple-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] border border-purple-900/20" : "text-zinc-500 hover:bg-purple-950/10 hover:text-zinc-300"}`}>
+              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-purple-950/30 text-purple-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] border border-purple-900/20 animate-none" : "text-zinc-500 hover:bg-purple-950/10 hover:text-zinc-300"}`}>
                 <l.icon className={`w-3.5 h-3.5 ${tb === l.id ? "text-purple-400" : "text-zinc-500"}`} />{l.label}
               </button>
             ))}
@@ -509,7 +509,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
+                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Activity Breakdown</h3>
                   {su ? (
                     <div className="flex-1 flex flex-col overflow-hidden">
@@ -742,9 +742,9 @@ export default function Home() {
               </form>
             ) : (
               <form onSubmit={cu} className="p-5 space-y-3.5">
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
                 <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all mt-2">Create Account</button>
               </form>
             )}
