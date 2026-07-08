@@ -18,7 +18,7 @@ function AmbientCanvas() {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     const pArr: Array<{ x: number; y: number; r: number; sX: number; sY: number; o: number }> = [];
-    const pCount = 50;
+    const pCount = 60;
     for (let i = 0; i < pCount; i++) {
       pArr.push({
         x: Math.random() * canvas.width,
@@ -39,7 +39,7 @@ function AmbientCanvas() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(168, 85, 247, ${p.o})`;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 12;
         ctx.shadowColor = "#a855f7";
         ctx.fill();
       });
@@ -52,7 +52,7 @@ function AmbientCanvas() {
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
-  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-60" />;
+  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-50" />;
 }
 
 export default function Home() {
@@ -374,29 +374,28 @@ export default function Home() {
 
   if (!au) {
     return (
-      <div className="min-h-screen w-screen bg-[#07050F] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-purple-900/10 blur-[140px] pointer-events-none"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-indigo-900/10 blur-[140px] pointer-events-none"></div>
-        <div className="w-full max-w-[380px] bg-purple-950/30 border border-purple-800/20 rounded-3xl p-8 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.05)] border-b-4 border-purple-900/60 relative z-10">
+      <div className="min-h-screen w-screen bg-[#050409] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
+        <div className="absolute top-[-25%] left-[-15%] w-[700px] h-[700px] rounded-full bg-purple-900/10 blur-[150px] pointer-events-none"></div>
+        <div className="w-full max-w-[390px] bg-purple-950/10 border border-purple-900/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[6px] border-purple-955/80 relative z-10">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_8px_16px_rgba(147,51,234,0.25)]">
-              <Activity className="w-5 h-5 stroke-[1.5]" />
+            <div className="w-14 h-14 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_10px_25px_rgba(147,51,234,0.25),inset_0_1px_2px_rgba(255,255,255,0.1)]">
+              <Activity className="w-6 h-6 stroke-[1.5]" />
             </div>
-            <h2 className="text-xl font-bold text-zinc-100 tracking-tight text-center">Welcome Back</h2>
-            <p className="text-[11px] text-purple-300/60 mt-1 uppercase tracking-wider">Sign in to your account</p>
+            <h2 className="text-2xl font-black text-zinc-100 tracking-tight text-center">IOMS Portal</h2>
+            <p className="text-[11px] text-purple-400/70 mt-1 uppercase font-semibold tracking-wider">Secure Access Protocol</p>
           </div>
           <form onSubmit={li} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label>
-              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 font-mono transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" placeholder="yourname@domain.com" />
+              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Email Address</label>
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="name@domain.com" />
             </div>
             <div>
-              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Password</label>
-              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-purple-500/60 font-mono transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" placeholder="••••••••••••" />
+              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Password</label>
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="••••••••••••" />
             </div>
-            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-2.5 text-center shadow-inner">{er}</div>}
-            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl tracking-wide mt-2 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] transition-all shadow-lg shadow-purple-950/50">
-              SIGN IN
+            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
+            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-xl tracking-wide mt-3 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] shadow-xl shadow-purple-950/60 transition-all">
+              ENTER SYSTEM
             </button>
           </form>
         </div>
@@ -405,10 +404,17 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-[#05040B] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
+    <div className="flex h-screen w-screen bg-[#050409] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
       <AmbientCanvas />
       
-      <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
+      {ts && (
+        <div className="fixed top-5 right-5 z-50 max-w-xs w-[calc(100vw-2rem)] bg-[#0C0916]/90 border border-purple-800/40 backdrop-blur-md rounded-xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex items-start gap-2.5 animate-in fade-in slide-in-from-top-3">
+          {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" /> : <AlertTriangle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />}
+          <div className="flex-1"><p className="text-xs font-semibold text-zinc-200">{ts.msg}</p></div>
+        </div>
+      )}
+      
+      <div className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
       
       <aside className={`fixed inset-y-0 left-0 w-64 bg-[#0A0713]/90 border-r border-purple-955/50 backdrop-blur-xl flex flex-col justify-between z-40 transition-transform duration-300 lg:static lg:translate-x-0 shadow-[4px_0_30px_rgba(0,0,0,0.5)] ${mo ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-6 overflow-y-auto flex-1 relative z-10">
@@ -424,11 +430,11 @@ export default function Home() {
                 <p className="text-[9px] font-mono text-purple-400/70 font-bold uppercase tracking-wider">{rl}</p>
               </div>
             </div>
-            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 bg-purple-950/30 border border-purple-900/40 hover:bg-purple-900/50 hover:text-white border-b-2 border-purple-955 active:border-b-0 active:translate-y-px transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
+            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 bg-purple-950/30 border border-purple-900/40 hover:bg-purple-900/50 hover:text-white border-b-2 border-purple-950 active:border-b-0 active:translate-y-px transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
           </div>
           <nav className="space-y-1 flex-1">
             {lk.map(l => (
-              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-purple-950/30 text-purple-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] border border-purple-900/20 animate-none" : "text-zinc-500 hover:bg-purple-950/10 hover:text-zinc-300"}`}>
+              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-purple-950/40 text-purple-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] border border-purple-900/20 animate-none" : "text-zinc-500 hover:bg-purple-950/10 hover:text-zinc-300"}`}>
                 <l.icon className={`w-3.5 h-3.5 ${tb === l.id ? "text-purple-400" : "text-zinc-500"}`} />{l.label}
               </button>
             ))}
@@ -458,7 +464,7 @@ export default function Home() {
             {tb === "dash" && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-6 lg:col-span-2 overflow-x-auto backdrop-blur-sm">
+                  <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 p-4 md:p-6 lg:col-span-2 overflow-x-auto backdrop-blur-sm rounded-2xl">
                     <div className="flex items-center justify-between pb-3 mb-5 border-b border-purple-900/20 min-w-[500px]"><h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Task Status Tracker</h3><div className="text-purple-500/60 font-mono text-[9px] tracking-widest">DATA_REFRESH_OK</div></div>
                     <div className="grid grid-cols-7 gap-3 min-w-[500px]">
                       {Object.entries(tM).map(([stVal, count]) => {
@@ -593,7 +599,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
+                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Activity Breakdown</h3>
                   {su ? (
                     <div className="flex-1 flex flex-col overflow-hidden">
@@ -667,7 +673,7 @@ export default function Home() {
                     <div>
                       <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
                         <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Team List & Options</h2>
-                        {rl === "admin" && <button onClick={() => setMd("user")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold transition-all shadow-md border-b-2 border-purple-800 active:border-b-0 active:translate-y-px"><Plus className="w-3.5 h-3.5" /> Add Team Member</button>}
+                        {rl === "admin" && <button onClick={() => setMd("user")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold transition-all shadow-md border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all"><Plus className="w-3.5 h-3.5" /> Add Team Member</button>}
                       </div>
                       <div className="w-full overflow-x-auto">
                         <table className="w-full text-left text-xs min-w-[500px]">
@@ -748,7 +754,7 @@ export default function Home() {
                                       await sb.from("projects").update({ status: v }).eq("id", p.id);
                                       pn("project_status_updated", { id: p.id, name: p.name, status: v });
                                       await gd();
-                                    }} className="bg-purple-950/50 text-xs border border-purple-900/30 px-2.5 py-1 rounded-lg text-zinc-200 font-semibold focus:outline-none focus:border-purple-600 shadow-inner">
+                                    }} className="bg-purple-955/50 text-xs border border-purple-900/30 px-2.5 py-1 rounded-lg text-zinc-200 font-semibold focus:outline-none focus:border-purple-600 shadow-inner">
                                       {["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}
                                     </select>
                                   </td>
@@ -844,9 +850,9 @@ export default function Home() {
               </form>
             ) : (
               <form onSubmit={cu} className="p-5 space-y-4">
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-purple-95 gate/20 border border-purple-900/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-purple-95 gate/20 border border-purple-900/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-purple-95 gate/20 border border-purple-900/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
                 <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all mt-2">Create Account</button>
               </form>
             )}
