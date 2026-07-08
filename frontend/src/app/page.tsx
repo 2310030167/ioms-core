@@ -335,9 +335,6 @@ export default function Home() {
     setCf(null);
   };
 
-  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
-  tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
-
   if (!au) {
     return (
       <div className="min-h-screen w-screen bg-[#07050F] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
@@ -370,16 +367,12 @@ export default function Home() {
     );
   }
 
+  const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
+  tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
+
   return (
     <div className="flex h-screen w-screen bg-[#05040B] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
       <AmbientCanvas />
-      
-      {ts && (
-        <div className="fixed top-5 right-5 z-50 max-w-xs w-[calc(100vw-2rem)] bg-purple-950/40 border border-purple-800/40 backdrop-blur-md rounded-xl p-3.5 shadow-2xl flex items-start gap-2.5 animate-in fade-in slide-in-from-top-3">
-          {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" /> : <AlertTriangle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />}
-          <div className="flex-1"><p className="text-xs font-medium text-zinc-200">{ts.msg}</p></div>
-        </div>
-      )}
       
       <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
       
@@ -397,11 +390,11 @@ export default function Home() {
                 <p className="text-[9px] font-mono text-purple-400/70 font-bold uppercase tracking-wider">{rl}</p>
               </div>
             </div>
-            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 bg-purple-950/30 border border-purple-900/40 hover:bg-purple-900/50 hover:text-white border-b-2 border-purple-950 active:border-b-0 active:translate-y-px transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
+            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 bg-purple-950/30 border border-purple-900/40 hover:bg-purple-900/50 hover:text-white border-b-2 border-purple-955 active:border-b-0 active:translate-y-px transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
           </div>
           <nav className="space-y-1 flex-1">
             {lk.map(l => (
-              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-purple-950/30 text-purple-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] border border-purple-900/20" : "text-zinc-500 hover:bg-purple-950/10 hover:text-zinc-300"}`}>
+              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-purple-950/40 text-purple-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] border border-purple-900/20" : "text-zinc-500 hover:bg-purple-950/10 hover:text-zinc-300"}`}>
                 <l.icon className={`w-3.5 h-3.5 ${tb === l.id ? "text-purple-400" : "text-zinc-500"}`} />{l.label}
               </button>
             ))}
@@ -438,7 +431,7 @@ export default function Home() {
                         const maxTasks = Math.max(...Object.values(tM), 1);
                         const pct = Math.min((count / maxTasks) * 100, 100);
                         return (
-                          <div key={stVal} className="bg-purple-950/5 border border-purple-900/10 p-2.5 rounded-xl text-center flex flex-col justify-between items-center shadow-[inset_0_1px_2px_rgba(0,0,0,0.6)] border-b-[3px] border-purple-955/80 hover:scale-[1.03] hover:border-purple-500/30 transition-all duration-200 group">
+                          <div key={stVal} className="bg-purple-950/10 border border-purple-900/20 px-2 py-4 rounded-2xl text-center flex flex-col justify-between items-center shadow-[0_10px_25px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.02)] border-b-[3px] border-purple-955/80 hover:scale-[1.03] hover:border-purple-500/30 transition-all duration-200 group">
                             <span className="text-[9px] font-bold tracking-wide text-purple-300/70 group-hover:text-purple-300 uppercase truncate w-full transition-colors font-mono">{stVal.replace("_", " ")}</span>
                             <div className="w-3.5 bg-purple-950/40 h-28 my-3 rounded-full relative flex items-end justify-center overflow-hidden shadow-[inset_0_2px_5px_rgba(0,0,0,0.7)] border border-purple-900/20">
                               <div style={{ height: `${Math.max(pct, count > 0 ? 8 : 0)}%` }} className="w-full bg-gradient-to-t from-purple-700 via-purple-500 to-fuchsia-400 rounded-full transition-all duration-700 ease-out shadow-[0_0_15px_rgba(168,85,247,0.6)] relative">
@@ -626,7 +619,7 @@ export default function Home() {
 
                     <div>
                       <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
-                        <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-purple-400/50" /> Recent Employee Logins & Logouts</h2>
+                        <h2 className="text-xs font-bold text-purple-400/77 uppercase tracking-wider flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-purple-400/50" /> Recent Employee Logins & Logouts</h2>
                       </div>
                       <div className="w-full overflow-x-auto">
                         <table className="w-full text-left text-xs min-w-[500px]">
@@ -749,9 +742,9 @@ export default function Home() {
               </form>
             ) : (
               <form onSubmit={cu} className="p-5 space-y-3.5">
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-purple-950/20 border border-purple-900/40 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
                 <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all mt-2">Create Account</button>
               </form>
             )}
