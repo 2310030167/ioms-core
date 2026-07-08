@@ -18,7 +18,7 @@ function AmbientCanvas() {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     const pArr: Array<{ x: number; y: number; r: number; sX: number; sY: number; o: number }> = [];
-    const pCount = 50;
+    const pCount = 60;
     for (let i = 0; i < pCount; i++) {
       pArr.push({
         x: Math.random() * canvas.width,
@@ -39,7 +39,7 @@ function AmbientCanvas() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(168, 85, 247, ${p.o})`;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = 12;
         ctx.shadowColor = "#a855f7";
         ctx.fill();
       });
@@ -52,7 +52,7 @@ function AmbientCanvas() {
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
-  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-60" />;
+  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-50" />;
 }
 
 export default function Home() {
@@ -173,6 +173,26 @@ export default function Home() {
     }
   }
 
+  const pn = async (v: string, d: any) => {
+    try {
+      const tok = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
+      const cid = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
+      if (!tok || !cid) return;
+      let md = "";
+      if (v === "operator_role_updated") {
+        md = `• Target: ${d.operator}\n• New Role: ${d.role}`;
+      } else {
+        md = `• ID: ${d.id || ""}\n• Name: ${d.name || d.title || ""}\n• Status/State: ${d.status || ""}\n• Assigned: ${d.assigned_to || "None"}`;
+      }
+      const txt = `📊 IOMS CORE EVENT TELEMETRY\n━━━━━━━━━━━━━━\n🔹 Event: ${v}\n👤 Operator: ${au?.email}\n📅 2026-07-07\n━━━━━━━━━━━━━━\n📦 Data Context:\n${md}`;
+      fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: cid, text: txt })
+      }).catch(() => {});
+    } catch (e) {}
+  };
+
   const li = async (e: React.FormEvent) => {
     e.preventDefault();
     setEr("");
@@ -219,6 +239,7 @@ export default function Home() {
     });
     const d = await res.json();
     if (d.ok) {
+      pn("operator_provisioned", { id: "SYSTEM", name: uf.em, status: uf.rl });
       setUf({ em: "", pw: "", rl: "viewer" });
       setMd(null);
       setTs({ msg: "New team member account added.", type: "ok" });
@@ -273,6 +294,7 @@ export default function Home() {
     e.preventDefault();
     const { data, error } = await sb.from("projects").insert([{ name: pf.name, status: pf.status }]).select().single();
     if (!error && data) {
+      pn("project_created", data);
       setPf({ name: "", status: "New" });
       setMd(null);
       setTs({ msg: "Project created successfully.", type: "ok" });
@@ -284,6 +306,7 @@ export default function Home() {
     e.preventDefault();
     const { data, error } = await sb.from("tasks").insert([{ title: tf.title, status: tf.status, assigned_to: tf.as || null }]).select().single();
     if (!error && data) {
+      pn("task_created", data);
       setTf({ title: "", status: "Todo", as: "" });
       setMd(null);
       setTs({ msg: "Task saved successfully.", type: "ok" });
@@ -332,6 +355,7 @@ export default function Home() {
       });
       const d = await res.json();
       if (d.ok) {
+        pn("operator_purged", { id: cf.id, name: cf.name });
         setTs({ msg: "User account deleted.", type: "ok" });
         if (su === cf.name) setSu(null);
         await gd();
@@ -352,27 +376,27 @@ export default function Home() {
   if (!au) {
     return (
       <div className="min-h-screen w-screen bg-[#050409] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-purple-900/10 blur-[140px] pointer-events-none"></div>
-        <div className="w-full max-w-[380px] bg-purple-900/10 border border-purple-800/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.05)] border-b-4 border-purple-900/60 relative z-10">
+        <div className="absolute top-[-25%] left-[-15%] w-[700px] h-[700px] rounded-full bg-purple-900/10 blur-[150px] pointer-events-none"></div>
+        <div className="w-full max-w-[390px] bg-purple-950/10 border border-purple-900/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[6px] border-purple-950 relative z-10">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_8px_16px_rgba(147,51,234,0.25)]">
-              <Activity className="w-5 h-5 stroke-[1.5]" />
+            <div className="w-14 h-14 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_10px_25px_rgba(147,51,234,0.25)]">
+              <Activity className="w-6 h-6 stroke-[1.5]" />
             </div>
-            <h2 className="text-xl font-bold text-zinc-100 tracking-tight text-center">Welcome Back</h2>
-            <p className="text-[11px] text-purple-300/60 mt-1 uppercase tracking-wider">Sign in to your account</p>
+            <h2 className="text-2xl font-black text-zinc-100 tracking-tight text-center">IOMS Portal</h2>
+            <p className="text-[11px] text-purple-400/70 mt-1 uppercase font-semibold tracking-wider">Secure Access Protocol</p>
           </div>
           <form onSubmit={li} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label>
-              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-purple-900/20 border border-purple-800/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 font-mono transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" placeholder="yourname@domain.com" />
+              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Email Address</label>
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="name@domain.com" />
             </div>
             <div>
-              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Password</label>
-              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-purple-900/20 border border-purple-800/40 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 font-mono transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]" placeholder="••••••••••••" />
+              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Password</label>
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="••••••••••••" />
             </div>
-            {er && <div className="text-xs text-purple-200 bg-purple-900/40 border border-purple-800/50 rounded-xl p-2.5 text-center shadow-inner">{er}</div>}
-            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl tracking-wide mt-2 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] transition-all shadow-lg shadow-purple-950/50">
-              SIGN IN
+            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
+            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-xl tracking-wide mt-3 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] shadow-xl shadow-purple-950/60 transition-all">
+              ENTER SYSTEM
             </button>
           </form>
         </div>
@@ -384,7 +408,14 @@ export default function Home() {
     <div className="flex h-screen w-screen bg-[#050409] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
       <AmbientCanvas />
       
-      <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
+      {ts && (
+        <div className="fixed top-5 right-5 z-50 max-w-xs w-[calc(100vw-2rem)] bg-[#0C0916]/90 border border-purple-800/40 backdrop-blur-md rounded-xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.6)] flex items-start gap-2.5 animate-in fade-in slide-in-from-top-3">
+          {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" /> : <AlertTriangle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />}
+          <div className="flex-1"><p className="text-xs font-semibold text-zinc-200">{ts.msg}</p></div>
+        </div>
+      )}
+      
+      <div className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
       
       <aside className={`fixed inset-y-0 left-0 w-64 bg-[#0A0713]/90 border-r border-purple-900/40 backdrop-blur-xl flex flex-col justify-between z-40 transition-transform duration-300 lg:static lg:translate-x-0 shadow-[4px_0_30px_rgba(0,0,0,0.5)] ${mo ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-6 overflow-y-auto flex-1 relative z-10">
@@ -394,7 +425,7 @@ export default function Home() {
           </div>
           <div className="mb-4 p-3 bg-purple-900/20 border border-purple-800/30 rounded-xl backdrop-blur-sm shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)] border-b-2 border-purple-900/60">
             <div className="flex items-center gap-2 mb-2.5">
-              <div className="w-6 h-6 rounded-md bg-purple-900/20 border border-purple-800/40 flex items-center justify-center text-purple-400 flex-shrink-0 shadow-inner"><User className="w-3 h-3" /></div>
+              <div className="w-6 h-6 rounded-md bg-purple-950 border border-purple-900/40 flex items-center justify-center text-purple-400 flex-shrink-0 shadow-inner"><User className="w-3 h-3" /></div>
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-bold text-zinc-200 truncate">{au?.email}</p>
                 <p className="text-[9px] font-mono text-purple-400/70 font-bold uppercase tracking-wider">{rl}</p>
@@ -650,7 +681,7 @@ export default function Home() {
                           <thead><tr className="text-purple-400/50 border-b border-purple-800/20 font-bold uppercase tracking-wider"><th className="pb-2">User Email</th><th className="pb-2">Permission Tier</th><th className="pb-2 text-right">Options</th></tr></thead>
                           <tbody className="divide-y divide-purple-900/10">
                             {us.map(u => (
-                              <tr key={u.id} className="text-zinc-300 hover:bg-purple-900/5 transition-colors">
+                              <tr key={u.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
                                 <td className="py-3 font-medium text-zinc-200">{u?.email}</td>
                                 <td className="py-3">
                                   <select disabled={u?.id === au?.id} value={u?.role} onChange={async (e) => {
@@ -791,21 +822,21 @@ export default function Home() {
               <form onSubmit={ap} className="p-5 space-y-4">
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Project Name</label><input required type="text" value={pf.name} onChange={e => setPf({...pf, name: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="e.g., Core Storage Deployment" /></div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Status State</label><select value={pf.status} onChange={e => setPf({...pf, status: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner">{["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}</select></div>
-                <div className="grid grid-cols-2 gap-3 pt-2"><button type="button" onClick={() => sbp("proj")} className="bg-zinc-900 border border-zinc-800 text-[11px] font-bold text-zinc-300 py-2.5 rounded-xl flex items-center justify-center gap-1.5 hover:bg-zinc-850 transition-all"><Copy className="w-3 h-3" /> Save Template</button><button type="submit" className="bg-white hover:bg-zinc-100 font-bold text-black text-[11px] py-2.5 rounded-xl transition-all">Save Project</button></div>
+                <div className="grid grid-cols-2 gap-3 pt-2"><button type="button" onClick={() => sbp("proj")} className="bg-purple-900 border border-purple-800 text-[11px] font-bold text-purple-300 py-2.5 rounded-xl flex items-center justify-center gap-1.5 hover:bg-zinc-850 transition-all"><Copy className="w-3 h-3" /> Save Template</button><button type="submit" className="bg-white hover:bg-zinc-100 font-bold text-black text-[11px] py-2.5 rounded-xl transition-all">Save Project</button></div>
               </form>
             ) : md === "task" ? (
               <form onSubmit={at} className="p-5 space-y-4">
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Task Name</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="e.g., Run Integration Diagnostics" /></div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Progress Status</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner">{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Assign to Employee</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner"><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u?.email}>{u?.email}</option>)}</select></div>
-                <div className="grid grid-cols-2 gap-3 pt-2"><button type="button" onClick={() => sbp("task")} className="bg-zinc-900 border border-zinc-800 text-[11px] font-bold text-zinc-300 py-2.5 rounded-xl flex items-center justify-center gap-1.5 hover:bg-zinc-850 transition-all"><Copy className="w-3 h-3" /> Save Template</button><button type="submit" className="bg-white hover:bg-zinc-100 font-bold text-black text-[11px] py-2.5 rounded-xl transition-all">Save Task</button></div>
+                <div className="grid grid-cols-2 gap-3 pt-2"><button type="button" onClick={() => sbp("task")} className="bg-purple-900 border border-purple-800 text-[11px] font-bold text-zinc-300 py-2.5 rounded-xl flex items-center justify-center gap-1.5 hover:bg-zinc-850 transition-all"><Copy className="w-3 h-3" /> Save Template</button><button type="submit" className="bg-white hover:bg-zinc-100 font-bold text-black text-[11px] py-2.5 rounded-xl transition-all">Save Task</button></div>
               </form>
             ) : md === "client" ? (
               <form onSubmit={ac} className="p-5 space-y-4">
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Full Contact Name</label><input required type="text" value={cff.nm} onChange={e => setCff({...cff, nm: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="e.g., Jane Doe" /></div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Corporate Entity / Business Brand</label><input type="text" value={cff.co} onChange={e => setCff({...cff, co: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="e.g., Acme Corp (Optional)" /></div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label><input required type="email" value={cff.em} onChange={e => setCff({...cff, em: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="client@domain.com" /></div>
-                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-[4px] transition-all mt-2">Initialize Client Record</button>
+                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all mt-2">Initialize Client Record</button>
               </form>
             ) : md === "finance" ? (
               <form onSubmit={af} className="p-5 space-y-4">
@@ -816,14 +847,14 @@ export default function Home() {
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Payer / Payee Identity Reference</label><input required type="text" value={fff.cn} onChange={e => setFff({...fff, cn: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="e.g., Acme Holdings" /></div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Total Amount Tally (INR)</label><input required type="number" min="1" value={fff.am} onChange={e => setFff({...fff, am: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="50000" /></div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Transaction Parameters / Memo</label><textarea rows={2} value={fff.ds} onChange={e => setFff({...fff, ds: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="Contextual data regarding transfer specifications..." /></div>
-                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-[4px] transition-all mt-2">Log Financial Entry</button>
+                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all mt-2">Log Financial Entry</button>
               </form>
             ) : (
               <form onSubmit={cu} className="p-5 space-y-4">
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-purple-900/20 border border-purple-800/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-purple-900/20 border border-purple-800/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-purple-900/20 border border-purple-800/40 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
-                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-[4px] transition-all mt-2">Create Account</button>
+                <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all mt-2">Create Account</button>
               </form>
             )}
           </div>
