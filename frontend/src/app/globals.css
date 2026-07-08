@@ -1,45 +1,38 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-body {
-  background-color: #000000;
-  color: #e4e4e7;
+@utility obsidian-panel {
+  background-color: rgba(9, 7, 16, 0.5) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.75), inset 0 1px 2px rgba(255, 255, 255, 0.02) !important;
+  border-radius: 1.25rem !important;
 }
 
-.obsidian-panel {
-  background: rgba(9, 7, 16, 0.5);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-top-color: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.75), inset 0 1px 2px rgba(255, 255, 255, 0.02);
-  border-radius: 1.25rem;
+@utility capsule-pillar-wrap {
+  width: 1.25rem !important;
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  height: 7rem !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+  border-radius: 9999px !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9) !important;
 }
 
-.capsule-pillar-wrap {
-  width: 1.25rem;
-  background: rgba(0, 0, 0, 0.85);
-  height: 7rem;
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
-  border-radius: 9999px;
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.03);
-  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9);
-}
-
-.capsule-pillar-fill {
-  width: 100%;
-  background: linear-gradient(to top, #6b21a8, #a855f7, #f472b6);
-  border-radius: 9999px;
-  transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
+@utility capsule-pillar-fill {
+  width: 100% !important;
+  background: linear-gradient(to top, #6b21a8, #a855f7, #f472b6) !important;
+  border-radius: 9999px !important;
+  transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative !important;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.5) !important;
 }
 
 .capsule-pillar-fill::after {

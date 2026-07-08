@@ -128,13 +128,6 @@ export default function Home() {
     };
   }, [au?.id, rl]);
 
-  useEffect(() => {
-    if (ts) {
-      const t = setTimeout(() => setTs(null), 4000);
-      return () => clearTimeout(t);
-    }
-  }, [ts]);
-
   async function gd() {
     if (!sb.auth.getUser()) return;
     try {
@@ -172,26 +165,6 @@ export default function Home() {
       setLd(false);
     }
   }
-
-  const pn = async (v: string, d: any) => {
-    try {
-      const tok = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
-      const cid = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
-      if (!tok || !cid) return;
-      let mdDetails = "";
-      if (v === "operator_role_updated") {
-        mdDetails = `• Target: ${d.operator}\n• New Role: ${d.role}`;
-      } else {
-        mdDetails = `• ID: ${d.id || ""}\n• Name: ${d.name || d.title || ""}\n• Status/State: ${d.status || ""}\n• Assigned: ${d.assigned_to || "None"}`;
-      }
-      const txt = `📊 IOMS CORE EVENT TELEMETRY\n━━━━━━━━━━━━━━\n🔹 Event: ${v}\n👤 Operator: ${au?.email}\n📅 2026-07-07\n━━━━━━━━━━━━━━\n📦 Data Context:\n${mdDetails}`;
-      fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: cid, text: txt })
-      }).catch(() => {});
-    } catch (e) {}
-  };
 
   const li = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -239,7 +212,6 @@ export default function Home() {
     });
     const d = await res.json();
     if (d.ok) {
-      pn("operator_provisioned", { id: "SYSTEM", name: uf.em, status: uf.rl });
       setUf({ em: "", pw: "", rl: "viewer" });
       setMd(null);
       setTs({ msg: "New team member account added.", type: "ok" });
@@ -294,7 +266,6 @@ export default function Home() {
     e.preventDefault();
     const { data, error } = await sb.from("projects").insert([{ name: pf.name, status: pf.status }]).select().single();
     if (!error && data) {
-      pn("project_created", data);
       setPf({ name: "", status: "New" });
       setMd(null);
       setTs({ msg: "Project created successfully.", type: "ok" });
@@ -306,24 +277,11 @@ export default function Home() {
     e.preventDefault();
     const { data, error } = await sb.from("tasks").insert([{ title: tf.title, status: tf.status, assigned_to: tf.as || null }]).select().single();
     if (!error && data) {
-      pn("task_created", data);
       setTf({ title: "", status: "Todo", as: "" });
       setMd(null);
       setTs({ msg: "Task saved successfully.", type: "ok" });
       await gd();
     }
-  };
-
-  const sbp = (t: "proj" | "task") => {
-    const n = t === "proj" ? pf.name : tf.title;
-    const s = t === "proj" ? pf.status : tf.status;
-    if (!n.trim()) return;
-    const i = { id: Math.random().toString(36).substr(2, 9), type: t, name: n, status: s };
-    const u = [...bp, i];
-    setBp(u);
-    localStorage.setItem("ioms_blueprints", JSON.stringify(u));
-    setMd(null);
-    setTs({ msg: "Template blueprint saved.", type: "ok" });
   };
 
   const abp = (b: any) => {
@@ -355,7 +313,6 @@ export default function Home() {
       });
       const d = await res.json();
       if (d.ok) {
-        pn("operator_purged", { id: cf.id, name: cf.name });
         setTs({ msg: "User account deleted.", type: "ok" });
         if (su === cf.name) setSu(null);
         await gd();
@@ -379,23 +336,23 @@ export default function Home() {
         <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-purple-900/10 blur-[140px] pointer-events-none"></div>
         <div className="w-full max-w-[380px] obsidian-panel p-8 relative z-10">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-purple-400 mb-4">
+            <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-purple-400 mb-4 shadow-md">
               <Activity className="w-5 h-5 stroke-[1.5]" />
             </div>
             <h2 className="text-xl font-bold text-zinc-100 tracking-tight text-center">Welcome Back</h2>
-            <p className="text-[11px] text-purple-400 mt-1 uppercase tracking-wider font-semibold">Sign in to your account</p>
+            <p className="text-[11px] text-purple-400 font-semibold uppercase tracking-wider mt-1">Sign in to your account</p>
           </div>
           <form onSubmit={li} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label>
-              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60" placeholder="yourname@domain.com" />
+              <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label>
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-inner" placeholder="yourname@domain.com" />
             </div>
             <div>
-              <label className="block text-[10px] font-medium text-zinc-400 uppercase tracking-wider mb-1.5">Password</label>
-              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60" placeholder="••••••••••••" />
+              <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label>
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3.5 py-2.5 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-inner" placeholder="••••••••••••" />
             </div>
-            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-2.5 text-center">{er}</div>}
-            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl tracking-wide mt-2 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] transition-all shadow-lg">
+            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-2.5 text-center shadow-inner font-semibold">{er}</div>}
+            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3 rounded-xl tracking-wide mt-2 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] transition-all shadow-lg shadow-purple-950/50">
               SIGN IN
             </button>
           </form>
@@ -407,29 +364,35 @@ export default function Home() {
   return (
     <div className="flex h-screen w-screen bg-[#000000] text-zinc-300 font-sans overflow-hidden relative">
       <AmbientCanvas />
+      {ts && (
+        <div className="fixed top-5 right-5 z-50 max-w-xs w-[calc(100vw-2rem)] bg-[#0C0916]/90 border border-purple-800/40 backdrop-blur-md rounded-xl p-4 shadow-2xl flex items-start gap-2.5 animate-in fade-in slide-in-from-top-3">
+          {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-purple-400 mt-0.5 flex-shrink-0" /> : <AlertTriangle className="w-4 h-4 text-purple-500 mt-0.5 flex-shrink-0" />}
+          <div className="flex-1"><p className="text-xs font-semibold text-zinc-200">{ts.msg}</p></div>
+        </div>
+      )}
       
-      <div className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
+      <div className={`fixed inset-0 bg-black/70 backdrop-blur-sm z-30 transition-opacity lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
       
       <aside className={`fixed inset-y-0 left-0 w-64 bg-[#050508] border-r border-zinc-900 flex flex-col justify-between z-40 transition-transform duration-300 lg:static lg:translate-x-0 ${mo ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-6 overflow-y-auto flex-1 relative z-10">
-          <div className="flex items-center justify-between mb-6 px-1">
-            <div className="flex items-center gap-2.5"><Activity className="w-5 h-5 text-purple-400 stroke-[1.5]" /><span className="font-extrabold text-sm text-zinc-100 tracking-tight">IOMS Central</span></div>
+          <div className="flex items-center justify-between mb-8 px-1">
+            <div className="flex items-center gap-2.5"><Activity className="w-5 h-5 text-purple-400 stroke-[1.5]" /><span className="font-extrabold text-sm text-white tracking-tight">IOMS Central</span></div>
             <button onClick={() => setMo(false)} className="lg:hidden p-1 text-zinc-500 hover:text-white"><X className="w-4 h-4" /></button>
           </div>
-          <div className="mb-4 p-3 bg-zinc-950/60 border border-zinc-900 rounded-xl shadow-inner">
-            <div className="flex items-center gap-2 mb-2.5">
-              <div className="w-6 h-6 rounded-md bg-zinc-900 border border-zinc-800 flex items-center justify-center text-purple-400 flex-shrink-0 shadow-inner"><User className="w-3 h-3" /></div>
+          <div className="mb-6 p-4 bg-[#0A0A0F] border border-zinc-800 rounded-2xl shadow-inner">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-purple-400 flex-shrink-0"><User className="w-3.5 h-3.5" /></div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-bold text-zinc-200 truncate">{au?.email}</p>
-                <p className="text-[9px] font-mono text-purple-400 font-bold uppercase tracking-wider">{rl}</p>
+                <p className="text-xs font-bold text-white truncate">{au?.email}</p>
+                <p className="text-[10px] font-mono text-purple-400 font-bold uppercase tracking-wider">{rl}</p>
               </div>
             </div>
-            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[10px] font-bold text-purple-300 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:text-white transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
+            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-bold text-purple-300 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:text-white transition-all"><LogOut className="w-3 h-3" /> Sign Out</button>
           </div>
-          <nav className="space-y-1 flex-1">
+          <nav className="space-y-1">
             {lk.map(l => (
-              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-zinc-900 text-purple-400 border border-zinc-800" : "text-zinc-500 hover:bg-zinc-900/40 hover:text-zinc-300"}`}>
-                <l.icon className={`w-3.5 h-3.5 ${tb === l.id ? "text-purple-400" : "text-zinc-500"}`} />{l.label}
+              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-zinc-900 text-purple-400 border border-zinc-800" : "text-zinc-400 hover:bg-zinc-900/40 hover:text-zinc-200"}`}>
+                <l.icon className={`w-4 h-4 ${tb === l.id ? "text-purple-400" : "text-zinc-400"}`} />{l.label}
               </button>
             ))}
           </nav>
@@ -437,50 +400,50 @@ export default function Home() {
       </aside>
       
       <main className="flex-1 flex flex-col bg-transparent overflow-hidden relative z-10">
-        <header className="h-14 border-b border-zinc-900/60 flex items-center justify-between px-4 md:px-6 flex-shrink-0 backdrop-blur-md bg-black/40">
+        <header className="h-14 border-b border-zinc-900/80 flex items-center justify-between px-6 flex-shrink-0 backdrop-blur-md bg-black/40">
           <div className="flex items-center gap-3">
             <button onClick={() => setMo(true)} className="p-1.5 text-zinc-400 hover:text-white lg:hidden rounded-lg bg-zinc-900 border border-zinc-800"><Menu className="w-4 h-4" /></button>
-            <h1 className="text-xs font-bold tracking-wide uppercase text-zinc-400">
+            <h1 className="text-xs font-bold tracking-wider uppercase text-zinc-400">
               {tb === "team" ? "Team Roles" : tb === "reports" ? "Individual Reports" : tb === "clients" ? "Clients Panel" : tb === "finance" ? "Finance Ledger" : tb} Hub
             </h1>
           </div>
-          <div className="flex items-center gap-1.5"><span className="w-1 h-1 rounded-full bg-purple-400 animate-pulse"></span><span className="text-[9px] font-mono text-zinc-500 tracking-widest">SYSTEM ACTIVE</span></div>
+          <div className="flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse"></span><span className="text-[10px] font-mono text-zinc-500 tracking-widest uppercase">System Active</span></div>
         </header>
         
-        <section className="flex-1 overflow-y-auto p-4 md:p-6">
+        <section className="flex-1 overflow-y-auto p-6">
           <div className="max-w-6xl mx-auto space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[{ t: "Total Projects", v: ld ? "..." : st.pipeline }, { t: "Total Tasks", v: ld ? "..." : st.tasks }, { t: "Your Account Role", v: ld ? "..." : rl.toUpperCase() }].map((c, i) => (
-                <div key={i} className="obsidian-panel p-4"><h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">{c.t}</h3><p className="text-2xl font-black text-zinc-100 mt-1 tracking-tight">{c.v}</p></div>
+                <div key={i} className="obsidian-panel p-5"><h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">{c.t}</h3><p className="text-3xl font-bold text-white mt-1 tracking-tight">{c.v}</p></div>
               ))}
             </div>
             
             {tb === "dash" && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                  <div className="obsidian-panel p-4 md:p-6 lg:col-span-2 overflow-x-auto">
-                    <div className="flex items-center justify-between pb-3 mb-5 border-b border-zinc-900/60 min-w-[500px]"><h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Task Status Tracker</h3><div className="text-zinc-600 font-mono text-[9px] tracking-widest">DATA_REFRESH_OK</div></div>
-                    <div className="grid grid-cols-7 gap-3 min-w-[500px]">
+                  <div className="obsidian-panel p-6 lg:col-span-2 overflow-x-auto">
+                    <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-zinc-900/60 min-w-[500px]"><h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wide">Task Status Tracker</h3><div className="text-zinc-600 font-mono text-[10px] tracking-widest">DATA_REFRESH_OK</div></div>
+                    <div className="grid grid-cols-7 gap-4 min-w-[500px]">
                       {Object.entries(tM).map(([stVal, count]) => {
                         const maxTasks = Math.max(...Object.values(tM), 1);
                         const pct = Math.min((count / maxTasks) * 100, 100);
                         return (
-                          <div key={stVal} className="bg-zinc-950/40 border border-zinc-900/40 px-2 py-4 rounded-2xl text-center flex flex-col justify-between items-center hover:scale-[1.03] hover:border-purple-500/20 transition-all duration-200 group">
-                            <span className="text-[9px] font-bold tracking-wide text-zinc-500 group-hover:text-purple-400 uppercase truncate w-full transition-colors font-mono">{stVal.replace("_", " ")}</span>
+                          <div key={stVal} className="bg-black/40 border border-zinc-900/60 px-2 py-4 rounded-2xl text-center flex flex-col justify-between items-center group hover:border-purple-500/20 transition-all">
+                            <span className="text-[10px] font-bold tracking-wide text-zinc-500 uppercase truncate w-full transition-colors font-mono">{stVal.replace("_", " ")}</span>
                             <div className="capsule-pillar-wrap">
                               <div style={{ height: `${Math.max(pct, count > 0 ? 12 : 0)}%` }} className="capsule-pillar-fill" />
                             </div>
-                            <span className="text-xs font-mono font-bold text-white mt-1.5 block">{count}</span>
+                            <span className="text-xs font-mono font-bold text-zinc-300 group-hover:text-white transition-colors">{count}</span>
                           </div>
                         );
                       })}
                     </div>
                   </div>
-                  <div className="obsidian-panel p-4 md:p-5">
-                    <div className="pb-3 mb-3 border-b border-zinc-900/60"><h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Quick Templates</h3></div>
-                    <div className="space-y-1.5 max-h-[168px] overflow-y-auto pr-0.5">
+                  <div className="obsidian-panel p-5">
+                    <div className="pb-3 mb-3 border-b border-zinc-900/60"><h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wide">Quick Templates</h3></div>
+                    <div className="space-y-1.5 max-h-[148px] overflow-y-auto pr-0.5">
                       {bp.length === 0 ? <div className="text-center text-[11px] font-mono text-zinc-600 py-6">NO TEMPLATES CONFIGURED</div> : bp.map(b => (
-                        <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-zinc-900/30 border border-zinc-800 p-2 rounded-xl flex items-center justify-between gap-2 group transition-colors shadow-sm ${rl !== "viewer" ? "cursor-pointer hover:border-zinc-700" : ""}`}>
+                        <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-[#0A0A0F]/40 border border-zinc-900/60 p-2.5 rounded-xl flex items-center justify-between gap-2 group transition-colors ${rl !== "viewer" ? "cursor-pointer hover:border-zinc-800" : ""}`}>
                           <span className="text-xs text-zinc-300 truncate font-semibold">{b.name}</span>
                           {(rl === "admin" || rl === "operator") && <button onClick={(e) => dbp(b.id, e)} className="text-zinc-500 hover:text-purple-400 p-0.5 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>}
                         </div>
@@ -490,31 +453,31 @@ export default function Home() {
                 </div>
 
                 {rl === "operator" && (
-                  <div className="obsidian-panel p-5">
-                    <div className="flex items-center gap-2 pb-3 mb-4 border-b border-zinc-900/60">
+                  <div className="obsidian-panel p-6">
+                    <div className="flex items-center gap-2.5 pb-3 mb-4 border-b border-zinc-900/60">
                       <ClipboardCheck className="w-4 h-4 text-purple-400" />
-                      <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Mandatory Daily Work Log Form</h2>
+                      <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wide">Mandatory Daily Work Log Form</h2>
                     </div>
-                    <form onSubmit={sl} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-3">
+                    <form onSubmit={sl} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
                         <div>
-                          <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Tasks Completed Today</label>
-                          <textarea required rows={2} value={lf.cp} onChange={e => setLf({...lf, cp: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="List items or features completed..." />
+                          <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Tasks Completed Today</label>
+                          <textarea required rows={2} value={lf.cp} onChange={e => setLf({...lf, cp: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="List items or features completed..." />
                         </div>
                         <div>
-                          <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Current Blockers / Dependencies</label>
-                          <textarea value={lf.bl} onChange={e => setLf({...lf, bl: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="Any blockers (or None)..." />
+                          <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Current Blockers / Dependencies</label>
+                          <textarea value={lf.bl} onChange={e => setLf({...lf, bl: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="Any blockers (or None)..." />
                         </div>
                       </div>
-                      <div className="space-y-3 flex flex-col justify-between">
+                      <div className="space-y-4 flex flex-col justify-between">
                         <div>
-                          <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Tomorrow's Work Plan</label>
-                          <textarea required rows={2} value={lf.pl} onChange={e => setLf({...lf, pl: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="What are you working on tomorrow?..." />
+                          <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Tomorrow's Work Plan</label>
+                          <textarea required rows={2} value={lf.pl} onChange={e => setLf({...lf, pl: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="What are you working on tomorrow?..." />
                         </div>
-                        <div className="flex gap-3 items-end">
+                        <div className="flex gap-4 items-end">
                           <div className="flex-1">
-                            <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">Hours Worked</label>
-                            <input required type="number" step="0.5" min="0.5" max="24" value={lf.hr} onChange={e => setLf({...lf, hr: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="8" />
+                            <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Hours Worked</label>
+                            <input required type="number" step="0.5" min="0.5" max="24" value={lf.hr} onChange={e => setLf({...lf, hr: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="8" />
                           </div>
                           <button type="submit" className="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold px-6 py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all h-9">
                             SUBMIT WORK LOG
@@ -526,56 +489,6 @@ export default function Home() {
                 )}
               </div>
             )}
-
-            {tb === "clients" && (rl === "admin" || rl === "accounts") && (
-              <div className="obsidian-panel p-5 space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-zinc-900/60">
-                  <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Client Directories</h2>
-                  <button onClick={() => setMd("client")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl font-bold border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all"><Plus className="w-3.5 h-3.5" /> New Client Profile</button>
-                </div>
-                <div className="w-full overflow-x-auto">
-                  <table className="w-full text-left text-xs min-w-[500px]">
-                    <thead><tr className="text-zinc-500 border-b border-zinc-900 font-bold uppercase tracking-wider"><th className="pb-2">Client Name</th><th className="pb-2">Corporate Entity</th><th className="pb-2">Email Address</th><th className="pb-2 text-right">Actions</th></tr></thead>
-                    <tbody className="divide-y divide-zinc-900/40">
-                      {cl.length === 0 ? <tr><td colSpan={4} className="py-4 text-center text-zinc-600 font-mono">NO CUSTOMER SHEETS INDEXED</td></tr> : cl.map(c => (
-                        <tr key={c.id} className="text-zinc-300 hover:bg-zinc-900/20 transition-colors">
-                          <td className="py-3 font-semibold text-white">{c.name}</td>
-                          <td className="py-3 font-medium">{c.company || "Individual"}</td>
-                          <td className="py-3 font-mono">{c.email}</td>
-                          <td className="py-3 text-right"><button onClick={() => setCf({ id: c.id, type: "client", name: c.name })} className="text-zinc-500 hover:text-purple-400 p-1"><Trash2 className="w-3.5 h-3.5" /></button></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-
-            {tb === "finance" && (rl === "admin" || rl === "accounts") && (
-              <div className="obsidian-panel p-5 space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-zinc-900/60">
-                  <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Accounting Statements</h2>
-                  <button onClick={() => setMd("finance")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl font-bold border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all"><Plus className="w-3.5 h-3.5" /> File Transaction</button>
-                </div>
-                <div className="w-full overflow-x-auto">
-                  <table className="w-full text-left text-xs min-w-[600px]">
-                    <thead><tr className="text-zinc-500 border-b border-zinc-900 font-bold uppercase tracking-wider"><th className="pb-2">Account Handling</th><th className="pb-2">Classification</th><th className="pb-2">Gross Tally</th><th className="pb-2">Status</th><th className="pb-2">Details</th><th className="pb-2 text-right">Purge</th></tr></thead>
-                    <tbody className="divide-y divide-zinc-900/40">
-                      {fi.length === 0 ? <tr><td colSpan={6} className="py-4 text-center text-zinc-600 font-mono">NO TRANSFERS AUDITED YET</td></tr> : fi.map(f => (
-                        <tr key={f.id} className="text-zinc-300 hover:bg-zinc-900/20 transition-colors">
-                          <td className="py-3 font-semibold text-white">{f.client_name}</td>
-                          <td className="py-3"><span className={`px-2 py-0.5 text-[10px] rounded border font-mono font-bold ${f.type === "Invoice" ? "bg-purple-950/60 text-purple-300 border-purple-900/40" : f.type === "Expense" ? "bg-rose-955/40 text-rose-400 border-rose-900/30" : "bg-zinc-900 text-zinc-400 border-zinc-800"}`}>{f.type.toUpperCase()}</span></td>
-                          <td className="py-3 font-mono font-bold text-zinc-100">₹{f.amount.toLocaleString()}</td>
-                          <td className="py-3"><span className={`px-1.5 py-0.5 text-[9px] rounded font-bold ${f.status === "Paid" || f.status === "Approved" ? "bg-emerald-950 text-emerald-400" : "bg-amber-950 text-amber-400"}`}>{f.status}</span></td>
-                          <td className="py-3 truncate max-w-[150px] text-zinc-400">{f.description || "None"}</td>
-                          <td className="py-3 text-right"><button onClick={() => setCf({ id: f.id, type: "finance", name: f.client_name })} className="text-zinc-500 hover:text-purple-400 p-1"><Trash2 className="w-3.5 h-3.5" /></button></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
             
             {tb === "reports" && rl === "admin" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -583,9 +496,9 @@ export default function Home() {
                   <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider pb-3 border-b border-zinc-900/60 mb-4 flex-shrink-0">Select Team Member</h3>
                   <div className="space-y-2 overflow-y-auto flex-1 pr-1">
                     {us.map(u => (
-                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 ${su === u.email ? "bg-purple-950/20 border-purple-500/60 text-white shadow-lg border-b-[4px] border-purple-600" : "bg-zinc-950/40 border-zinc-900 text-zinc-400 hover:border-zinc-800 border-b-[4px] border-black"}`}>
+                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 ${su === u.email ? "bg-zinc-900 border-zinc-700 text-white shadow-lg" : "bg-[#0A0A0F]/60 border-zinc-900 text-zinc-400 hover:border-zinc-800 hover:text-zinc-200"}`}>
                         <p className="text-xs font-bold truncate">{u.email}</p>
-                        <p className="text-[9px] font-mono text-purple-400 font-bold mt-1 uppercase tracking-widest">{u.role}</p>
+                        <p className="text-[10px] font-mono text-purple-400 font-bold mt-1 uppercase tracking-widest">{u.role}</p>
                       </div>
                     ))}
                   </div>
@@ -595,21 +508,21 @@ export default function Home() {
                   <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider pb-3 border-b border-zinc-900/60 mb-4 flex-shrink-0">Activity Breakdown</h3>
                   {su ? (
                     <div className="flex-1 flex flex-col overflow-hidden">
-                      <div className="bg-zinc-950/60 border border-zinc-900 p-4 rounded-xl mb-4 flex-shrink-0 shadow-inner">
-                        <p className="text-[10px] uppercase font-bold text-zinc-500">Viewing Report For</p>
+                      <div className="bg-[#0A0A0F]/80 border border-zinc-900 p-4 rounded-xl mb-4 flex-shrink-0 shadow-inner">
+                        <p className="text-[10px] uppercase font-bold text-zinc-500">Report Context</p>
                         <p className="text-xs font-bold text-white truncate mt-1">{su}</p>
                         <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-zinc-900/60 text-center">
                           <div>
-                            <p className="text-[9px] font-bold text-zinc-500 uppercase">Tasks</p>
-                            <p className="text-lg font-black text-purple-400 mt-0.5">{tk.filter(t => t.assigned_to === su).length}</p>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase">Tasks</p>
+                            <p className="text-xl font-black text-purple-400 mt-0.5">{tk.filter(t => t.assigned_to === su).length}</p>
                           </div>
                           <div>
-                            <p className="text-[9px] font-bold text-zinc-500 uppercase">Done</p>
-                            <p className="text-lg font-black text-emerald-400 mt-0.5">{tk.filter(t => t.assigned_to === su && t.status === "Completed").length}</p>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase">Done</p>
+                            <p className="text-xl font-black text-emerald-400 mt-0.5">{tk.filter(t => t.assigned_to === su && t.status === "Completed").length}</p>
                           </div>
                           <div>
-                            <p className="text-[9px] font-bold text-zinc-500 uppercase">Hours</p>
-                            <p className="text-lg font-black text-fuchsia-400 mt-0.5">{wl.filter(w => w.email === su).reduce((acc, c) => acc + (c.hours || 0), 0)}h</p>
+                            <p className="text-[10px] font-bold text-zinc-500 uppercase">Hours</p>
+                            <p className="text-xl font-black text-fuchsia-400 mt-0.5">{wl.filter(w => w.email === su).reduce((acc, c) => acc + (c.hours || 0), 0)}h</p>
                           </div>
                         </div>
                       </div>
@@ -625,9 +538,9 @@ export default function Home() {
                                 <span>{new Date(w.created_at).toLocaleDateString()}</span>
                                 <span className="text-purple-400 font-bold">{w.hours} Hours Worked</span>
                               </div>
-                              <p><strong className="text-purple-400/70 font-mono text-[10px] block uppercase">Completed:</strong> {w.completed}</p>
-                              <p><strong className="text-amber-400/70 font-mono text-[10px] block uppercase">Blockers:</strong> {w.blockers}</p>
-                              <p><strong className="text-blue-400/70 font-mono text-[10px] block uppercase">Next Plan:</strong> {w.plan}</p>
+                              <p><strong className="text-purple-400/80 font-mono text-[10px] block uppercase">Completed:</strong> {w.completed}</p>
+                              <p><strong className="text-amber-400/80 font-mono text-[10px] block uppercase">Blockers:</strong> {w.blockers}</p>
+                              <p><strong className="text-blue-400/80 font-mono text-[10px] block uppercase">Next Plan:</strong> {w.plan}</p>
                             </div>
                           ))}
                         </div>
@@ -649,7 +562,7 @@ export default function Home() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border-2 border-dashed border-zinc-800 rounded-2xl">
+                    <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-zinc-800 rounded-2xl">
                       <FileText className="w-8 h-8 text-zinc-700 mb-2" />
                       <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Select a team member to load records.</p>
                     </div>
@@ -659,12 +572,12 @@ export default function Home() {
             )}
             
             {tb !== "reports" && tb !== "clients" && tb !== "finance" && (
-              <div className="obsidian-panel p-4 md:p-5 overflow-hidden">
+              <div className="obsidian-panel p-5 overflow-hidden">
                 {tb === "team" ? (
                   <div className="space-y-8">
                     <div>
                       <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-900/60">
-                        <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Team Matrix</h2>
+                        <h2 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">Team List & Options</h2>
                         {rl === "admin" && <button onClick={() => setMd("user")} className="bg-white hover:bg-zinc-100 text-black text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold shadow-md transition-all active:scale-[0.98]"><Plus className="w-3.5 h-3.5" /> Add Team Member</button>}
                       </div>
                       <div className="w-full overflow-x-auto">
@@ -842,9 +755,9 @@ export default function Home() {
               </form>
             ) : (
               <form onSubmit={cu} className="p-5 space-y-4">
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
-                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-zinc-100 focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="name@domain.com" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="••••••••••••" /></div>
+                <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
                 <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-bold text-white text-xs py-2.5 rounded-xl border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all mt-2">Create Account</button>
               </form>
             )}
