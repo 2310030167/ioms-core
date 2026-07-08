@@ -1,48 +1,26 @@
 @import "tailwindcss";
 
-@utility obsidian-panel {
-  background-color: rgba(9, 7, 16, 0.5) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.04) !important;
-  border-top-color: rgba(255, 255, 255, 0.08) !important;
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.75), inset 0 1px 2px rgba(255, 255, 255, 0.02) !important;
-  border-radius: 1.25rem !important;
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
-@utility capsule-pillar-wrap {
-  width: 1.25rem !important;
-  background-color: rgba(0, 0, 0, 0.85) !important;
-  height: 7rem !important;
-  margin-top: 0.75rem !important;
-  margin-bottom: 0.75rem !important;
-  border-radius: 9999px !important;
-  position: relative !important;
-  display: flex !important;
-  align-items: flex-end !important;
-  justify-content: center !important;
-  overflow: hidden !important;
-  border: 1px solid rgba(255, 255, 255, 0.03) !important;
-  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9) !important;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
-@utility capsule-pillar-fill {
-  width: 100% !important;
-  background: linear-gradient(to top, #6b21a8, #a855f7, #f472b6) !important;
-  border-radius: 9999px !important;
-  transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
-  position: relative !important;
-  box-shadow: 0 0 16px rgba(168, 85, 247, 0.5) !important;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
 }
 
-.capsule-pillar-fill::after {
-  content: '';
-  position: absolute;
-  top: 4px;
-  left: 20%;
-  width: 15%;
-  height: 70%;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 9999px;
-  filter: blur(0.3px);
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
 }
