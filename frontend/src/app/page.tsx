@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Menu, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, ShieldAlert } from "lucide-react";
+import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Menu, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, ShieldAlert, Users } from "lucide-react";
 import { sb } from "../lib/sb";
 
 const ClientsPanel = ({ clients }: { clients: any[] }) => (
@@ -64,7 +64,7 @@ const AuditPanel = ({ logs }: { logs: any[] }) => (
           <tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider"><th className="pb-2">Timestamp</th><th className="pb-2">Operator</th><th className="pb-2">Action</th><th className="pb-2">Target Table</th><th className="pb-2">Details</th></tr>
         </thead>
         <tbody className="divide-y divide-purple-900/10 font-mono text-[11px]">
-          {logs.length === 0 ? <tr><td colSpan={5} className="py-4 text-center text-purple-500/40A">NO SECURITY TELEMETRY ENTRIES INDEXED</td></tr> : logs.map(l => (
+          {logs.length === 0 ? <tr><td colSpan={5} className="py-4 text-center text-purple-500/40">NO SECURITY TELEMETRY ENTRIES INDEXED</td></tr> : logs.map(l => (
             <tr key={l.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
               <td className="py-3 text-zinc-500">{new Date(l.created_at).toLocaleString()}</td>
               <td className="py-3 text-purple-400 font-bold">{l.actor}</td>
@@ -647,7 +647,7 @@ export default function Home() {
 
             {tb === "reports" && rl === "admin" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
+                <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Select Team Member</h3>
                   <div className="space-y-2 overflow-y-auto flex-1 pr-1">
                     {us.map(u => (
@@ -903,7 +903,7 @@ export default function Home() {
             ) : md === "finance" ? (
               <form onSubmit={af} className="p-5 space-y-4">
                 <div className="grid grid-cols-2 gap-3">
-                  <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Classification</label><select value={fff.ty} onChange={e => setFff({...fff, ty: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner"><option value="Invoice">Invoice</option><option value="Expense">Expense</option><option value="Quotation">Quotation</option></select></div>
+                  <div><label className="block text-[10px] font-bold text-zinc-400 tracking-wider mb-1.5">Classification</label><select value={fff.ty} onChange={e => setFff({...fff, ty: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner"><option value="Invoice">Invoice</option><option value="Expense">Expense</option><option value="Quotation">Quotation</option></select></div>
                   <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Status State</label><select value={fff.st} onChange={e => setFff({...fff, st: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner"><option value="Pending">Pending</option><option value="Paid">Paid</option><option value="Approved">Approved</option></select></div>
                 </div>
                 <div><label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1.5">Payer / Payee Identity Reference</label><input required type="text" value={fff.cn} onChange={e => setFff({...fff, cn: e.target.value})} className="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-purple-600 shadow-inner" placeholder="e.g., Acme Holdings" /></div>
