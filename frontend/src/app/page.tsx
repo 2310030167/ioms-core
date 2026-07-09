@@ -241,7 +241,7 @@ export default function Home() {
           const { data: lD } = await sb.from("user_logins").select("*").order("logged_at", { ascending: false }).limit(200);
           if (lD) setLn(lD);
           const { data: wD } = await sb.from("work_logs").select("*").order("created_at", { ascending: false });
-          if (wData => wD) setWl(wD);
+          if (wD) setWl(wD);
           const { data: cD } = await sb.from("clients").select("*").order("created_at", { ascending: false });
           if (cD) setCl(cD);
           const { data: fD } = await sb.from("finance").select("*").order("created_at", { ascending: false });
@@ -537,7 +537,7 @@ export default function Home() {
               <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Password</label>
               <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="••••••••••••" />
             </div>
-            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
+            {er && <div className="text-xs text-purple-200 bg-purple-955/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
             <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-xl tracking-wide mt-3 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] shadow-xl shadow-purple-955/60 transition-all">
               ENTER SYSTEM
             </button>
@@ -745,7 +745,7 @@ export default function Home() {
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Select Team Member</h3>
                   <div className="space-y-2 overflow-y-auto flex-1 pr-1">
                     {us.map(u => (
-                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 ${su === u.email ? "bg-purple-950/40 border-purple-500/60 text-white shadow-[0_8px_20px_rgba(124,58,237,0.15),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[4px] border-purple-600" : "bg-purple-955/5 border-purple-900/20 text-zinc-400 hover:border-purple-900/60 hover:text-zinc-200 border-b-[4px] border-purple-955"}`}>
+                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 ${su === u.email ? "bg-purple-950/40 border-purple-500/60 text-white shadow-[0_8px_20px_rgba(124,58,237,0.15),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[4px] border-purple-600" : "bg-purple-950/5 border-purple-900/20 text-zinc-400 hover:border-purple-900/60 hover:text-zinc-200 border-b-[4px] border-purple-955"}`}>
                         <p className="text-xs font-bold truncate">{u.email}</p>
                         <p className="text-[9px] font-mono text-purple-400/60 mt-1 uppercase font-bold tracking-widest">{u.role}</p>
                       </div>
@@ -782,7 +782,7 @@ export default function Home() {
                           {wl.filter(w => w.email === su).length === 0 ? (
                             <div className="text-center text-[11px] font-mono text-purple-500/30 py-4">NO WORK LOGS FILED</div>
                           ) : wl.filter(w => w.email === su).map(w => (
-                            <div key={w.id} className="bg-purple-955/5 border border-purple-900/10 rounded-xl p-3.5 mb-2 text-xs space-y-1.5 shadow-sm">
+                            <div key={w.id} className="bg-purple-950/5 border border-purple-900/10 rounded-xl p-3.5 mb-2 text-xs space-y-1.5 shadow-sm">
                               <div className="flex justify-between items-center text-[10px] font-mono text-zinc-500 border-b border-purple-900/40 pb-1.5">
                                 <span>{new Date(w.created_at).toLocaleDateString()}</span>
                                 <span className="text-purple-400 font-bold">{w.hours} Hours Worked</span>
