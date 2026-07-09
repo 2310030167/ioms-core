@@ -15,7 +15,7 @@ const ClientsPanel = ({ clients }: { clients: any[] }) => (
         </thead>
         <tbody className="divide-y divide-purple-900/10">
           {clients.length === 0 ? <tr><td colSpan={3} className="py-4 text-center text-purple-500/40 font-mono">NO CUSTOMER SHEETS INDEXED</td></tr> : clients.map(c => (
-            <tr key={c.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+            <tr key={c.id} className="text-zinc-300 hover:bg-purple-955/5 transition-colors">
               <td className="py-3 font-semibold text-white">{c.name}</td>
               <td className="py-3 font-medium">{c.company || "Individual"}</td>
               <td className="py-3 font-mono">{c.email}</td>
@@ -478,37 +478,6 @@ export default function Home() {
   const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
   tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
 
-  if (!au) {
-    return (
-      <div className="min-h-screen w-screen bg-[#050409] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-955/40">
-        <div className="absolute top-[-25%] left-[-15%] w-[700px] h-[700px] rounded-full bg-purple-900/10 blur-[150px] pointer-events-none"></div>
-        <div className="w-full max-w-[390px] bg-purple-955/10 border border-purple-900/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[6px] border-purple-955/80 relative z-10">
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_10px_25px_rgba(147,51,234,0.25),inset_0_1px_2px_rgba(255,255,255,0.1)]">
-              <Activity className="w-6 h-6 stroke-[1.5]" />
-            </div>
-            <h2 className="text-2xl font-black text-zinc-100 tracking-tight text-center">IOMS Portal</h2>
-            <p className="text-[11px] text-purple-400/70 mt-1 uppercase font-semibold tracking-wider">Secure Access Protocol</p>
-          </div>
-          <form onSubmit={li} className="space-y-4">
-            <div>
-              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Email Address</label>
-              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="name@domain.com" />
-            </div>
-            <div>
-              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Password</label>
-              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="••••••••••••" />
-            </div>
-            {er && <div className="text-xs text-purple-200 bg-purple-955/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
-            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-xl tracking-wide mt-3 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] shadow-xl shadow-purple-955/60 transition-all">
-              ENTER SYSTEM
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex h-screen w-screen bg-[#050409] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
       <AmbientCanvas />
@@ -603,8 +572,64 @@ export default function Home() {
                   </div>
                 </div>
 
+                {rl !== "admin" && (
+                  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[420px] flex flex-col">
+                    <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Your Activity Breakdown</h3>
+                    <div className="bg-purple-950/10 border border-purple-900/20 p-4 rounded-2xl mb-4 flex-shrink-0 shadow-inner">
+                      <p className="text-[10px] uppercase font-bold text-purple-400/50">Viewing Personal Profile</p>
+                      <p className="text-xs font-bold text-white truncate mt-1">{au?.email}</p>
+                      <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-purple-900/10 text-center">
+                        <div>
+                          <p className="text-[9px] font-bold text-zinc-500 uppercase">Assigned</p>
+                          <p className="text-lg font-black text-purple-400 mt-0.5">{tk.filter(t => t.assigned_to === au?.email).length}</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-zinc-500 uppercase">Done</p>
+                          <p className="text-lg font-black text-emerald-400 mt-0.5">{tk.filter(t => t.assigned_to === au?.email && t.status === "Completed").length}</p>
+                        </div>
+                        <div>
+                          <p className="text-[9px] font-bold text-zinc-500 uppercase">Total Hours</p>
+                          <p className="text-lg font-black text-fuchsia-400 mt-0.5">{wl.filter(w => w.email === au?.email).reduce((acc, c) => acc + (c.hours || 0), 0)}h</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+                      <div>
+                        <p className="text-[10px] font-bold text-purple-400/50 uppercase tracking-wider mb-2">Submitted Daily Work Logs</p>
+                        {wl.filter(w => w.email === au?.email).length === 0 ? (
+                          <div className="text-center text-[11px] font-mono text-purple-500/30 py-4">NO WORK LOGS FILED</div>
+                        ) : wl.filter(w => w.email === au?.email).map(w => (
+                          <div key={w.id} className="bg-purple-950/5 border border-purple-900/10 rounded-xl p-3.5 mb-2 text-xs space-y-1.5 shadow-sm">
+                            <div className="flex justify-between items-center text-[10px] font-mono text-zinc-500 border-b border-purple-900/40 pb-1.5">
+                              <span>{new Date(w.created_at).toLocaleDateString()}</span>
+                              <span className="text-purple-400 font-bold">{w.hours} Hours Worked</span>
+                            </div>
+                            <p><strong className="text-purple-400/70 font-mono text-[10px] block uppercase">Completed:</strong> {w.completed}</p>
+                            <p><strong className="text-amber-400/70 font-mono text-[10px] block uppercase">Blockers:</strong> {w.blockers}</p>
+                            <p><strong className="text-blue-400/70 font-mono text-[10px] block uppercase">Next Plan:</strong> {w.plan}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold text-purple-400/50 uppercase tracking-wider mb-2">Your Telemetry Sessions</p>
+                        {ln.filter(l => l.email === au?.email).length === 0 ? (
+                          <div className="text-center text-[11px] font-mono text-purple-500/30 py-4">NO LOGINS LOGGED</div>
+                        ) : ln.filter(l => l.email === au?.email).map(l => (
+                          <div key={l.id} className="bg-purple-952/5 border border-purple-900/10 rounded-xl p-2.5 flex items-center justify-between gap-4 shadow-sm mb-1.5">
+                            <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-md border ${l.action === "LOGIN" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"}`}>
+                              {l.action === "LOGIN" ? <ArrowDownLeft className="w-2.5 h-3" /> : <ArrowUpRight className="w-2.5 h-3" />}
+                              {l.action}
+                            </span>
+                            <span className="text-[11px] font-mono text-zinc-400">{new Date(l.logged_at).toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {rl === "operator" && (
-                  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm">
+                  <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm">
                     <div className="flex items-center gap-2 pb-3 mb-4 border-b border-purple-900/20">
                       <ClipboardCheck className="w-4 h-4 text-purple-400" />
                       <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Mandatory Daily Work Log Form</h2>
@@ -659,11 +684,11 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
+                <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Activity Breakdown</h3>
                   {su ? (
                     <div className="flex-1 flex flex-col overflow-hidden">
-                      <div className="bg-purple-950/10 border border-purple-900/20 p-4 rounded-2xl mb-4 flex-shrink-0 shadow-inner">
+                      <div className="bg-purple-955/10 border border-purple-900/20 p-4 rounded-2xl mb-4 flex-shrink-0 shadow-inner">
                         <p className="text-[10px] uppercase font-bold text-purple-400/50">Viewing Report For</p>
                         <p className="text-xs font-bold text-white truncate mt-1">{su}</p>
                         <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-purple-900/10 text-center">
