@@ -1,41 +1,118 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogIn, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Copy, Users, Menu, Clock, ArrowUpRight, ArrowDownLeft, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, Shield } from "lucide-react";
+import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Menu, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, ShieldAlert } from "lucide-react";
 import { sb } from "../lib/sb";
 
+const ClientsPanel = ({ clients }: { clients: any[] }) => (
+  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
+    <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
+      <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Client Directories</h2>
+    </div>
+    <div className="w-full overflow-x-auto">
+      <table className="w-full text-left text-xs min-w-[500px]">
+        <thead>
+          <tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider"><th className="pb-2">Client Name</th><th className="pb-2">Corporate Entity</th><th className="pb-2">Email Address</th></tr>
+        </thead>
+        <tbody className="divide-y divide-purple-900/10">
+          {clients.length === 0 ? <tr><td colSpan={3} className="py-4 text-center text-purple-500/40 font-mono">NO CUSTOMER SHEETS INDEXED</td></tr> : clients.map(c => (
+            <tr key={c.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+              <td className="py-3 font-semibold text-white">{c.name}</td>
+              <td className="py-3 font-medium">{c.company || "Individual"}</td>
+              <td className="py-3 font-mono">{c.email}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const FinanceLedger = ({ transactions }: { transactions: any[] }) => (
+  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
+    <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
+      <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Accounting Statements</h2>
+    </div>
+    <div className="w-full overflow-x-auto">
+      <table className="w-full text-left text-xs min-w-[600px]">
+        <thead>
+          <tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider"><th className="pb-2">Account Handling</th><th className="pb-2">Classification</th><th className="pb-2">Gross Tally</th><th className="pb-2">Status</th><th className="pb-2">Details</th></tr>
+        </thead>
+        <tbody className="divide-y divide-purple-900/10">
+          {transactions.length === 0 ? <tr><td colSpan={5} className="py-4 text-center text-purple-500/40 font-mono">NO TRANSFERS AUDITED YET</td></tr> : transactions.map(f => (
+            <tr key={f.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+              <td className="py-3 font-semibold text-white">{f.client_name}</td>
+              <td className="py-3"><span className={`px-2 py-0.5 text-[10px] rounded border font-mono font-bold ${f.type === "Invoice" ? "bg-purple-950 text-purple-300 border-purple-800/40" : f.type === "Expense" ? "bg-rose-950/40 text-rose-400 border-rose-900/30" : "bg-zinc-900 text-zinc-400 border-zinc-800"}`}>{f.type.toUpperCase()}</span></td>
+              <td className="py-3 font-mono font-bold text-zinc-100">₹{f.amount.toLocaleString()}</td>
+              <td className="py-3"><span className={`px-1.5 py-0.5 text-[9px] rounded font-bold ${f.status === "Paid" || f.status === "Approved" ? "bg-emerald-950 text-emerald-400" : "bg-amber-950 text-amber-400"}`}>{f.status}</span></td>
+              <td className="py-3 truncate max-w-[150px] text-zinc-400">{f.description || "None"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
+const AuditPanel = ({ logs }: { logs: any[] }) => (
+  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
+    <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
+      <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">System Audit Ledger</h2>
+    </div>
+    <div className="w-full overflow-x-auto">
+      <table className="w-full text-left text-xs min-w-[650px]">
+        <thead>
+          <tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider"><th className="pb-2">Timestamp</th><th className="pb-2">Operator</th><th className="pb-2">Action</th><th className="pb-2">Target Table</th><th className="pb-2">Details</th></tr>
+        </thead>
+        <tbody className="divide-y divide-purple-900/10 font-mono text-[11px]">
+          {logs.length === 0 ? <tr><td colSpan={5} className="py-4 text-center text-purple-500/40A">NO SECURITY TELEMETRY ENTRIES INDEXED</td></tr> : logs.map(l => (
+            <tr key={l.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+              <td className="py-3 text-zinc-500">{new Date(l.created_at).toLocaleString()}</td>
+              <td className="py-3 text-purple-400 font-bold">{l.actor}</td>
+              <td className="py-3">
+                <span className="px-1.5 py-0.5 rounded bg-purple-950/30 text-purple-200 border border-purple-900/40 text-[10px]">{l.action}</span>
+              </td>
+              <td className="py-3 text-zinc-400">{l.target_table}</td>
+              <td className="py-3 text-zinc-400 truncate max-w-xs">{l.details || "—"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+);
+
 function AmbientCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const cvRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    const cv = cvRef.current;
+    if (!cv) return;
+    const ctx = cv.getContext("2d");
     if (!ctx) return;
-    let animationFrameId: number;
-    const resizeCanvas = () => {
-      canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-      canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+    let animId: number;
+    const res = () => {
+      cv.width = cv.parentElement?.clientWidth || window.innerWidth;
+      cv.height = cv.parentElement?.clientHeight || window.innerHeight;
     };
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    res();
+    window.addEventListener("resize", res);
     const pArr: Array<{ x: number; y: number; r: number; sX: number; sY: number; o: number }> = [];
-    const pCount = 60;
-    for (let i = 0; i < pCount; i++) {
+    for (let i = 0; i < 60; i++) {
       pArr.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
+        x: Math.random() * cv.width,
+        y: Math.random() * cv.height,
         r: Math.random() * 2 + 1,
         sX: (Math.random() - 0.5) * 0.4,
         sY: (Math.random() - 0.5) * 0.4,
         o: Math.random() * 0.5 + 0.2
       });
     }
-    const render = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const rndr = () => {
+      ctx.clearRect(0, 0, cv.width, cv.height);
       pArr.forEach((p) => {
         p.x += p.sX;
         p.y += p.sY;
-        if (p.x < 0 || p.x > canvas.width) p.sX *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.sY *= -1;
+        if (p.x < 0 || p.x > cv.width) p.sX *= -1;
+        if (p.y < 0 || p.y > cv.height) p.sY *= -1;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(168, 85, 247, ${p.o})`;
@@ -44,15 +121,15 @@ function AmbientCanvas() {
         ctx.fill();
       });
       ctx.shadowBlur = 0;
-      animationFrameId = requestAnimationFrame(render);
+      animId = requestAnimationFrame(rndr);
     };
-    render();
+    rndr();
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
-      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", res);
+      cancelAnimationFrame(animId);
     };
   }, []);
-  return <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-0 opacity-50" />;
+  return <canvas ref={cvRef} className="absolute inset-0 pointer-events-none z-0 opacity-50" />;
 }
 
 export default function Home() {
@@ -66,7 +143,7 @@ export default function Home() {
   const [ld, setLd] = useState(true);
   const [md, setMd] = useState<string | null>(null);
   const [ts, setTs] = useState<{ msg: string; type: "ok" | "err" } | null>(null);
-  const [cf, setCf] = useState<{ id: string; type: "proj" | "task" | "user" | "client" | "finance"; name: string } | null>(null);
+  const [cf, setCf] = useState<any>(null);
   const [pf, setPf] = useState({ name: "", status: "New" });
   const [tf, setTf] = useState({ title: "", status: "Todo", as: "" });
   const [uf, setUf] = useState({ em: "", pw: "", rl: "viewer" });
@@ -95,7 +172,7 @@ export default function Home() {
     ...(rl === "admin" ? [
       { id: "team", label: "Team Roles", icon: Users },
       { id: "reports", label: "Team Reports", icon: BarChart3 },
-      { id: "audit", label: "Audit Ledger", icon: Shield }
+      { id: "audit", label: "Audit Ledger", icon: ShieldAlert }
     ] : [])
   ];
 
@@ -138,38 +215,46 @@ export default function Home() {
     }
   }, [ts]);
 
+  useEffect(() => {
+    if (tb === "audit" && rl !== "admin") {
+      setTb("dash");
+    }
+  }, [tb, rl]);
+
   async function gd() {
     if (!sb.auth.getUser()) return;
     try {
-      const { data: pData } = await sb.from("projects").select("*").order("created_at", { ascending: false });
-      const { data: tData } = await sb.from("tasks").select("*").order("created_at", { ascending: false });
-      const { data: sessionData } = await sb.auth.getSession();
-      const uId = sessionData.session?.user?.id;
+      const { data: pD } = await sb.from("projects").select("*").order("created_at", { ascending: false });
+      const { data: tD } = await sb.from("tasks").select("*").order("created_at", { ascending: false });
+      const { data: sD } = await sb.auth.getSession();
+      const uId = sD.session?.user?.id;
       
       if (uId) {
-        const { data: rData } = await sb.from("user_roles").select("role").eq("id", uId).maybeSingle();
-        if (rData) {
-          setRl(rData.role);
-          const { data: uData } = await sb.from("user_roles").select("*").order("email", { ascending: true });
-          if (uData) {
-            setUs(uData);
-            setSt(prev => ({ ...prev, team: uData.length }));
+        const { data: rD } = await sb.from("user_roles").select("role").eq("id", uId).maybeSingle();
+        if (rD) {
+          setRl(rD.role);
+          const { data: uD } = await sb.from("user_roles").select("*").order("email", { ascending: true });
+          if (uD) {
+            setUs(uD);
+            setSt(prev => ({ ...prev, team: uD.length }));
           }
-          const { data: lData } = await sb.from("user_logins").select("*").order("logged_at", { ascending: false }).limit(200);
-          if (lData) setLn(lData);
-          const { data: wData } = await sb.from("work_logs").select("*").order("created_at", { ascending: false });
-          if (wData) setWl(wData);
-          const { data: cData } = await sb.from("clients").select("*").order("created_at", { ascending: false });
-          if (cData) setCl(cData);
-          const { data: fData } = await sb.from("finance").select("*").order("created_at", { ascending: false });
-          if (fData) setFi(fData);
-          const { data: aData } = await sb.from("audit_ledger").select("*").order("created_at", { ascending: false });
-          if (aData) setAl(aData);
+          const { data: lD } = await sb.from("user_logins").select("*").order("logged_at", { ascending: false }).limit(200);
+          if (lD) setLn(lD);
+          const { data: wD } = await sb.from("work_logs").select("*").order("created_at", { ascending: false });
+          if (wD) setWl(wD);
+          const { data: cD } = await sb.from("clients").select("*").order("created_at", { ascending: false });
+          if (cD) setCl(cD);
+          const { data: fD } = await sb.from("finance").select("*").order("created_at", { ascending: false });
+          if (fD) setFi(fD);
+          if (rD.role === "admin") {
+            const { data: aD } = await sb.from("audit_ledger").select("*").order("created_at", { ascending: false });
+            if (aD) setAl(aD);
+          }
         }
       }
       
-      const pL = pData || [];
-      const tL = tData || [];
+      const pL = pD || [];
+      const tL = tD || [];
       setSt(prev => ({ ...prev, pipeline: pL.length, tasks: tL.length }));
       setPj(pL);
       setTk(tL);
@@ -179,10 +264,8 @@ export default function Home() {
   }
 
   const alog = async (act: string, tbl: string, tid: string, dtl: string) => {
-    if (!sb.auth.getUser()) return;
-    const { data: sD } = await sb.auth.getSession();
-    const em = sD.session?.user?.email || "system";
-    await sb.from("audit_ledger").insert([{ actor: em, action: act, target_table: tbl, target_id: tid, details: dtl }]);
+    if (!au?.email) return;
+    await sb.from("audit_ledger").insert([{ actor: au.email, action: act, target_table: tbl, target_id: tid, details: dtl }]);
   };
 
   const pn = async (v: string, d: any) => {
@@ -190,13 +273,13 @@ export default function Home() {
       const tok = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
       const cid = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
       if (!tok || !cid) return;
-      let msgDetails = "";
+      let mD = "";
       if (v === "operator_role_updated") {
-        msgDetails = `• Target: ${d.operator}\n• New Role: ${d.role}`;
+        mD = `• Target: ${d.operator}\n• New Role: ${d.role}`;
       } else {
-        msgDetails = `• ID: ${d.id || ""}\n• Name: ${d.name || d.title || ""}\n• Status/State: ${d.status || ""}\n• Assigned: ${d.assigned_to || "None"}`;
+        mD = `• ID: ${d.id || ""}\n• Name: ${d.name || d.title || ""}\n• Status: ${d.status || ""}\n• Assigned: ${d.assigned_to || "None"}`;
       }
-      const txt = `📊 IOMS CORE EVENT TELEMETRY\n━━━━━━━━━━━━━━\n🔹 Event: ${v}\n👤 Operator: ${au?.email}\n📅 2026-07-07\n━━━━━━━━━━━━━━\n📦 Data Context:\n${msgDetails}`;
+      const txt = `📊 IOMS TELEMETRY\n🔹 Event: ${v}\n👤 Op: ${au?.email}\n📦 Context:\n${mD}`;
       fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -277,7 +360,7 @@ export default function Home() {
     }]);
     if (!error) {
       await alog("SUBMIT_WORKLOG", "work_logs", au.email, `Logged: ${lf.hr} hours`);
-      setLf({ cp: "", blockers: "None", plan: "", hours: "" } as any);
+      setLf({ cp: "", bl: "None", pl: "", hr: "" });
       setTs({ msg: "Daily work log submitted successfully.", type: "ok" });
       await gd();
     } else {
@@ -397,7 +480,7 @@ export default function Home() {
 
   if (!au) {
     return (
-      <div className="min-h-screen w-screen bg-[#050409] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-950/40">
+      <div className="min-h-screen w-screen bg-[#050409] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-955/40">
         <div className="absolute top-[-25%] left-[-15%] w-[700px] h-[700px] rounded-full bg-purple-900/10 blur-[150px] pointer-events-none"></div>
         <div className="w-full max-w-[390px] bg-purple-955/10 border border-purple-900/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[6px] border-purple-955/80 relative z-10">
           <div className="flex flex-col items-center mb-8">
@@ -417,7 +500,7 @@ export default function Home() {
               <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="••••••••••••" />
             </div>
             {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
-            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-xl tracking-wide mt-3 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] shadow-xl shadow-purple-950/60 transition-all">
+            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-xl tracking-wide mt-3 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] shadow-xl shadow-purple-955/60 transition-all">
               ENTER SYSTEM
             </button>
           </form>
@@ -457,7 +540,7 @@ export default function Home() {
           </div>
           <nav className="space-y-1 flex-1">
             {lk.map(l => (
-              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-purple-950/40 text-purple-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] border border-purple-900/20 animate-none" : "text-zinc-500 hover:bg-purple-950/10 hover:text-zinc-300"}`}>
+              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${tb === l.id ? "bg-purple-950/40 text-purple-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)] border border-purple-900/20 animate-none" : "text-zinc-500 hover:bg-purple-955/10 hover:text-zinc-300"}`}>
                 <l.icon className={`w-3.5 h-3.5 ${tb === l.id ? "text-purple-400" : "text-zinc-500"}`} />{l.label}
               </button>
             ))}
@@ -558,89 +641,10 @@ export default function Home() {
               </div>
             )}
 
-            {tb === "clients" && (rl === "admin" || rl === "accounts") && (
-              <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
-                  <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Client Directories</h2>
-                  <button onClick={() => setMd("client")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl font-bold border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all"><Plus className="w-3.5 h-3.5" /> New Client Profile</button>
-                </div>
-                <div className="w-full overflow-x-auto">
-                  <table className="w-full text-left text-xs min-w-[500px]">
-                    <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider"><th className="pb-2">Client Name</th><th className="pb-2">Corporate Entity</th><th className="pb-2">Email Address</th><th className="pb-2 text-right">Actions</th></tr></thead>
-                    <tbody className="divide-y divide-purple-900/10">
-                      {cl.length === 0 ? <tr><td colSpan={4} className="py-4 text-center text-purple-500/40 font-mono">NO CUSTOMER SHEETS INDEXED</td></tr> : cl.map(c => (
-                        <tr key={c.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
-                          <td className="py-3 font-semibold text-white">{c.name}</td>
-                          <td className="py-3 font-medium">{c.company || "Individual"}</td>
-                          <td className="py-3 font-mono">{c.email}</td>
-                          <td className="py-3 text-right"><button onClick={() => setCf({ id: c.id, type: "client", name: c.name })} className="text-purple-400/40 hover:text-purple-300 p-1"><Trash2 className="w-3.5 h-3.5" /></button></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
+            {tb === "clients" && (rl === "admin" || rl === "accounts") && <ClientsPanel clients={cl} />}
+            {tb === "finance" && (rl === "admin" || rl === "accounts") && <FinanceLedger transactions={fi} />}
+            {tb === "audit" && rl === "admin" && <AuditPanel logs={al} />}
 
-            {tb === "finance" && (rl === "admin" || rl === "accounts") && (
-              <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
-                  <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Accounting Statements</h2>
-                  <button onClick={() => setMd("finance")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl font-bold border-b-2 border-purple-800 active:border-b-0 active:translate-y-px transition-all"><Plus className="w-3.5 h-3.5" /> File Transaction</button>
-                </div>
-                <div className="w-full overflow-x-auto">
-                  <table className="w-full text-left text-xs min-w-[600px]">
-                    <thead><tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider"><th className="pb-2">Account Handling</th><th className="pb-2">Classification</th><th className="pb-2">Gross Tally</th><th className="pb-2">Status</th><th className="pb-2">Details</th><th className="pb-2 text-right">Purge</th></tr></thead>
-                    <tbody className="divide-y divide-purple-900/10">
-                      {fi.length === 0 ? <tr><td colSpan={6} className="py-4 text-center text-purple-500/40 font-mono">NO TRANSFERS AUDITED YET</td></tr> : fi.map(f => (
-                        <tr key={f.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
-                          <td className="py-3 font-semibold text-white">{f.client_name}</td>
-                          <td className="py-3"><span className={`px-2 py-0.5 text-[10px] rounded border font-mono font-bold ${f.type === "Invoice" ? "bg-purple-950 text-purple-300 border-purple-800/40" : f.type === "Expense" ? "bg-rose-950/40 text-rose-400 border-rose-900/30" : "bg-zinc-900 text-zinc-400 border-zinc-800"}`}>{f.type.toUpperCase()}</span></td>
-                          <td className="py-3 font-mono font-bold text-zinc-100">₹{f.amount.toLocaleString()}</td>
-                          <td className="py-3"><span className={`px-1.5 py-0.5 text-[9px] rounded font-bold ${f.status === "Paid" || f.status === "Approved" ? "bg-emerald-950 text-emerald-400" : "bg-amber-950 text-amber-400"}`}>{f.status}</span></td>
-                          <td className="py-3 truncate max-w-[150px] text-zinc-400">{f.description || "None"}</td>
-                          <td className="py-3 text-right"><button onClick={() => setCf({ id: f.id, type: "finance", name: f.client_name })} className="text-purple-400/40 hover:text-purple-300 p-1"><Trash2 className="w-3.5 h-3.5" /></button></td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-            
-            {tb === "audit" && rl === "admin" && (
-              <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
-                  <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Security Audit Ledger Logs</h2>
-                  <div className="text-[10px] font-mono text-purple-500/60 tracking-widest">LIVE_STREAM_ACTIVE</div>
-                </div>
-                <div className="w-full overflow-x-auto">
-                  <table className="w-full text-left text-xs min-w-[700px]">
-                    <thead>
-                      <tr className="text-purple-400/50 border-b border-purple-900/20 font-bold uppercase tracking-wider">
-                        <th className="pb-2">Timestamp</th>
-                        <th className="pb-2">Actor</th>
-                        <th className="pb-2">Action</th>
-                        <th className="pb-2">Target Engine</th>
-                        <th className="pb-2">Parameters Context</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-purple-900/10 font-mono text-[11px]">
-                      {al.length === 0 ? <tr><td colSpan={5} className="py-4 text-center text-purple-500/40">NO TELEMETRY TRANSACTION ENTRIES RECORDED</td></tr> : al.map(log => (
-                        <tr key={log.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
-                          <td className="py-3 text-zinc-500">{new Date(log.created_at).toLocaleString()}</td>
-                          <td className="py-3 text-purple-400 font-semibold">{log.actor}</td>
-                          <td className="py-3"><span className="px-1.5 py-0.5 rounded bg-purple-950/30 text-purple-200 border border-purple-900/40 text-[10px]">{log.action}</span></td>
-                          <td className="py-3 text-zinc-400">{log.target_table}</td>
-                          <td className="py-3 text-zinc-400 truncate max-w-xs" title={log.details}>{log.details || "—"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
-            
             {tb === "reports" && rl === "admin" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
@@ -655,7 +659,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
+                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Activity Breakdown</h3>
                   {su ? (
                     <div className="flex-1 flex flex-col overflow-hidden">
@@ -701,7 +705,7 @@ export default function Home() {
                           {ln.filter(l => l.email === su).length === 0 ? (
                             <div className="text-center text-[11px] font-mono text-purple-500/30 py-4">NO LOGINS LOGGED</div>
                           ) : ln.filter(l => l.email === su).map(l => (
-                            <div key={l.id} className="bg-purple-955/5 border border-purple-900/10 rounded-xl p-2.5 flex items-center justify-between gap-4 shadow-sm mb-1.5">
+                            <div key={l.id} className="bg-purple-952/5 border border-purple-900/10 rounded-xl p-2.5 flex items-center justify-between gap-4 shadow-sm mb-1.5">
                               <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-md border ${l.action === "LOGIN" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"}`}>
                                 {l.action === "LOGIN" ? <ArrowDownLeft className="w-2.5 h-3" /> : <ArrowUpRight className="w-2.5 h-3" />}
                                 {l.action}
@@ -723,13 +727,13 @@ export default function Home() {
             )}
             
             {tb !== "reports" && tb !== "clients" && tb !== "finance" && tb !== "audit" && (
-              <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-5 overflow-hidden backdrop-blur-sm">
+              <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-5 overflow-hidden backdrop-blur-sm">
                 {tb === "team" ? (
                   <div className="space-y-8">
                     <div>
                       <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
                         <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Team List & Options</h2>
-                        {rl === "admin" && <button onClick={() => setMd("user")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold transition-all shadow-md border-b-2 border-purple-800 active:border-b-0 active:translate-y-px"><Plus className="w-3.5 h-3.5" /> Add Team Member</button>}
+                        {rl === "admin" && <button onClick={() => setMd("user")} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold border-b-2 border-purple-800 active:border-b-0 active:translate-y-px"><Plus className="w-3.5 h-3.5" /> Add Team Member</button>}
                       </div>
                       <div className="w-full overflow-x-auto">
                         <table className="w-full text-left text-xs min-w-[500px]">
@@ -746,7 +750,7 @@ export default function Home() {
                                     pn("operator_role_updated", { operator: u.email, role: v });
                                     await alog("ALTER_ROLE", "user_roles", u.id, `Modified permission vector to: ${v}`);
                                     await gd();
-                                  }} className="bg-purple-950/50 text-xs border border-purple-900/30 px-2.5 py-1 rounded-lg text-zinc-200 font-semibold focus:outline-none focus:border-purple-600 shadow-inner">
+                                  }} className="bg-purple-955/50 text-xs border border-purple-900/30 px-2.5 py-1 rounded-lg text-zinc-200 font-semibold focus:outline-none focus:border-purple-600 shadow-inner">
                                     {["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}
                                   </select>
                                 </td>
@@ -793,7 +797,7 @@ export default function Home() {
                   <div>
                     <div className="flex items-center justify-between mb-4 pb-2 border-b border-purple-900/20">
                       <h2 className="text-xs font-medium text-purple-400/70 uppercase tracking-wider">Item Management</h2>
-                      {tb !== "dash" && (rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold transition-all shadow-md border-b-2 border-purple-800 active:border-b-0 active:translate-y-px"><Plus className="w-3.5 h-3.5" /> Create New {tb === "proj" ? "Project" : "Task"}</button>}
+                      {tb !== "dash" && (rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-purple-600 hover:bg-purple-500 text-white text-[11px] px-3 py-1.5 rounded-xl flex items-center gap-1 font-bold border-b-2 border-purple-800 active:border-b-0 active:translate-y-px"><Plus className="w-3.5 h-3.5" /> Create New {tb === "proj" ? "Project" : "Task"}</button>}
                     </div>
                     {ld ? <div className="text-center py-8 font-mono text-purple-400/40 animate-pulse tracking-wide text-xs">LOADING DATA ENTRIES...</div> : tb === "dash" || tb === "proj" ? (
                       pj.length === 0 ? <div className="text-center py-8 text-xs text-purple-400/40 font-mono">NO PROJECTS FOUND</div> : (
