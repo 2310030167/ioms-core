@@ -15,7 +15,7 @@ const ClientsPanel = ({ clients }: { clients: any[] }) => (
         </thead>
         <tbody className="divide-y divide-purple-900/10">
           {clients.length === 0 ? <tr><td colSpan={3} className="py-4 text-center text-purple-500/40 font-mono">NO CUSTOMER SHEETS INDEXED</td></tr> : clients.map(c => (
-            <tr key={c.id} className="text-zinc-300 hover:bg-purple-955/5 transition-colors">
+            <tr key={c.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
               <td className="py-3 font-semibold text-white">{c.name}</td>
               <td className="py-3 font-medium">{c.company || "Individual"}</td>
               <td className="py-3 font-mono">{c.email}</td>
@@ -241,7 +241,7 @@ export default function Home() {
           const { data: lD } = await sb.from("user_logins").select("*").order("logged_at", { ascending: false }).limit(200);
           if (lD) setLn(lD);
           const { data: wD } = await sb.from("work_logs").select("*").order("created_at", { ascending: false });
-          if (wD) setWl(wD);
+          if (wData => wD) setWl(wD);
           const { data: cD } = await sb.from("clients").select("*").order("created_at", { ascending: false });
           if (cD) setCl(cD);
           const { data: fD } = await sb.from("finance").select("*").order("created_at", { ascending: false });
@@ -291,6 +291,10 @@ export default function Home() {
   const li = async (e: React.FormEvent) => {
     e.preventDefault();
     setEr("");
+    if (!fm.email.trim() || !fm.password.trim()) {
+      setTs({ msg: "Authentication keys required", type: "err" });
+      return;
+    }
     const { data, error } = await sb.auth.signInWithPassword({ email: fm.email, password: fm.password });
     if (error) {
       setEr(error.message);
@@ -330,6 +334,10 @@ export default function Home() {
 
   const cu = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!uf.em.trim() || !uf.pw.trim()) {
+      setTs({ msg: "Credentials required", type: "err" });
+      return;
+    }
     const res = await fetch("/api/user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -351,12 +359,21 @@ export default function Home() {
   const sl = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!au?.email) return;
+    if (!lf.cp.trim() || !lf.pl.trim()) {
+      setTs({ msg: "Task strings cannot be empty", type: "err" });
+      return;
+    }
+    const h = parseFloat(lf.hr);
+    if (isNaN(h) || h <= 0 || h > 24) {
+      setTs({ msg: "Operational metrics hour scope error", type: "err" });
+      return;
+    }
     const { error } = await sb.from("work_logs").insert([{
       email: au.email,
       completed: lf.cp,
       blockers: lf.bl || "None",
       plan: lf.pl,
-      hours: parseFloat(lf.hr)
+      hours: h
     }]);
     if (!error) {
       await alog("SUBMIT_WORKLOG", "work_logs", au.email, `Logged: ${lf.hr} hours`);
@@ -370,6 +387,10 @@ export default function Home() {
 
   const ac = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!cff.nm.trim() || !cff.em.trim()) {
+      setTs({ msg: "Client references required", type: "err" });
+      return;
+    }
     const { error } = await sb.from("clients").insert([{ name: cff.nm, email: cff.em, company: cff.co }]);
     if (!error) {
       await alog("CREATE_CLIENT", "clients", cff.nm, `Client entity: ${cff.co || "Individual"}`);
@@ -382,7 +403,16 @@ export default function Home() {
 
   const af = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { error } = await sb.from("finance").insert([{ type: fff.ty, client_name: fff.cn, amount: parseFloat(fff.am), status: fff.st, description: fff.ds }]);
+    if (!fff.cn.trim()) {
+      setTs({ msg: "Transaction context payer entity missing", type: "err" });
+      return;
+    }
+    const v = parseFloat(fff.am);
+    if (isNaN(v) || v <= 0) {
+      setTs({ msg: "Financial gross numbers must be non-negative values", type: "err" });
+      return;
+    }
+    const { error } = await sb.from("finance").insert([{ type: fff.ty, client_name: fff.cn, amount: v, status: fff.st, description: fff.ds || "None" }]);
     if (!error) {
       await alog("RECORD_TRANSACTION", "finance", fff.cn, `Type: ${fff.ty}, Gross: ${fff.am} INR`);
       setFff({ ty: "Invoice", cn: "", am: "", st: "Pending", ds: "" });
@@ -394,6 +424,10 @@ export default function Home() {
 
   const ap = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!pf.name.trim()) {
+      setTs({ msg: "Project name parameters required", type: "err" });
+      return;
+    }
     const { data, error } = await sb.from("projects").insert([{ name: pf.name, status: pf.status }]).select().single();
     if (!error && data) {
       pn("project_created", data);
@@ -407,6 +441,10 @@ export default function Home() {
 
   const at = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!tf.title.trim()) {
+      setTs({ msg: "Task trace parameters required", type: "err" });
+      return;
+    }
     const { data, error } = await sb.from("tasks").insert([{ title: tf.title, status: tf.status, assigned_to: tf.as || null }]).select().single();
     if (!error && data) {
       pn("task_created", data);
@@ -477,6 +515,37 @@ export default function Home() {
 
   const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
   tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM]++; });
+
+  if (!au) {
+    return (
+      <div className="min-h-screen w-screen bg-[#050409] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden selection:bg-purple-955/40">
+        <div className="absolute top-[-25%] left-[-15%] w-[700px] h-[700px] rounded-full bg-purple-900/10 blur-[150px] pointer-events-none"></div>
+        <div className="w-full max-w-[390px] bg-purple-955/10 border border-purple-900/30 rounded-3xl p-8 backdrop-blur-xl shadow-[0_30px_70px_rgba(0,0,0,0.8),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[6px] border-purple-955/80 relative z-10">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-14 h-14 rounded-2xl bg-purple-900/20 border border-purple-700/30 flex items-center justify-center text-purple-400 mb-4 shadow-[0_10px_25px_rgba(147,51,234,0.25),inset_0_1px_2px_rgba(255,255,255,0.1)]">
+              <Activity className="w-6 h-6 stroke-[1.5]" />
+            </div>
+            <h2 className="text-2xl font-black text-zinc-100 tracking-tight text-center">IOMS Portal</h2>
+            <p className="text-[11px] text-purple-400/70 mt-1 uppercase font-semibold tracking-wider">Secure Access Protocol</p>
+          </div>
+          <form onSubmit={li} className="space-y-4">
+            <div>
+              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Email Address</label>
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="name@domain.com" />
+            </div>
+            <div>
+              <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Password</label>
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="••••••••••••" />
+            </div>
+            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
+            <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-xl tracking-wide mt-3 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] shadow-xl shadow-purple-955/60 transition-all">
+              ENTER SYSTEM
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-screen bg-[#050409] text-zinc-300 font-sans selection:bg-purple-950 overflow-hidden relative">
@@ -559,11 +628,11 @@ export default function Home() {
                       })}
                     </div>
                   </div>
-                  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-5 backdrop-blur-sm">
+                  <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_30px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-4 md:p-5 backdrop-blur-sm">
                     <div className="pb-3 mb-3 border-b border-purple-900/20"><h3 className="text-xs font-bold text-purple-400/60 uppercase tracking-wider">Quick Templates</h3></div>
                     <div className="space-y-1.5 max-h-[168px] overflow-y-auto pr-0.5">
                       {bp.length === 0 ? <div className="text-center text-[11px] font-mono text-purple-500/40 py-6">NO TEMPLATES CONFIGURED</div> : bp.map(b => (
-                        <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-purple-950/5 border border-purple-900/10 p-2 rounded-xl flex items-center justify-between gap-2 group transition-colors shadow-sm ${rl !== "viewer" ? "cursor-pointer hover:border-purple-800/60" : ""}`}>
+                        <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-purple-955/5 border border-purple-900/10 p-2 rounded-xl flex items-center justify-between gap-2 group transition-colors shadow-sm ${rl !== "viewer" ? "cursor-pointer hover:border-purple-800/60" : ""}`}>
                           <span className="text-xs text-zinc-300 truncate font-semibold">{b.name}</span>
                           {(rl === "admin" || rl === "operator") && <button onClick={(e) => dbp(b.id, e)} className="text-purple-400/40 hover:text-purple-400 p-0.5 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>}
                         </div>
@@ -573,9 +642,9 @@ export default function Home() {
                 </div>
 
                 {rl !== "admin" && (
-                  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[420px] flex flex-col">
+                  <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[420px] flex flex-col">
                     <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Your Activity Breakdown</h3>
-                    <div className="bg-purple-950/10 border border-purple-900/20 p-4 rounded-2xl mb-4 flex-shrink-0 shadow-inner">
+                    <div className="bg-purple-955/10 border border-purple-900/20 p-4 rounded-2xl mb-4 flex-shrink-0 shadow-inner">
                       <p className="text-[10px] uppercase font-bold text-purple-400/50">Viewing Personal Profile</p>
                       <p className="text-xs font-bold text-white truncate mt-1">{au?.email}</p>
                       <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-purple-900/10 text-center">
@@ -599,7 +668,7 @@ export default function Home() {
                         {wl.filter(w => w.email === au?.email).length === 0 ? (
                           <div className="text-center text-[11px] font-mono text-purple-500/30 py-4">NO WORK LOGS FILED</div>
                         ) : wl.filter(w => w.email === au?.email).map(w => (
-                          <div key={w.id} className="bg-purple-950/5 border border-purple-900/10 rounded-xl p-3.5 mb-2 text-xs space-y-1.5 shadow-sm">
+                          <div key={w.id} className="bg-purple-955/5 border border-purple-900/10 rounded-xl p-3.5 mb-2 text-xs space-y-1.5 shadow-sm">
                             <div className="flex justify-between items-center text-[10px] font-mono text-zinc-500 border-b border-purple-900/40 pb-1.5">
                               <span>{new Date(w.created_at).toLocaleDateString()}</span>
                               <span className="text-purple-400 font-bold">{w.hours} Hours Worked</span>
@@ -615,7 +684,7 @@ export default function Home() {
                         {ln.filter(l => l.email === au?.email).length === 0 ? (
                           <div className="text-center text-[11px] font-mono text-purple-500/30 py-4">NO LOGINS LOGGED</div>
                         ) : ln.filter(l => l.email === au?.email).map(l => (
-                          <div key={l.id} className="bg-purple-952/5 border border-purple-900/10 rounded-xl p-2.5 flex items-center justify-between gap-4 shadow-sm mb-1.5">
+                          <div key={l.id} className="bg-purple-955/5 border border-purple-900/10 rounded-xl p-2.5 flex items-center justify-between gap-4 shadow-sm mb-1.5">
                             <span className={`inline-flex items-center gap-1 text-[9px] font-bold px-2 py-0.5 rounded-md border ${l.action === "LOGIN" ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-400 border-amber-500/20"}`}>
                               {l.action === "LOGIN" ? <ArrowDownLeft className="w-2.5 h-3" /> : <ArrowUpRight className="w-2.5 h-3" />}
                               {l.action}
@@ -676,7 +745,7 @@ export default function Home() {
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Select Team Member</h3>
                   <div className="space-y-2 overflow-y-auto flex-1 pr-1">
                     {us.map(u => (
-                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 ${su === u.email ? "bg-purple-950/40 border-purple-500/60 text-white shadow-[0_8px_20px_rgba(124,58,237,0.15),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[4px] border-purple-600" : "bg-purple-950/5 border-purple-900/20 text-zinc-400 hover:border-purple-900/60 hover:text-zinc-200 border-b-[4px] border-purple-955"}`}>
+                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-2xl border text-left cursor-pointer transition-all duration-200 ${su === u.email ? "bg-purple-950/40 border-purple-500/60 text-white shadow-[0_8px_20px_rgba(124,58,237,0.15),inset_0_1px_2px_rgba(255,255,255,0.05)] border-b-[4px] border-purple-600" : "bg-purple-955/5 border-purple-900/20 text-zinc-400 hover:border-purple-900/60 hover:text-zinc-200 border-b-[4px] border-purple-955"}`}>
                         <p className="text-xs font-bold truncate">{u.email}</p>
                         <p className="text-[9px] font-mono text-purple-400/60 mt-1 uppercase font-bold tracking-widest">{u.role}</p>
                       </div>
@@ -713,7 +782,7 @@ export default function Home() {
                           {wl.filter(w => w.email === su).length === 0 ? (
                             <div className="text-center text-[11px] font-mono text-purple-500/30 py-4">NO WORK LOGS FILED</div>
                           ) : wl.filter(w => w.email === su).map(w => (
-                            <div key={w.id} className="bg-purple-950/5 border border-purple-900/10 rounded-xl p-3.5 mb-2 text-xs space-y-1.5 shadow-sm">
+                            <div key={w.id} className="bg-purple-955/5 border border-purple-900/10 rounded-xl p-3.5 mb-2 text-xs space-y-1.5 shadow-sm">
                               <div className="flex justify-between items-center text-[10px] font-mono text-zinc-500 border-b border-purple-900/40 pb-1.5">
                                 <span>{new Date(w.created_at).toLocaleDateString()}</span>
                                 <span className="text-purple-400 font-bold">{w.hours} Hours Worked</span>
