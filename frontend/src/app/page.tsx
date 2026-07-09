@@ -1,10 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Menu, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, ShieldAlert, Users } from "lucide-react";
+import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Menu, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, ShieldAlert, Users, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { sb } from "../lib/sb";
 
 const ClientsPanel = ({ clients }: { clients: any[] }) => (
-  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
+  <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
     <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
       <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Client Directories</h2>
     </div>
@@ -28,7 +28,7 @@ const ClientsPanel = ({ clients }: { clients: any[] }) => (
 );
 
 const FinanceLedger = ({ transactions }: { transactions: any[] }) => (
-  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
+  <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
     <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
       <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">Accounting Statements</h2>
     </div>
@@ -39,7 +39,7 @@ const FinanceLedger = ({ transactions }: { transactions: any[] }) => (
         </thead>
         <tbody className="divide-y divide-purple-900/10">
           {transactions.length === 0 ? <tr><td colSpan={5} className="py-4 text-center text-purple-500/40 font-mono">NO TRANSFERS AUDITED YET</td></tr> : transactions.map(f => (
-            <tr key={f.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+            <tr key={f.id} className="text-zinc-300 hover:bg-purple-955/5 transition-colors">
               <td className="py-3 font-semibold text-white">{f.client_name}</td>
               <td className="py-3"><span className={`px-2 py-0.5 text-[10px] rounded border font-mono font-bold ${f.type === "Invoice" ? "bg-purple-950 text-purple-300 border-purple-800/40" : f.type === "Expense" ? "bg-rose-950/40 text-rose-400 border-rose-900/30" : "bg-zinc-900 text-zinc-400 border-zinc-800"}`}>{f.type.toUpperCase()}</span></td>
               <td className="py-3 font-mono font-bold text-zinc-100">₹{f.amount.toLocaleString()}</td>
@@ -54,7 +54,7 @@ const FinanceLedger = ({ transactions }: { transactions: any[] }) => (
 );
 
 const AuditPanel = ({ logs }: { logs: any[] }) => (
-  <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
+  <div className="bg-purple-955/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm space-y-4">
     <div className="flex items-center justify-between pb-3 border-b border-purple-900/20">
       <h2 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider">System Audit Ledger</h2>
     </div>
@@ -65,7 +65,7 @@ const AuditPanel = ({ logs }: { logs: any[] }) => (
         </thead>
         <tbody className="divide-y divide-purple-900/10 font-mono text-[11px]">
           {logs.length === 0 ? <tr><td colSpan={5} className="py-4 text-center text-purple-500/40">NO SECURITY TELEMETRY ENTRIES INDEXED</td></tr> : logs.map(l => (
-            <tr key={l.id} className="text-zinc-300 hover:bg-purple-950/5 transition-colors">
+            <tr key={l.id} className="text-zinc-300 hover:bg-purple-955/5 transition-colors">
               <td className="py-3 text-zinc-500">{new Date(l.created_at).toLocaleString()}</td>
               <td className="py-3 text-purple-400 font-bold">{l.actor}</td>
               <td className="py-3">
@@ -499,7 +499,7 @@ export default function Home() {
               <label className="block text-[11px] font-bold text-zinc-400 tracking-wide mb-1.5">Password</label>
               <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-[#030207]/60 border border-purple-900/30 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/60 transition-colors shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]" placeholder="••••••••••••" />
             </div>
-            {er && <div className="text-xs text-purple-200 bg-purple-950/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
+            {er && <div className="text-xs text-purple-200 bg-purple-955/40 border border-purple-900/50 rounded-xl p-3 text-center shadow-inner font-medium">{er}</div>}
             <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-3.5 rounded-xl tracking-wide mt-3 border-b-[4px] border-purple-800 active:border-b-0 active:translate-y-[4px] shadow-xl shadow-purple-955/60 transition-all">
               ENTER SYSTEM
             </button>
@@ -659,7 +659,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-950/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
+                <div className="bg-purple-950/10 border border-purple-900/20 shadow-[0_12px_32px_rgba(0,0,0,0.4)] border-b-[5px] border-purple-955/60 rounded-2xl p-5 backdrop-blur-sm h-[560px] flex flex-col">
                   <h3 className="text-xs font-bold text-purple-400/70 uppercase tracking-wider pb-3 border-b border-purple-900/20 mb-4 flex-shrink-0">Activity Breakdown</h3>
                   {su ? (
                     <div className="flex-1 flex flex-col overflow-hidden">
