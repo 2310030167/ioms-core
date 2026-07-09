@@ -17,14 +17,14 @@ export default function AmbientCanvas() {
     res();
     window.addEventListener("resize", res);
     const pArr: Array<{ x: number; y: number; r: number; sX: number; sY: number; o: number }> = [];
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 45; i++) {
       pArr.push({
         x: Math.random() * cv.width,
         y: Math.random() * cv.height,
-        r: Math.random() * 2 + 1,
-        sX: (Math.random() - 0.5) * 0.4,
-        sY: (Math.random() - 0.5) * 0.4,
-        o: Math.random() * 0.5 + 0.2
+        r: Math.random() * 1.5 + 0.5,
+        sX: (Math.random() - 0.5) * 0.2,
+        sY: (Math.random() - 0.5) * 0.2,
+        o: Math.random() * 0.3 + 0.1
       });
     }
     const rndr = () => {
@@ -36,8 +36,8 @@ export default function AmbientCanvas() {
         if (p.y < 0 || p.y > cv.height) p.sY *= -1;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(168, 85, 247, ${p.o})`;
-        ctx.shadowBlur = 12;
+        ctx.fillStyle = `rgba(147, 51, 234, ${p.o})`;
+        ctx.shadowBlur = 8;
         ctx.shadowColor = "#a855f7";
         ctx.fill();
       });
@@ -51,5 +51,5 @@ export default function AmbientCanvas() {
     };
   }, []);
 
-  return <canvas ref={cvRef} className="absolute inset-0 pointer-events-none z-0 opacity-50" />;
+  return <canvas ref={cvRef} className="absolute inset-0 pointer-events-none z-0 opacity-40 selection:bg-transparent" />;
 }
