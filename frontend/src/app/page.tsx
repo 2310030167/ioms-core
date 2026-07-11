@@ -397,7 +397,7 @@ export default function Home() {
         <div className="absolute top-[-25%] left-[-15%] w-[700px] h-[700px] rounded-full bg-purple-500/[0.03] blur-[120px] pointer-events-none"></div>
         <div className="w-full max-w-[400px] bg-[#070510]/40 border border-purple-500/10 rounded-2xl p-8 backdrop-blur-md shadow-[0_24px_60px_rgba(0,0,0,0.8)] relative z-10">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-14 h-14 rounded-xl bg-purple-950/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-4 shadow-[0_8px_20px_rgba(147,51,234,0.15)]">
+            <div className="w-14 h-14 rounded-xl bg-purple-955/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mb-4 shadow-[0_8px_20px_rgba(147,51,234,0.15)]">
               <Activity className="w-6 h-6 stroke-[1.5]" />
             </div>
             <h2 className="text-2xl font-semibold text-zinc-100 tracking-tight text-center">IOMS Portal</h2>
@@ -608,8 +608,8 @@ export default function Home() {
               </div>
             )}
 
-            {tb === "clients" && (rl === "admin" || rl === "accounts") && <ClientsPanel clients={cl} />}
-            {tb === "finance" && (rl === "admin" || rl === "accounts") && <FinanceLedger transactions={fi} />}
+            {tb === "clients" && (rl === "admin" || rl === "accounts") && <ClientsPanel clients={cl} onAdd={() => setMd("client")} show={rl === "admin"} />}
+            {tb === "finance" && (rl === "admin" || rl === "accounts") && <FinanceLedger transactions={fi} onAdd={() => setMd("finance")} show={rl === "admin" || rl === "accounts"} />}
             {tb === "audit" && rl === "admin" && <AuditPanel logs={al} />}
 
             {tb === "reports" && rl === "admin" && (
@@ -864,7 +864,7 @@ export default function Home() {
               <form onSubmit={ac} className="p-6 space-y-4">
                 <div><label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Full Contact Name</label><input required type="text" value={cff.nm} onChange={e => setCff({...cff, nm: e.target.value})} className="w-full bg-[#020105] border border-zinc-900 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/30 shadow-inner" placeholder="e.g., Jane Doe" /></div>
                 <div><label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Corporate Entity / Business Brand</label><input type="text" value={cff.co} onChange={e => setCff({...cff, co: e.target.value})} className="w-full bg-[#020105] border border-zinc-900 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/30 shadow-inner" placeholder="e.g., Acme Corp (Optional)" /></div>
-                <div><label className="block text-[11px] font-semibold text-zinc-400 uppercase tracking-wider mb-2">Email Address</label><input required type="email" value={cff.em} onChange={e => setCff({...cff, em: e.target.value})} className="w-full bg-[#020105] border border-zinc-900 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/30 shadow-inner" placeholder="client@domain.com" /></div>
+                <div><label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Email Address</label><input required type="email" value={cff.em} onChange={e => setCff({...cff, em: e.target.value})} className="w-full bg-[#020105] border border-zinc-900 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/30 shadow-inner" placeholder="client@domain.com" /></div>
                 <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-semibold text-white text-xs py-3 rounded-xl transition-all mt-2">Initialize Client Record</button>
               </form>
             ) : md === "finance" ? (
