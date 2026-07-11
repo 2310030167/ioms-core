@@ -145,20 +145,36 @@ export default function Home() {
 
   const pn = async (v: string, d: any) => {
     try {
-      const tok = process.env.NEXT_PUBLIC_TELEGRAM_BOT_TOKEN;
-      const cid = process.env.NEXT_PUBLIC_TELEGRAM_CHAT_ID;
-      if (!tok || !cid) return;
-      let mD = "";
-      if (v === "operator_role_updated") {
-        mD = `• Target: ${d.operator}\n• New Role: ${d.role}`;
-      } else {
-        mD = `• ID: ${d.id || ""}\n• Name: ${d.name || d.title || ""}\n• Status: ${d.status || ""}\n• Assigned: ${d.assigned_to || "None"}`;
+      let nTy = "SYSTEM";
+      let ttl = "System Alert";
+      let dt = {};
+
+      if (v === "project_created") {
+        nTy = "TASK_ASSIGNED";
+        ttl = "Project Initialized";
+        dt = { task_name: d.name, assigned_by: au?.email, deadline: "Review Hub" };
+      } else if (v === "task_created") {
+        nTy = "TASK_ASSIGNED";
+        ttl = "Task Assigned";
+        dt = { task_name: d.title, assigned_by: au?.email, deadline: "Tomorrow 6 PM" };
+      } else if (v === "operator_role_updated") {
+        nTy = "SYSTEM";
+        ttl = "Security Vector Amendment";
+        dt = { task_name: `Role altered for ${d.operator} to ${d.role}`, assigned_by: "System Admin", deadline: "Immediate" };
       }
-      const txt = `📊 IOMS TELEMETRY\n🔹 Event: ${v}\n👤 Op: ${au?.email}\n📦 Context:\n${mD}`;
-      fetch(`https://api.telegram.org/bot${tok}/sendMessage`, {
+
+      const tg = us.find(x => x.email === (d.assigned_to || d.name || au?.email));
+
+      fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: cid, text: txt })
+        body: JSON.stringify({
+          phone: tg?.phone || "919347426516",
+          email: tg?.email || au?.email,
+          type: nTy,
+          ttl: ttl,
+          dt: dt
+        }),
       }).catch(() => {});
     } catch (e) {}
   };
@@ -882,7 +898,7 @@ export default function Home() {
               <form onSubmit={cu} className="p-6 space-y-4">
                 <div><label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Email Address</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-[#020105] border border-zinc-900 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/30 shadow-inner" placeholder="name@domain.com" /></div>
                 <div><label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Password</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-[#020105] border border-zinc-900 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/30 shadow-inner" placeholder="••••••••••••" /></div>
-                <div><label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-[#020105] border border-zinc-900 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/30 shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <div><label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Permission Level</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-[#020105] border border-zinc-100 rounded-xl px-4 py-3 text-sm text-zinc-100 focus:outline-none focus:border-purple-500/30 shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
                 <button type="submit" className="w-full bg-purple-600 hover:bg-purple-500 font-semibold text-white text-xs py-3 rounded-xl transition-all mt-2">Create Account</button>
               </form>
             )}
