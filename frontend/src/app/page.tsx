@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Menu, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, ShieldAlert, Users, ArrowDownLeft, ArrowUpRight, Clock, Copy, Calendar, MessageSquare, Layers } from "lucide-react";
 import { sb } from "../lib/sb";
+import AmbientCanvas from "../components/AmbientCanvas";
 import ClientsPanel from "../components/ClientsPanel";
 import FinanceLedger from "../components/FinanceLedger";
 import AuditPanel from "../components/AuditPanel";
@@ -409,24 +410,24 @@ export default function Home() {
 
   if (!au) {
     return (
-      <div className="min-h-screen w-screen bg-[#f8fafc] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden isolate text-slate-600">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.08),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(15,23,42,0.03),transparent_24%)] pointer-events-none"></div>
-        <div className="w-full max-w-[400px] bg-white border border-slate-200/80 rounded-2xl p-8 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] relative z-10">
+      <div className="min-h-screen w-screen bg-[#f4f6f9] flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden">
+        <div className="absolute top-[-25%] left-[-15%] w-[750px] h-[750px] rounded-full bg-indigo-500/[0.05] blur-[130px] pointer-events-none"></div>
+        <div className="w-full max-w-[400px] bg-white border border-slate-200 rounded-2xl p-8 shadow-[0_20px_50px_rgba(15,23,42,0.08)] relative z-10">
           <div className="flex flex-col items-center mb-7">
             <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mb-4 shadow-sm">
               <Layers className="w-5 h-5 stroke-[1.5]" />
             </div>
-            <h2 className="text-xl font-bold text-slate-900 tracking-tight text-center">Clerias Platform</h2>
+            <h2 className="text-xl font-bold text-slate-800 tracking-tight text-center">Clerias Platform</h2>
             <p className="text-[10px] text-slate-400 tracking-[0.2em] mt-1.5 uppercase font-mono font-bold">Secure Environment Gate</p>
           </div>
           <form onSubmit={li} className="space-y-4">
             <div>
               <label className="block text-[10px] font-bold text-slate-500 tracking-wider uppercase mb-1.5 font-mono">Operator ID</label>
-              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-150 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="name@company.com" />
+              <input required type="email" value={fm.email} onChange={e => setFm({...fm, email: e.target.value})} className="w-full bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all duration-150" placeholder="name@company.com" />
             </div>
             <div>
               <label className="block text-[10px] font-bold text-slate-500 tracking-wider uppercase mb-1.5 font-mono">Passkey String</label>
-              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-150 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="••••••••••••" />
+              <input required type="password" value={fm.password} onChange={e => setFm({...fm, password: e.target.value})} className="w-full bg-slate-50 border border-slate-200/80 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all duration-150" placeholder="••••••••••••" />
             </div>
             {er && <div className="text-xs text-rose-600 bg-rose-50 border border-rose-100 rounded-xl px-3 py-2.5 text-center font-medium font-mono">{er}</div>}
             <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold py-3.5 rounded-xl tracking-widest uppercase transition-all duration-150 mt-1 shadow-sm shadow-indigo-600/20">
@@ -439,19 +440,19 @@ export default function Home() {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-[#f8fafc] text-slate-600 font-sans selection:bg-indigo-500/10 overflow-hidden relative isolate">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.06),transparent_32%),radial-gradient(circle_at_bottom_right,rgba(15,23,42,0.03),transparent_26%)]"></div>
+    <div className="flex h-screen w-screen bg-[#f8fafc] text-slate-600 font-sans selection:bg-indigo-500/10 overflow-hidden relative">
+      <AmbientCanvas />
       
       {ts && (
-        <div className="fixed top-6 right-6 z-50 max-w-sm w-[calc(100vw-3rem)] bg-white border border-slate-200/80 rounded-xl p-4 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_12px_24px_-10px_rgba(15,23,42,0.16)] flex items-start gap-3 border-t-4 border-t-indigo-500">
+        <div className="fixed top-6 right-6 z-50 max-w-sm w-[calc(100vw-3rem)] bg-white border border-slate-200 rounded-xl p-4 shadow-[0_20px_50px_rgba(15,23,42,0.12)] flex items-start gap-3 border-t-4 border-t-indigo-500">
           {ts.type === "ok" ? <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" /> : <AlertTriangle className="w-4 h-4 text-rose-500 flex-shrink-0 mt-0.5" />}
           <div className="flex-1"><p className="text-xs font-semibold text-slate-700">{ts.msg}</p></div>
         </div>
       )}
       
-      <div className={`fixed inset-0 bg-slate-950/10 backdrop-blur-sm z-30 transition-opacity duration-300 lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
+      <div className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-30 transition-opacity duration-300 lg:hidden ${mo ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} onClick={() => setMo(false)}></div>
       
-      <aside className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200 flex flex-col justify-between z-40 transition-transform duration-300 ease-out lg:static lg:translate-x-0 shadow-[0_1px_3px_0_rgba(0,0,0,0.03)] ${mo ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-slate-200/80 flex flex-col justify-between z-40 transition-transform duration-300 ease-out lg:static lg:translate-x-0 shadow-sm ${mo ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-5 overflow-y-auto flex-1 space-y-6">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2.5">
@@ -463,20 +464,20 @@ export default function Home() {
             <button onClick={() => setMo(false)} className="lg:hidden p-1 text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
           </div>
           
-          <div className="p-3.5 bg-white border border-slate-200/80 rounded-xl shadow-[0_1px_2px_rgba(15,23,42,0.02)]">
+          <div className="p-3.5 bg-slate-50 border border-slate-200/60 rounded-xl">
             <div className="flex items-center gap-2.5 mb-2.5">
               <div className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 flex-shrink-0 shadow-sm"><User className="w-3.5 h-3.5" /></div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-bold text-slate-900 truncate">{au?.email}</p>
+                <p className="text-[10px] font-bold text-slate-800 truncate">{au?.email}</p>
                 <p className="text-[8px] font-mono text-indigo-600 font-bold uppercase tracking-widest mt-0.5">{rl}</p>
               </div>
             </div>
-            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[9px] font-bold tracking-wider text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-800 transition-all uppercase shadow-[0_1px_2px_rgba(15,23,42,0.03)]"><LogOut className="w-3 h-3 text-slate-400" /> Disconnect</button>
+            <button onClick={lo} className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-[9px] font-bold tracking-wider text-slate-500 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-700 transition-all uppercase shadow-2xs"><LogOut className="w-3 h-3 text-slate-400" /> Disconnect</button>
           </div>
           
           <nav className="space-y-0.5">
             {lk.map(l => (
-              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 border ${tb === l.id ? "bg-indigo-50 border-indigo-100 text-indigo-600 shadow-[0_1px_2px_rgba(99,102,241,0.06)]" : "text-slate-500 border-transparent hover:bg-slate-50 hover:text-slate-900"}`}>
+              <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 border ${tb === l.id ? "bg-indigo-50/80 border-indigo-100 text-indigo-600 shadow-3xs" : "text-slate-500 border-transparent hover:bg-slate-50 hover:text-slate-800"}`}>
                 <l.icon className={`w-4 h-4 ${tb === l.id ? "text-indigo-600" : "text-slate-400"}`} />{l.label}
               </button>
             ))}
@@ -485,226 +486,217 @@ export default function Home() {
       </aside>
       
       <main className="flex-1 flex flex-col bg-transparent overflow-hidden relative z-10">
-        <header className="h-16 border-b border-slate-200/80 flex items-center justify-between px-6 flex-shrink-0 bg-white/80 backdrop-blur-xl">
+        <header className="h-16 border-b border-slate-200/80 flex items-center justify-between px-6 flex-shrink-0 bg-white/60 backdrop-blur-md">
           <div className="flex items-center gap-4">
             <button onClick={() => setMo(true)} className="p-2 text-slate-500 hover:text-slate-700 lg:hidden rounded-xl bg-white border border-slate-200"><Menu className="w-4 h-4" /></button>
-            <h1 className="text-[11px] font-bold tracking-[0.25em] uppercase text-slate-900 font-mono">
+            <h1 className="text-[11px] font-bold tracking-[0.25em] uppercase text-slate-800 font-mono">
               {tb === "team" ? "Access Control" : tb === "reports" ? "Analytics Terminal" : tb === "clients" ? "Client Registry" : tb === "finance" ? "Accounting Ledger" : tb === "audit" ? "Security Log" : tb} Hub
             </h1>
           </div>
-          <div className="flex items-center gap-2 bg-white border border-slate-200/80 px-3 py-1.5 rounded-full shadow-[0_1px_2px_rgba(15,23,42,0.03)]"><span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_6px_#6366f1]"></span><span className="text-[9px] font-mono text-slate-500 tracking-widest font-bold uppercase">System_Active</span></div>
+          <div className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-2xs"><span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_6px_#6366f1]"></span><span className="text-[9px] font-mono text-slate-500 tracking-widest font-bold uppercase">System_Active</span></div>
         </header>
         
-        <section className="flex-1 overflow-y-auto p-6 lg:p-7">
+        <section className="flex-1 overflow-y-auto p-6 lg:p-8">
           <div className="max-w-6xl mx-auto space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[{ t: "Active Pipelines", v: ld ? "..." : st.pipeline }, { t: "Assigned Operations", v: ld ? "..." : st.tasks }, { t: "Authorization Tier", v: ld ? "..." : rl.toUpperCase() }].map((c, i) => (
-                <div key={i} className="bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] p-5 rounded-xl relative group overflow-hidden">
-                  <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">{c.t}</h3>
-                  <p className="text-xl font-bold text-slate-900 mt-1.5 tracking-tight">{c.v}</p>
-                </div>
-              ))}
-            </div>
             
             {tb === "dash" && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-                <div className="space-y-6 lg:col-span-2">
-                  <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] p-5 rounded-xl overflow-x-auto">
-                    <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-slate-100 min-w-[500px]"><h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Pipeline Distribution Overview</h3><div className="text-slate-400 font-mono text-[9px] tracking-wider uppercase">Metrics Node</div></div>
-                    <div className="grid grid-cols-7 gap-3 min-w-[500px]">
-                      {Object.entries(tM).map(([stVal, count]) => {
-                        const maxTasks = Math.max(...Object.values(tM), 1);
-                        const pct = Math.min((count / maxTasks) * 100, 100);
-                        return (
-                          <div key={stVal} className="bg-white border border-slate-200/80 px-1 py-4.5 rounded-xl text-center flex flex-col justify-between items-center group shadow-[0_1px_2px_rgba(15,23,42,0.02)]">
-                            <span className="text-[9px] font-bold tracking-wider text-slate-400 group-hover:text-slate-600 uppercase truncate w-full font-mono">{stVal.replace("_", " ")}</span>
-                            <div className="w-2.5 bg-slate-100/80 h-28 my-3.5 rounded-full relative flex items-end justify-center border border-slate-200/60 shadow-inner">
-                              <div style={{ height: `${Math.max(pct, count > 0 ? 10 : 0)}%` }} className="w-full bg-indigo-600 rounded-full transition-all duration-500 ease-out shadow-xs"></div>
-                            </div>
-                            <span className="text-xs font-mono font-bold text-slate-700 block">{count}</span>
-                          </div>
-                        );
-                      })}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {[{ t: "Active Pipelines", v: ld ? "..." : st.pipeline }, { t: "Assigned Operations", v: ld ? "..." : st.tasks }, { t: "Authorization Tier", v: ld ? "..." : rl.toUpperCase() }].map((c, i) => (
+                    <div key={i} className="bg-white border border-slate-200/70 shadow-2xs p-5 rounded-xl relative group overflow-hidden">
+                      <h3 className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">{c.t}</h3>
+                      <p className="text-xl font-bold text-slate-800 mt-1.5 tracking-tight">{c.v}</p>
                     </div>
-                  </div>
-
-                  <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] p-5 rounded-xl">
-                    <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4"><h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Recent Activity Feed</h3><span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider">Historical Stream</span></div>
-                    <div className="space-y-3 max-h-[260px] overflow-y-auto pr-1">
-                      {ln.length === 0 ? (
-                        <div className="text-center text-[10px] font-mono text-slate-400 py-10 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/40">No Activity Stream Registered</div>
-                      ) : ln.slice(0, 5).map(l => (
-                        <div key={l.id} className="bg-white border border-slate-200/80 rounded-xl p-3.5 flex items-center justify-between gap-4 shadow-[0_1px_2px_rgba(15,23,42,0.02)] transition-all hover:border-slate-300 hover:shadow-[0_4px_10px_-6px_rgba(15,23,42,0.18)]">
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 flex-shrink-0"><MessageSquare className="w-3.5 h-3.5 text-slate-400" /></div>
-                            <div className="min-w-0">
-                              <p className="text-xs font-semibold text-slate-900 truncate">{l.email}</p>
-                              <p className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mt-0.5">Dispatched access instruction event action token bundle</p>
-                            </div>
-                          </div>
-                          <div className="text-right flex-shrink-0">
-                            <span className={`inline-block text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded border mb-1 font-mono ${l.action === "LOGIN" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-amber-50 text-amber-600 border-amber-200"}`}>{l.action}</span>
-                            <p className="text-[9px] font-mono text-slate-400">{new Date(l.logged_at).toLocaleTimeString()}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                  ))}
                 </div>
 
-                <div className="space-y-6">
-                  <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] rounded-xl p-5 flex flex-col h-[235px]">
-                    <div className="pb-3 border-b border-slate-100 mb-3 flex items-center justify-between"><h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Upcoming Deadlines</h3><Calendar className="w-3.5 h-3.5 text-slate-400" /></div>
-                    <div className="space-y-2 flex-1 overflow-y-auto pr-0.5">
-                      {tk.filter(t => t.status !== "Completed").length === 0 ? (
-                        <div className="text-center text-[10px] font-mono text-slate-400 py-10 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/40">No Pending Node Targets</div>
-                      ) : tk.filter(t => t.status !== "Completed").slice(0, 3).map(t => (
-                        <div key={t.id} className="bg-white border border-slate-200/80 p-3 rounded-xl flex flex-col justify-between gap-2.5 shadow-[0_1px_2px_rgba(15,23,42,0.02)]">
-                          <div className="flex items-start justify-between gap-2">
-                            <span className="text-xs text-slate-900 font-semibold tracking-wide truncate flex-1">{t.title}</span>
-                            <span className="text-[9px] font-mono text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex-shrink-0 font-bold tracking-widest">{t.status.replace("_", " ")}</span>
-                          </div>
-                          <div className="flex items-center justify-between border-t border-slate-200/60 pt-2 text-[9px] font-mono text-slate-400">
-                            <span className="truncate max-w-[120px]">{t.assigned_to || "Unallocated"}</span>
-                            <span className="text-indigo-600 font-bold uppercase tracking-wider">Tomorrow 6 PM</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] rounded-xl p-5 flex flex-col h-[235px]">
-                    <div className="pb-3 border-b border-slate-100 mb-3"><h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Structural Blueprints</h3></div>
-                    <div className="space-y-2 flex-1 overflow-y-auto pr-0.5">
-                      {bp.length === 0 ? <div className="text-center text-[10px] font-mono text-slate-400 py-10 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/40">No Blueprint Nodes</div> : bp.map(b => (
-                        <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-white border border-slate-200/80 p-3 rounded-xl flex items-center justify-between gap-3 group shadow-[0_1px_2px_rgba(15,23,42,0.02)] ${rl !== "viewer" ? "cursor-pointer hover:bg-slate-50 hover:border-slate-300" : ""}`}>
-                          <span className="text-xs text-slate-900 truncate font-semibold tracking-wide">{b.name}</span>
-                          {(rl === "admin" || rl === "operator") && <button onClick={(e) => dbp(b.id, e)} className="text-slate-400 hover:text-rose-500 p-0.5 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {rl !== "admin" && (
-                  <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] rounded-xl p-5 lg:col-span-3 h-[420px] flex flex-col">
-                    <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest pb-3 border-b border-slate-100 mb-4 flex-shrink-0 font-mono">Operational Context Summary Matrix</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 flex-shrink-0">
-                      <div className="bg-white border border-slate-200/80 p-4 rounded-xl shadow-[0_1px_2px_rgba(15,23,42,0.02)]">
-                        <p className="text-[9px] uppercase font-bold text-slate-400 tracking-widest font-mono">Operator Identity Node</p>
-                        <p className="text-xs font-bold text-slate-900 truncate mt-1">{au?.email}</p>
-                      </div>
-                      <div className="bg-white border border-slate-200/80 p-4 rounded-xl shadow-[0_1px_2px_rgba(15,23,42,0.02)] grid grid-cols-2 gap-2 text-center">
-                        <div>
-                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Allocated</p>
-                          <p className="text-base font-bold text-indigo-600 mt-0.5">{tk.filter(t => t.assigned_to === au?.email).length}</p>
-                        </div>
-                        <div>
-                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Resolved</p>
-                          <p className="text-base font-bold text-emerald-600 mt-0.5">{tk.filter(t => t.assigned_to === au?.email && t.status === "Completed").length}</p>
-                        </div>
-                      </div>
-                      <div className="bg-white border border-slate-200/80 p-4 rounded-xl shadow-[0_1px_2px_rgba(15,23,42,0.02)] text-center">
-                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Committed Hours Quantum</p>
-                        <p className="text-base font-bold text-fuchsia-600 mt-0.5">{wl.filter(w => w.email === au?.email).reduce((acc, c) => acc + (c.hours || 0), 0)} Hours</p>
-                      </div>
-                    </div>
-                    <div className="flex-1 overflow-y-auto space-y-4 pr-1">
-                      <div>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 font-mono">Committed Daily Log Traces</p>
-                        {wl.filter(w => w.email === au?.email).length === 0 ? (
-                          <div className="text-center text-[10px] font-mono text-slate-400 py-5 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/40">No Log Records Filed</div>
-                        ) : wl.filter(w => w.email === au?.email).map(w => (
-                          <div key={w.id} className="bg-white border border-slate-200/80 rounded-xl p-4 mb-2.5 text-xs space-y-2 shadow-[0_1px_2px_rgba(15,23,42,0.02)]">
-                            <div className="flex justify-between items-center text-[9px] font-mono text-slate-400 border-b border-slate-100 pb-2">
-                              <span>{new Date(w.created_at).toLocaleDateString()}</span>
-                              <span className="text-indigo-600 font-bold uppercase tracking-wider">{w.hours} Hours Worked</span>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+                  <div className="space-y-6 lg:col-span-2">
+                    <div className="bg-white border border-slate-200/70 shadow-2xs p-5 rounded-xl overflow-x-auto">
+                      <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-slate-100 min-w-[500px]"><h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Pipeline Distribution Overview</h3><div className="text-slate-400 font-mono text-[9px] tracking-wider uppercase">Metrics Node</div></div>
+                      <div className="grid grid-cols-7 gap-3 min-w-[500px]">
+                        {Object.entries(tM).map(([stVal, count]) => {
+                          const maxTasks = Math.max(...Object.values(tM), 1);
+                          const pct = Math.min((count / maxTasks) * 100, 100);
+                          return (
+                            <div key={stVal} className="bg-slate-50 border border-slate-200/40 px-1 py-4.5 rounded-xl text-center flex flex-col justify-between items-center group">
+                              <span className="text-[9px] font-bold tracking-wider text-slate-400 group-hover:text-slate-600 uppercase truncate w-full font-mono">{stVal.replace("_", " ")}</span>
+                              <div className="w-2.5 bg-slate-200/60 h-28 my-3.5 rounded-full relative flex items-end justify-center border border-slate-200/40 shadow-inner">
+                                <div style={{ height: `${Math.max(pct, count > 0 ? 10 : 0)}%` }} className="w-full bg-indigo-600 rounded-full transition-all duration-500 ease-out shadow-xs"></div>
+                              </div>
+                              <span className="text-xs font-mono font-bold text-slate-700 block">{count}</span>
                             </div>
-                            <p className="text-slate-600"><strong className="text-slate-400 font-mono text-[9px] uppercase tracking-wider mr-1">Executed:</strong> {w.completed}</p>
-                            <p className="text-slate-600"><strong className="text-slate-400 font-mono text-[9px] uppercase tracking-wider mr-1">Blockers:</strong> {w.blockers}</p>
-                            <p className="text-slate-600"><strong className="text-slate-400 font-mono text-[9px] uppercase tracking-wider mr-1">Target:</strong> {w.plan}</p>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="bg-white border border-slate-200/70 shadow-2xs p-5 rounded-xl">
+                      <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4"><h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Recent Activity Feed</h3><span className="text-[9px] font-mono text-slate-400 uppercase tracking-wider">Historical Stream</span></div>
+                      <div className="space-y-3 max-h-[260px] overflow-y-auto pr-1">
+                        {ln.length === 0 ? (
+                          <div className="text-center text-[10px] font-mono text-slate-400 py-10 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/50">No Activity Stream Registered</div>
+                        ) : ln.slice(0, 5).map(l => (
+                          <div key={l.id} className="bg-white border border-slate-200/60 rounded-xl p-3.5 flex items-center justify-between gap-4 shadow-3xs transition-all hover:border-slate-300 hover:shadow-2xs">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 flex-shrink-0"><MessageSquare className="w-3.5 h-3.5 text-slate-400" /></div>
+                              <div className="min-w-0">
+                                <p className="text-xs font-semibold text-slate-700 truncate">{l.email}</p>
+                                <p className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mt-0.5">Dispatched access instruction event action token bundle</p>
+                              </div>
+                            </div>
+                            <div className="text-right flex-shrink-0">
+                              <span className={`inline-block text-[8px] font-bold tracking-widest px-1.5 py-0.5 rounded border mb-1 font-mono ${l.action === "LOGIN" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-amber-50 text-amber-600 border-amber-200"}`}>{l.action}</span>
+                              <p className="text-[9px] font-mono text-slate-400">{new Date(l.logged_at).toLocaleTimeString()}</p>
+                            </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
-                )}
 
-                {rl === "operator" && (
-                  <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] rounded-xl p-5 lg:col-span-3">
-                    <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100">
-                      <ClipboardCheck className="w-3.5 h-3.5 text-indigo-600" />
-                      <h2 className="text-xs font-semibold text-slate-800 uppercase tracking-widest font-mono">Mandatory Daily Log Form Node</h2>
-                    </div>
-                    <form onSubmit={sl} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-3.5">
-                        <div>
-                          <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Operational Metrics Completed</label>
-                          <textarea required rows={2} value={lf.cp} onChange={e => setLf({...lf, cp: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="Detail operational tasks resolved..." />
-                        </div>
-                        <div>
-                          <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">System Blockers / Dependencies</label>
-                          <textarea value={lf.bl} onChange={e => setLf({...lf, bl: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="Specify system bounds (or None)..." />
-                        </div>
-                      </div>
-                      <div className="space-y-3.5 flex flex-col justify-between">
-                        <div>
-                          <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Next Framework Iteration Vector</label>
-                          <textarea required rows={2} value={lf.pl} onChange={e => setLf({...lf, pl: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all resize-none shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="Outline target framework milestones..." />
-                        </div>
-                        <div className="flex gap-4 items-end">
-                          <div className="flex-1">
-                            <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Hours Quantum</label>
-                            <input required type="number" step="0.5" min="0.5" max="24" value={lf.hr} onChange={e => setLf({...lf, hr: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="8.0" />
+                  <div className="space-y-6">
+                    <div className="bg-white border border-slate-200/70 shadow-2xs rounded-xl p-5 flex flex-col h-[235px]">
+                      <div className="pb-3 border-b border-slate-100 mb-3 flex items-center justify-between"><h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Upcoming Deadlines</h3><Calendar className="w-3.5 h-3.5 text-slate-400" /></div>
+                      <div className="space-y-2 flex-1 overflow-y-auto pr-0.5">
+                        {tk.filter(t => t.status !== "Completed").length === 0 ? (
+                          <div className="text-center text-[10px] font-mono text-slate-400 py-10 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/50">No Pending Node Targets</div>
+                        ) : tk.filter(t => t.status !== "Completed").slice(0, 3).map(t => (
+                          <div key={t.id} className="bg-slate-50 border border-slate-200/60 p-3 rounded-xl flex flex-col justify-between gap-2.5 shadow-3xs">
+                            <div className="flex items-start justify-between gap-2">
+                              <span className="text-xs text-slate-700 font-semibold tracking-wide truncate flex-1">{t.title}</span>
+                              <span className="text-[9px] font-mono text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 flex-shrink-0 font-bold tracking-widest">{t.status.replace("_", " ")}</span>
+                            </div>
+                            <div className="flex items-center justify-between border-t border-slate-200/60 pt-2 text-[9px] font-mono text-slate-400">
+                              <span className="truncate max-w-[120px]">{t.assigned_to || "Unallocated"}</span>
+                              <span className="text-indigo-600 font-bold uppercase tracking-wider">Tomorrow 6 PM</span>
+                            </div>
                           </div>
-                          <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase px-6 py-3 rounded-xl shadow-sm transition-all h-[40px]">
-                            Commit Metrics Node
-                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="bg-white border border-slate-200/70 shadow-2xs rounded-xl p-5 flex flex-col h-[235px]">
+                      <div className="pb-3 border-b border-slate-100 mb-3"><h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Structural Blueprints</h3></div>
+                      <div className="space-y-2 flex-1 overflow-y-auto pr-0.5">
+                        {bp.length === 0 ? <div className="text-center text-[10px] font-mono text-slate-400 py-10 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/50">No Blueprint Nodes</div> : bp.map(b => (
+                          <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`bg-slate-50 border border-slate-200 p-3 rounded-xl flex items-center justify-between gap-3 group shadow-3xs ${rl !== "viewer" ? "cursor-pointer hover:bg-slate-100 hover:border-slate-300" : ""}`}>
+                            <span className="text-xs text-slate-700 truncate font-semibold tracking-wide">{b.name}</span>
+                            {(rl === "admin" || rl === "operator") && <button onClick={(e) => dbp(b.id, e)} className="text-slate-400 hover:text-rose-500 p-0.5 transition-colors"><Trash2 className="w-3.5 h-3.5" /></button>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {rl !== "admin" && (
+                    <div className="bg-white border border-slate-200/70 shadow-2xs rounded-xl p-5 backdrop-blur-xl lg:col-span-3 h-[420px] flex flex-col">
+                      <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest pb-3 border-b border-slate-100 mb-4 flex-shrink-0 font-mono">Operational Context Summary Matrix</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 flex-shrink-0">
+                        <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-xl shadow-3xs">
+                          <p className="text-[9px] uppercase font-bold text-slate-400 tracking-widest font-mono">Operator Identity Node</p>
+                          <p className="text-xs font-bold text-slate-700 truncate mt-1">{au?.email}</p>
+                        </div>
+                        <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-xl shadow-3xs grid grid-cols-2 gap-2 text-center">
+                          <div>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Allocated</p>
+                            <p className="text-base font-bold text-indigo-600 mt-0.5">{tk.filter(t => t.assigned_to === au?.email).length}</p>
+                          </div>
+                          <div>
+                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Resolved</p>
+                            <p className="text-base font-bold text-emerald-600 mt-0.5">{tk.filter(t => t.assigned_to === au?.email && t.status === "Completed").length}</p>
+                          </div>
+                        </div>
+                        <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-xl shadow-3xs text-center">
+                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Committed Hours Quantum</p>
+                          <p className="text-base font-bold text-fuchsia-600 mt-0.5">{wl.filter(w => w.email === au?.email).reduce((acc, c) => acc + (c.hours || 0), 0)} Hours</p>
                         </div>
                       </div>
-                    </form>
-                  </div>
-                )}
+                      <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+                        <div>
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 font-mono">Committed Daily Log Traces</p>
+                          {wl.filter(w => w.email === au?.email).length === 0 ? (
+                            <div className="text-center text-[10px] font-mono text-slate-400 py-5 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/50">No Log Records Filed</div>
+                          ) : wl.filter(w => w.email === au?.email).map(w => (
+                            <div key={w.id} className="bg-white border border-slate-200 rounded-xl p-4 mb-2.5 text-xs space-y-2 shadow-3xs">
+                              <div className="flex justify-between items-center text-[9px] font-mono text-slate-400 border-b border-slate-100 pb-2">
+                                <span>{new Date(w.created_at).toLocaleDateString()}</span>
+                                <span className="text-indigo-600 font-bold uppercase tracking-wider">{w.hours} Hours Worked</span>
+                              </div>
+                              <p className="text-slate-600"><strong className="text-slate-400 font-mono text-[9px] uppercase tracking-wider mr-1">Executed:</strong> {w.completed}</p>
+                              <p className="text-slate-600"><strong className="text-slate-400 font-mono text-[9px] uppercase tracking-wider mr-1">Blockers:</strong> {w.blockers}</p>
+                              <p className="text-slate-600"><strong className="text-slate-400 font-mono text-[9px] uppercase tracking-wider mr-1">Target:</strong> {w.plan}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {rl === "operator" && (
+                    <div className="bg-white border border-slate-200/70 shadow-2xs rounded-xl p-5 lg:col-span-3">
+                      <div className="flex items-center gap-2 pb-3 mb-4 border-b border-slate-100">
+                        <ClipboardCheck className="w-3.5 h-3.5 text-indigo-600" />
+                        <h2 className="text-xs font-semibold text-slate-800 uppercase tracking-widest font-mono">Mandatory Daily Log Form Node</h2>
+                      </div>
+                      <form onSubmit={sl} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-3.5">
+                          <div>
+                            <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Operational Metrics Completed</label>
+                            <textarea required rows={2} value={lf.cp} onChange={e => setLf({...lf, cp: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all resize-none shadow-3xs" placeholder="Detail operational tasks resolved..." />
+                          </div>
+                          <div>
+                            <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">System Blockers / Dependencies</label>
+                            <textarea value={lf.bl} onChange={e => setLf({...lf, blockers: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all resize-none shadow-3xs" placeholder="Specify system bounds (or None)..." />
+                          </div>
+                        </div>
+                        <div className="space-y-3.5 flex flex-col justify-between">
+                          <div>
+                            <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Next Framework Iteration Vector</label>
+                            <textarea required rows={2} value={lf.pl} onChange={e => setLf({...lf, pl: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all resize-none shadow-3xs" placeholder="Outline target framework milestones..." />
+                          </div>
+                          <div className="flex gap-4 items-end">
+                            <div className="flex-1">
+                              <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">Hours Quantum</label>
+                              <input required type="number" step="0.5" min="0.5" max="24" value={lf.hr} onChange={e => setLf({...lf, hr: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all shadow-3xs" placeholder="8.0" />
+                            </div>
+                            <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase px-6 py-3 rounded-xl shadow-sm transition-all h-[40px]">
+                              Commit Metrics Node
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
-            {tb === "clients" && (rl === "admin" || rl === "accounts") && (
-              <div className="rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] overflow-hidden">
-                <ClientsPanel clients={cl} onAdd={() => setMd("client")} show={rl === "admin"} />
-              </div>
-            )}
-            {tb === "finance" && (rl === "admin" || rl === "accounts") && (
-              <div className="rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] overflow-hidden">
-                <FinanceLedger transactions={fi} onAdd={() => setMd("finance")} show={rl === "admin" || rl === "accounts"} />
-              </div>
-            )}
-            {tb === "audit" && rl === "admin" && (
-              <div className="rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] overflow-hidden">
-                <AuditPanel logs={al} />
-              </div>
-            )}
+            {tb === "clients" && (rl === "admin" || rl === "accounts") && <ClientsPanel clients={cl} onAdd={() => setMd("client")} show={rl === "admin"} />}
+            {tb === "finance" && (rl === "admin" || rl === "accounts") && <FinanceLedger transactions={fi} onAdd={() => setMd("finance")} show={rl === "admin" || rl === "accounts"} />}
+            {tb === "audit" && rl === "admin" && <AuditPanel logs={al} />}
 
             {tb === "reports" && rl === "admin" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] rounded-xl p-5 h-[560px] flex flex-col">
+                <div className="bg-white border border-slate-200/70 shadow-2xs rounded-xl p-5 h-[560px] flex flex-col">
                   <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest pb-3 border-b border-slate-100 mb-4 flex-shrink-0 font-mono">Personnel Node Registry</h3>
                   <div className="space-y-2 overflow-y-auto flex-1 pr-1">
                     {us.map(u => (
-                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${su === u.email ? "bg-indigo-50 border-indigo-200 text-indigo-700 shadow-[0_1px_2px_rgba(99,102,241,0.06)]" : "bg-white border-slate-200/80 text-slate-600 hover:bg-slate-50 hover:text-slate-900"}`}>
-                        <p className="text-xs font-semibold truncate text-slate-900">{u.email}</p>
+                      <div key={u.id} onClick={() => setSu(u.email)} className={`p-4 rounded-xl border text-left cursor-pointer transition-all ${su === u.email ? "bg-indigo-50 border-indigo-200 text-indigo-700 shadow-3xs" : "bg-slate-50 border-slate-200/60 text-slate-600 hover:bg-slate-100/70 hover:text-slate-800"}`}>
+                        <p className="text-xs font-semibold truncate">{u.email}</p>
                         <p className="text-[9px] font-mono text-indigo-600 mt-1 uppercase font-bold tracking-widest">{u.role}</p>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_4px_12px_-2px_rgba(15,23,42,0.03)] rounded-xl p-5 h-[560px] flex flex-col">
+                <div className="bg-white border border-slate-200/70 shadow-2xs rounded-xl p-5 h-[560px] flex flex-col">
                   <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest pb-3 border-b border-slate-100 mb-4 flex-shrink-0 font-mono">Operational Metrics Output</h3>
                   {su ? (
                     <div className="flex-1 flex flex-col overflow-hidden">
-                      <div className="bg-white border border-slate-200/80 p-5 rounded-xl mb-4 flex-shrink-0 shadow-[0_1px_2px_rgba(15,23,42,0.02)]">
+                      <div className="bg-slate-50 border border-slate-200/60 p-5 rounded-xl mb-4 flex-shrink-0 shadow-3xs">
                         <p className="text-[9px] uppercase font-bold text-slate-400 tracking-widest font-mono">Isolated Node Stream</p>
-                        <p className="text-xs font-bold text-slate-900 truncate mt-1 tracking-wide">{su}</p>
+                        <p className="text-xs font-bold text-slate-700 truncate mt-1 tracking-wide">{su}</p>
                         <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-200 text-center">
                           <div>
                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Operations</p>
@@ -725,9 +717,9 @@ export default function Home() {
                         <div>
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 font-mono">Committed Work Logs</p>
                           {wl.filter(w => w.email === su).length === 0 ? (
-                            <div className="text-center text-[10px] font-mono text-slate-400 py-5 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/40">No Metrics Logged</div>
+                            <div className="text-center text-[10px] font-mono text-slate-400 py-5 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/50">No Metrics Logged</div>
                           ) : wl.filter(w => w.email === su).map(w => (
-                            <div key={w.id} className="bg-white border border-slate-200/80 rounded-xl p-4 mb-2.5 text-xs space-y-2 shadow-[0_1px_2px_rgba(15,23,42,0.02)]">
+                            <div key={w.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-2.5 text-xs space-y-2 shadow-3xs">
                               <div className="flex justify-between items-center text-[9px] font-mono text-slate-400 border-b border-slate-100 pb-2">
                                 <span>{new Date(w.created_at).toLocaleDateString()}</span>
                                 <span className="text-indigo-600 font-bold uppercase tracking-wider">{w.hours} Hours Logged</span>
@@ -742,9 +734,9 @@ export default function Home() {
                         <div>
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2.5 font-mono">Telemetry Traces</p>
                           {ln.filter(l => l.email === su).length === 0 ? (
-                            <div className="text-center text-[10px] font-mono text-slate-400 py-5 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/40">No Traces Registered</div>
+                            <div className="text-center text-[10px] font-mono text-slate-400 py-5 border border-dashed border-slate-200 rounded-xl uppercase tracking-wider bg-slate-50/50">No Traces Registered</div>
                           ) : ln.filter(l => l.email === su).map(l => (
-                            <div key={l.id} className="bg-white border border-slate-200/80 rounded-xl p-3 flex items-center justify-between gap-4 shadow-[0_1px_2px_rgba(15,23,42,0.02)] mb-2">
+                            <div key={l.id} className="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between gap-4 shadow-3xs mb-2">
                               <span className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-widest px-2 py-0.5 rounded border ${l.action === "LOGIN" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-amber-50 text-amber-600 border-amber-200"}`}>
                                 {l.action === "LOGIN" ? <ArrowDownLeft className="w-2.5 h-2.5" /> : <ArrowUpRight className="w-2.5 h-2.5" />}
                                 {l.action}
@@ -756,7 +748,7 @@ export default function Home() {
                       </div>
                     </div>
                   ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-200 rounded-xl bg-slate-50/40">
+                    <div className="flex-1 flex flex-col items-center justify-center text-center p-6 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
                       <FileText className="w-6 h-6 text-slate-300 mb-2 stroke-[1.5]" />
                       <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest font-mono">Select data vector node to stream logs.</p>
                     </div>
@@ -765,7 +757,7 @@ export default function Home() {
               </div>
             )}
             
-            {tb !== "reports" && tb !== "clients" && tb !== "finance" && tb !== "audit" && (
+            {tb !== "reports" && tb !== "clients" && tb !== "finance" && tb !== "audit" && tb !== "dash" && (
               <div className="bg-white border border-slate-200/70 shadow-2xs rounded-xl p-5 overflow-hidden">
                 {tb === "team" ? (
                   <div className="space-y-8">
@@ -836,10 +828,10 @@ export default function Home() {
                   <div>
                     <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
                       <h2 className="text-xs font-semibold text-slate-800 uppercase tracking-widest font-mono">Data Frame Clusters</h2>
-                      {tb !== "dash" && (rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-sm shadow-indigo-600/10"><Plus className="w-3.5 h-3.5" /> Initialize {tb === "proj" ? "Pipeline" : "Operation"}</button>}
+                      {(rl === "admin" || rl === "operator") && <button onClick={() => setMd(tb)} className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-sm shadow-indigo-600/10"><Plus className="w-3.5 h-3.5" /> Initialize {tb === "proj" ? "Pipeline" : "Operation"}</button>}
                     </div>
-                    {ld ? <div className="text-center py-10 font-mono text-slate-400 animate-pulse tracking-widest text-[10px] uppercase">Retrieving Node Framework...</div> : tb === "dash" || tb === "proj" ? (
-                      pj.length === 0 ? <div className="text-center py-10 text-[10px] font-mono text-slate-400 uppercase tracking-wider border border-dashed border-slate-200 rounded-xl bg-slate-50/40">No Active Pipelines Found</div> : (
+                    {ld ? <div className="text-center py-10 font-mono text-slate-400 animate-pulse tracking-widest text-[10px] uppercase">Retrieving Node Framework...</div> : tb === "proj" ? (
+                      pj.length === 0 ? <div className="text-center py-10 text-[10px] font-mono text-slate-400 uppercase tracking-wider border border-dashed border-slate-200 rounded-xl bg-slate-50/30">No Active Pipelines Found</div> : (
                         <div className="w-full overflow-x-auto">
                           <table className="w-full text-left text-xs min-w-[550px]">
                             <thead><tr className="text-slate-400 border-b border-slate-200/60 font-semibold uppercase tracking-widest text-[9px] font-mono"><th className="pb-3">Pipeline Label</th><th className="pb-3">Deployment Status</th>{rl === "admin" && <th className="pb-3 text-right">Purge</th>}</tr></thead>
@@ -904,11 +896,11 @@ export default function Home() {
       
       {cf && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
-          <div className="bg-white border border-slate-200/80 rounded-xl max-w-sm w-full p-6 shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_16px_36px_-18px_rgba(15,23,42,0.35)]">
-            <h3 className="font-bold text-xs uppercase tracking-widest font-mono text-slate-900 mb-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-indigo-600" /> Purge Matrix Node</h3>
+          <div className="bg-white border border-slate-200 rounded-xl max-w-sm w-full p-6 shadow-2xl">
+            <h3 className="font-bold text-xs uppercase tracking-widest font-mono text-slate-800 mb-2 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-indigo-600" /> Purge Matrix Node</h3>
             <p className="text-xs text-slate-500 leading-relaxed tracking-wide">Are you completely certain you want to permanently delete <span className="text-indigo-600 font-mono bg-slate-50 px-2 py-0.5 rounded border border-slate-200">"{cf.name}"</span> from cloud cluster records?</p>
             <div className="flex justify-end gap-2 mt-5">
-              <button onClick={() => setCf(null)} className="px-3.5 py-2 text-[10px] font-bold tracking-widest uppercase bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl transition-colors">Cancel</button>
+              <button onClick={() => setCf(null)} className="px-3.5 py-2 text-[10px] font-bold tracking-widest uppercase bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-600 rounded-xl transition-colors">Cancel</button>
               <button onClick={ep} className="px-3.5 py-2 text-[10px] font-bold tracking-widest uppercase bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow-sm transition-all">Execute Purge</button>
             </div>
           </div>
@@ -916,45 +908,45 @@ export default function Home() {
       )}
       
       {md && (
-        <div className="fixed inset-0 bg-slate-950/10 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
-          <div className="bg-white border border-slate-200/80 rounded-xl max-w-md w-full overflow-hidden shadow-[0_1px_3px_0_rgba(0,0,0,0.05),0_20px_40px_-18px_rgba(15,23,42,0.35)]">
-            <header className="p-4 border-b border-slate-100 flex items-center justify-between bg-white"><h3 className="font-bold text-slate-900 text-[10px] tracking-widest uppercase font-mono">Initialize Registry Entry</h3><button onClick={() => setMd(null)} className="text-slate-400 hover:text-slate-600 p-1 rounded-md"><X className="w-4 h-4" /></button></header>
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-xl max-w-md w-full overflow-hidden shadow-2xl">
+            <header className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50"><h3 className="font-bold text-slate-700 text-[10px] tracking-widest uppercase font-mono">Initialize Registry Entry</h3><button onClick={() => setMd(null)} className="text-slate-400 hover:text-slate-600 p-1 rounded-md"><X className="w-4 h-4" /></button></header>
             {md === "proj" ? (
               <form onSubmit={ap} className="p-5 space-y-4">
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Pipeline Vector Identifier</label><input required type="text" value={pf.name} onChange={e => setPf({...pf, name: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="e.g., Core Storage Deployment" /></div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Deployment Status State</label><select value={pf.status} onChange={e => setPf({...pf, status: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]">{["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}</select></div>
-                <div className="grid grid-cols-2 gap-3 pt-1"><button type="button" onClick={() => sbp("proj")} className="bg-white border border-slate-200 text-[10px] font-bold tracking-widest uppercase text-slate-600 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-50 transition-all shadow-[0_1px_2px_rgba(15,23,42,0.02)]"><Copy className="w-4 h-4" /> Save Template</button><button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all shadow-sm shadow-indigo-600/10">Commit Pipeline</button></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Pipeline Vector Identifier</label><input required type="text" value={pf.name} onChange={e => setPf({...pf, name: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner" placeholder="e.g., Core Storage Deployment" /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Deployment Status State</label><select value={pf.status} onChange={e => setPf({...pf, status: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">{["New", "Planning", "Development", "Testing", "Completed"].map(s => <option key={s} value={s}>{s}</option>)}</select></div>
+                <div className="grid grid-cols-2 gap-3 pt-1"><button type="button" onClick={() => sbp("proj")} className="bg-slate-50 border border-slate-200 text-[10px] font-bold tracking-widest uppercase text-slate-600 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-100 transition-all shadow-3xs"><Copy className="w-4 h-4" /> Save Template</button><button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all shadow-sm shadow-indigo-600/10">Commit Pipeline</button></div>
               </form>
             ) : md === "task" ? (
               <form onSubmit={at} className="p-5 space-y-4">
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Operation Title Specification</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="e.g., Run Integration Diagnostics" /></div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Execution Progress Status</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]">{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Allocate Operators Node</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]"><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u?.email}>{u?.email}</option>)}</select></div>
-                <div className="grid grid-cols-2 gap-3 pt-1"><button type="button" onClick={() => sbp("task")} className="bg-white border border-slate-200 text-[10px] font-bold tracking-widest uppercase text-slate-600 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-50 transition-all shadow-[0_1px_2px_rgba(15,23,42,0.02)]"><Copy className="w-4 h-4" /> Save Template</button><button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all shadow-sm shadow-indigo-600/10">Commit Task</button></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Operation Title Specification</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner" placeholder="e.g., Run Integration Diagnostics" /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Execution Progress Status</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Allocate Operators Node</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner"><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u?.email}>{u?.email}</option>)}</select></div>
+                <div className="grid grid-cols-2 gap-3 pt-1"><button type="button" onClick={() => sbp("task")} className="bg-slate-50 border border-slate-200 text-[10px] font-bold tracking-widest uppercase text-slate-600 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-slate-100 transition-all shadow-3xs"><Copy className="w-4 h-4" /> Save Template</button><button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all shadow-sm shadow-indigo-600/10">Commit Task</button></div>
               </form>
             ) : md === "client" ? (
               <form onSubmit={ac} className="p-5 space-y-4">
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Full Registry Contact Label</label><input required type="text" value={cff.nm} onChange={e => setCff({...cff, nm: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="e.g., Jane Doe" /></div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Corporate Brand Entity</label><input type="text" value={cff.co} onChange={e => setCff({...cff, co: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="e.g., Acme Corp (Optional)" /></div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Communication Target Email</label><input required type="email" value={cff.em} onChange={e => setCff({...cff, em: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="client@domain.com" /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Full Registry Contact Label</label><input required type="text" value={cff.nm} onChange={e => setCff({...cff, nm: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner" placeholder="e.g., Jane Doe" /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Corporate Brand Entity</label><input type="text" value={cff.co} onChange={e => setCff({...cff, co: e.target.value})} className="w-full bg-slate-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner" placeholder="e.g., Acme Corp (Optional)" /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Communication Target Email</label><input required type="email" value={cff.em} onChange={e => setCff({...cff, em: e.target.value})} className="w-full bg-slate-50 border border-zinc-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner" placeholder="client@domain.com" /></div>
                 <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all mt-1 shadow-sm shadow-indigo-600/10">Commit Client Profile</button>
               </form>
             ) : md === "finance" ? (
               <form onSubmit={af} className="p-5 space-y-4">
                 <div className="grid grid-cols-2 gap-3">
-                  <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Classification</label><select value={fff.ty} onChange={e => setFff({...fff, ty: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]"><option value="Invoice">Invoice</option><option value="Expense">Expense</option><option value="Quotation">Quotation</option></select></div>
-                  <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Ledger State</label><select value={fff.st} onChange={e => setFff({...fff, st: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]"><option value="Pending">Pending</option><option value="Paid">Paid</option><option value="Approved">Approved</option></select></div>
+                  <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Classification</label><select value={fff.ty} onChange={e => setFff({...fff, ty: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner"><option value="Invoice">Invoice</option><option value="Expense">Expense</option><option value="Quotation">Quotation</option></select></div>
+                  <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Ledger State</label><select value={fff.st} onChange={e => setFff({...fff, st: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner"><option value="Pending">Pending</option><option value="Paid">Paid</option><option value="Approved">Approved</option></select></div>
                 </div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Transaction Payer / Payee Reference</label><input required type="text" value={fff.cn} onChange={e => setFff({...fff, cn: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="e.g., Acme Holdings" /></div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Total Financial Quantum Tally (INR)</label><input required type="number" min="1" value={fff.am} onChange={e => setFff({...fff, am: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="50000" /></div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Ledger Transaction Memo</label><textarea rows={2} value={fff.ds} onChange={e => setFff({...fff, ds: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)] resize-none" placeholder="Enter transfer specs..." /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Transaction Payer / Payee Reference</label><input required type="text" value={fff.cn} onChange={e => setFff({...fff, cn: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner" placeholder="e.g., Acme Holdings" /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Total Financial Quantum Tally (INR)</label><input required type="number" min="1" value={fff.am} onChange={e => setFff({...fff, am: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner" placeholder="50000" /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Ledger Transaction Memo</label><textarea rows={2} value={fff.ds} onChange={e => setFff({...fff, ds: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner resize-none" placeholder="Enter transfer specs..." /></div>
                 <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all mt-1 shadow-sm shadow-indigo-600/10">Commit Accounting Item</button>
               </form>
             ) : (
               <form onSubmit={cu} className="p-5 space-y-4">
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Operator Access Email</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="name@domain.com" /></div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Secure Access Passkey Vector</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]" placeholder="••••••••••••" /></div>
-                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Authorization Level Class</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-white border border-slate-200/80 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 shadow-[0_1px_2px_rgba(15,23,42,0.02)]">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Operator Access Email</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner" placeholder="name@domain.com" /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Secure Access Passkey Vector</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner" placeholder="••••••••••••" /></div>
+                <div><label className="block text-[10px] font-bold text-slate-500 tracking-widest mb-1.5 font-mono">Authorization Level Class</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner">{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
                 <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all mt-1 shadow-sm shadow-indigo-600/10">Provision Node Profile</button>
               </form>
             )}
