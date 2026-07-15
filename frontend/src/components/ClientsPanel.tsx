@@ -1,35 +1,48 @@
 import React from "react";
-import { Plus } from "lucide-react";
+import { Plus, Briefcase } from "lucide-react";
 
-export default function ClientsPanel({ clients, onAdd, show }: { clients: any[]; onAdd?: () => void; show?: boolean }) {
+interface Props {
+  clients: any[];
+  onAdd: () => void;
+  show: boolean;
+}
+
+export default function ClientsPanel({ clients, onAdd, show }: Props) {
   return (
-    <div className="bg-[#070510]/40 border border-purple-500/10 shadow-[0_24px_50px_rgba(0,0,0,0.7)] rounded-xl p-6 backdrop-blur-md space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
-        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Client Registries</h2>
-        {show && onAdd && (
-          <button onClick={onAdd} className="bg-purple-600 hover:bg-purple-500 text-white text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 font-semibold transition-colors duration-200 shadow-md animate-none">
-            <Plus className="w-4 h-4" /> Initialize Client
+    <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(15,23,42,0.03)] rounded-xl p-5">
+      <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4">
+        <div className="flex items-center gap-2">
+          <Briefcase className="w-4 h-4 text-indigo-600" />
+          <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Client Registry Hub</h3>
+        </div>
+        {show && (
+          <button onClick={onAdd} className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-sm shadow-indigo-600/10">
+            <Plus className="w-3.5 h-3.5" /> Initialize Client
           </button>
         )}
       </div>
       <div className="w-full overflow-x-auto">
-        <table className="w-full text-left text-xs">
+        <table className="w-full text-left text-xs min-w-[500px]">
           <thead>
-            <tr className="text-zinc-500 border-b border-zinc-800/40 text-[10px] uppercase tracking-wider">
-              <th className="pb-3 font-medium">Client Name</th>
-              <th className="pb-3 font-medium">Corporate Entity</th>
-              <th className="pb-3 font-medium">Email Address</th>
+            <tr className="text-slate-400 border-b border-slate-200/60 font-semibold uppercase tracking-widest text-[9px] font-mono">
+              <th className="pb-3">Client Name</th>
+              <th className="pb-3">Corporate Entity</th>
+              <th className="pb-3 text-right">Email Address</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-900/30 text-zinc-300">
+          <tbody className="divide-y divide-slate-100 text-slate-600">
             {clients.length === 0 ? (
-              <tr><td colSpan={3} className="py-6 text-center text-zinc-600 font-mono text-[11px]">NO CUSTOMER RECORDS MATCHED</td></tr>
+              <tr>
+                <td colSpan={3} className="py-8 text-center font-mono text-slate-400 text-[10px] uppercase tracking-wider bg-slate-50/50 rounded-xl">
+                  No Client Records Found
+                </td>
+              </tr>
             ) : (
-              clients.map(c => (
-                <tr key={c.id} className="hover:bg-purple-500/[0.02] transition-colors duration-200">
-                  <td className="py-3.5 font-medium text-zinc-100">{c.name}</td>
-                  <td className="py-3.5 text-zinc-400">{c.company || "Individual"}</td>
-                  <td className="py-3.5 font-mono text-[11px] text-purple-400/80">{c.email}</td>
+              clients.map((c) => (
+                <tr key={c.id} className="hover:bg-slate-50/50 transition-colors duration-150">
+                  <td className="py-3.5 font-semibold text-slate-700 tracking-wide">{c.name}</td>
+                  <td className="py-3.5 text-slate-500 font-medium">{c.company || "Individual"}</td>
+                  <td className="py-3.5 text-right font-mono text-slate-500 text-[10px]">{c.email}</td>
                 </tr>
               ))
             )}

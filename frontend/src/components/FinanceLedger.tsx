@@ -1,43 +1,60 @@
 import React from "react";
-import { Plus } from "lucide-react";
+import { Plus, IndianRupee } from "lucide-react";
 
-export default function FinanceLedger({ transactions, onAdd, show }: { transactions: any[]; onAdd?: () => void; show?: boolean }) {
+interface Props {
+  transactions: any[];
+  onAdd: () => void;
+  show: boolean;
+}
+
+export default function FinanceLedger({ transactions, onAdd, show }: Props) {
   return (
-    <div className="bg-[#070510]/40 border border-purple-500/10 shadow-[0_24px_50px_rgba(0,0,0,0.7)] rounded-xl p-6 backdrop-blur-md space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-zinc-800/60">
-        <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-widest">Accounting Ledger</h2>
-        {show && onAdd && (
-          <button onClick={onAdd} className="bg-purple-600 hover:bg-purple-500 text-white text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 font-semibold transition-colors duration-200 shadow-md animate-none">
-            <Plus className="w-4 h-4" /> Log Transaction
+    <div className="bg-white border border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(15,23,42,0.03)] rounded-xl p-5">
+      <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4">
+        <div className="flex items-center gap-2">
+          <IndianRupee className="w-4 h-4 text-indigo-600" />
+          <h3 className="text-[11px] font-bold text-slate-800 uppercase tracking-widest font-mono">Accounting Ledger Hub</h3>
+        </div>
+        {show && (
+          <button onClick={onAdd} className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-sm shadow-indigo-600/10">
+            <Plus className="w-3.5 h-3.5" /> Log Transaction
           </button>
         )}
       </div>
       <div className="w-full overflow-x-auto">
-        <table className="w-full text-left text-xs">
+        <table className="w-full text-left text-xs min-w-[550px]">
           <thead>
-            <tr className="text-zinc-500 border-b border-zinc-800/40 text-[10px] uppercase tracking-wider">
-              <th className="pb-3 font-medium">Handling Reference</th>
-              <th className="pb-3 font-medium">Classification</th>
-              <th className="pb-3 font-medium">Gross Tally</th>
-              <th className="pb-3 font-medium">Status</th>
-              <th className="pb-3 font-medium">Memo Specifications</th>
+            <tr className="text-slate-400 border-b border-slate-200/60 font-semibold uppercase tracking-widest text-[9px] font-mono">
+              <th className="pb-3">Handling Reference</th>
+              <th className="pb-3">Classification</th>
+              <th className="pb-3">Gross Tally</th>
+              <th className="pb-3">Status</th>
+              <th className="pb-3 text-right">Memo Specifications</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-900/30 text-zinc-300">
+          <tbody className="divide-y divide-slate-100 text-slate-600">
             {transactions.length === 0 ? (
-              <tr><td colSpan={5} className="py-6 text-center text-zinc-600 font-mono text-[11px]">NO TRANSACTION DATA RECORDED</td></tr>
+              <tr>
+                <td colSpan={5} className="py-8 text-center font-mono text-slate-400 text-[10px] uppercase tracking-wider bg-slate-50/50 rounded-xl">
+                  No Accounting Entries Logged
+                </td>
+              </tr>
             ) : (
-              transactions.map(f => (
-                <tr key={f.id} className="hover:bg-purple-500/[0.02] transition-colors duration-200">
-                  <td className="py-3.5 font-medium text-zinc-100">{f.client_name}</td>
+              transactions.map((t) => (
+                <tr key={t.id} className="hover:bg-slate-50/50 transition-colors duration-150">
+                  <td className="py-3.5 font-semibold text-slate-700 tracking-wide">{t.client_name}</td>
                   <td className="py-3.5">
-                    <span className={`px-2 py-0.5 text-[9px] font-mono border rounded ${f.type === "Invoice" ? "bg-purple-950/20 text-purple-300 border-purple-500/20" : "bg-rose-950/20 text-rose-400 border-rose-500/20"}`}>{f.type.toUpperCase()}</span>
+                    <span className={`inline-block text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border font-mono ${t.type === "Invoice" ? "bg-indigo-50 text-indigo-600 border-indigo-200" : "bg-slate-100 text-slate-600 border-slate-200"}`}>
+                      {t.type.toUpperCase()}
+                    </span>
                   </td>
-                  <td className="py-3.5 font-mono font-medium text-zinc-200">₹{f.amount.toLocaleString()}</td>
+                  <td className="py-3.5 font-mono text-slate-800 font-bold">₹{parseFloat(t.amount).toLocaleString()}</td>
                   <td className="py-3.5">
-                    <span className={`px-2 py-0.5 text-[9px] rounded-full font-medium ${f.status === "Paid" || f.status === "Approved" ? "bg-emerald-500/10 text-emerald-400" : "bg-amber-500/10 text-amber-400"}`}>{f.status}</span>
+                    <span className={`inline-block text-[8px] font-bold tracking-widest px-2 py-0.5 rounded border font-mono ${t.status === "Paid" || t.status === "Approved" ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-amber-50 text-amber-600 border-amber-200"}`}>
+                      {t.status.toUpperCase()}
+                    </span>
                   </td>
-                  <td className="py-3.5 text-zinc-400 max-w-[200px] truncate">{f.description || "—"}</td>
+                  <td className="py-3.5 text-right text-slate-500 font-medium max-w-[150px] truncate">{t.description || "None"}</td>
                 </tr>
               ))
             )}
