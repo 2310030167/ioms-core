@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Menu, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, ShieldAlert, Users, ArrowDownLeft, ArrowUpRight, Clock, Copy, Calendar, MessageSquare, Layers, Sun, Moon } from "lucide-react";
+import { LayoutDashboard, FolderKanban, CheckSquare, Activity, Plus, X, LogOut, Trash2, AlertTriangle, CheckCircle2, User, Menu, FileText, BarChart3, ClipboardCheck, Briefcase, IndianRupee, ShieldAlert, Users, ArrowDownLeft, ArrowUpRight, Clock, Copy, Calendar, MessageSquare, Layers, Sun, Moon, TrendingUp, Filter, CheckSquare as CheckIcon } from "lucide-react";
 import { sb } from "../lib/sb";
 import AmbientCanvas from "../components/AmbientCanvas";
 import ClientsPanel from "../components/ClientsPanel";
@@ -411,7 +411,15 @@ export default function Home() {
   const tM = { Todo: 0, Assigned: 0, In_Progress: 0, Review: 0, Testing: 0, Completed: 0, Blocked: 0 };
   tk.forEach(t => { if (t?.status && tM[t.status as keyof typeof tM] !== undefined) tM[t.status as keyof typeof tM] ++; });
 
-  const cM = { Todo: "bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.2)]", Assigned: "bg-sky-500 shadow-[0_0_10px_rgba(14,165,233,0.2)]", In_Progress: "bg-purple-600 shadow-[0_0_10px_rgba(124,58,237,0.2)]", Review: "bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.2)]", Testing: "bg-fuchsia-500 shadow-[0_0_10px_rgba(217,70,239,0.2)]", Completed: "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.2)]", Blocked: "bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.2)]" };
+  const cM = { 
+    Todo: "bg-gradient-to-t from-amber-500 to-amber-400 shadow-[0_4px_12px_rgba(245,158,11,0.25)]", 
+    Assigned: "bg-gradient-to-t from-sky-500 to-sky-400 shadow-[0_4px_12px_rgba(14,165,233,0.25)]", 
+    In_Progress: "bg-gradient-to-t from-purple-600 to-purple-400 shadow-[0_4px_12px_rgba(124,58,237,0.3)]", 
+    Review: "bg-gradient-to-t from-indigo-500 to-indigo-400 shadow-[0_4px_12px_rgba(99,102,241,0.25)]", 
+    Testing: "bg-gradient-to-t from-fuchsia-500 to-fuchsia-400 shadow-[0_4px_12px_rgba(217,70,239,0.25)]", 
+    Completed: "bg-gradient-to-t from-emerald-500 to-emerald-400 shadow-[0_4px_12px_rgba(16,185,129,0.25)]", 
+    Blocked: "bg-gradient-to-t from-rose-500 to-rose-400 shadow-[0_4px_12px_rgba(244,63,94,0.25)]" 
+  };
 
   const tgThm = () => {
     const next = !dk;
@@ -421,9 +429,9 @@ export default function Home() {
 
   if (!au) {
     return (
-      <div className={`min-h-screen w-screen flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden transition-colors duration-300 ${dk ? "bg-[#0b0819]" : "bg-[#f4f6f9]"}`}>
+      <div className={`min-h-screen w-screen flex flex-col items-center justify-center font-sans p-4 relative overflow-hidden transition-colors duration-300 ${dk ? "bg-[#0b091a]" : "bg-[#f3f4f6]"}`}>
         <div className="absolute top-[-25%] left-[-15%] w-[750px] h-[750px] rounded-full bg-purple-500/[0.05] blur-[130px] pointer-events-none"></div>
-        <div className={`w-full max-w-[400px] border rounded-2xl p-8 shadow-xl relative z-10 transition-all ${dk ? "bg-[#141029] border-purple-950/40 shadow-black/40" : "bg-white border-slate-200"}`}>
+        <div className={`w-full max-w-[400px] border rounded-2xl p-8 shadow-xl relative z-10 transition-all ${dk ? "bg-[#120f26] border-purple-950/40 shadow-black/40" : "bg-white border-slate-200"}`}>
           <div className="flex flex-col items-center mb-7">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border mb-4 shadow-sm ${dk ? "bg-purple-950/40 border-purple-900/50 text-purple-400" : "bg-purple-50 border-purple-100 text-purple-600"}`}>
               <Layers className="w-5 h-5 stroke-[1.5]" />
@@ -467,7 +475,7 @@ export default function Home() {
         <div className="p-5 overflow-y-auto flex-1 space-y-6">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-6.5 h-6.5 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm shadow-indigo-600/30">
+              <div className="w-6.5 h-6.5 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-sm shadow-purple-600/30">
                 <Layers className="w-3.5 h-3.5" />
               </div>
               <span className={`font-bold text-xs uppercase tracking-widest font-mono ${dk ? "text-slate-100" : "text-slate-800"}`}>Clerias Desk</span>
@@ -519,13 +527,25 @@ export default function Home() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {[
-                    { t: "Active Pipelines", v: ld ? "..." : st.pipeline, border: "border-t-4 border-t-purple-500" }, 
-                    { t: "Assigned Operations", v: ld ? "..." : st.tasks, border: "border-t-4 border-t-indigo-500" }, 
-                    { t: "User Authorization Class", v: ld ? "..." : rl.toUpperCase(), border: "border-t-4 border-t-fuchsia-500" }
+                    { t: "Active Pipelines", v: ld ? "..." : st.pipeline, border: "border-t-4 border-t-purple-500", icon: Filter, change: "+12.5%" }, 
+                    { t: "Assigned Operations", v: ld ? "..." : st.tasks, border: "border-t-4 border-t-indigo-500", icon: CheckIcon, change: "+4.2%" }, 
+                    { t: "Authorization Tier", v: ld ? "..." : rl.toUpperCase(), border: "border-t-4 border-t-fuchsia-500", icon: User, change: "Active" }
                   ].map((c, i) => (
                     <div key={i} className={`border shadow-2xs p-5 rounded-xl relative overflow-hidden transition-colors ${dk ? "bg-[#110d24] border-purple-950/30" : "bg-white border-slate-200/70"} ${c.border}`}>
-                      <h3 className={`text-[9px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-500" : "text-slate-400"}`}>{c.t}</h3>
-                      <p className={`text-xl font-bold mt-1.5 tracking-tight ${dk ? "text-slate-100" : "text-slate-800"}`}>{c.v}</p>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className={`text-[10px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-500" : "text-slate-400"}`}>{c.t}</h3>
+                          <p className={`text-2xl font-bold mt-2 tracking-tight ${dk ? "text-slate-100" : "text-slate-800"}`}>{c.v}</p>
+                        </div>
+                        <div className={`p-2 rounded-lg border ${dk ? "bg-[#0b0819]/60 border-purple-950/50 text-purple-400" : "bg-slate-50 border-slate-100 text-purple-600"}`}>
+                          <c.icon className="w-4 h-4" />
+                        </div>
+                      </div>
+                      <div className="mt-4 flex items-center gap-1.5">
+                        <TrendingUp className="w-3 h-3 text-emerald-500" />
+                        <span className="text-[10px] font-bold text-emerald-500">{c.change}</span>
+                        <span className={`text-[10px] font-medium ${dk ? "text-slate-600" : "text-slate-400"}`}>vs last week</span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -533,7 +553,7 @@ export default function Home() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
                   <div className="space-y-6 lg:col-span-2">
                     <div className={`border shadow-2xs p-5 rounded-xl overflow-x-auto transition-colors ${dk ? "bg-[#110d24] border-purple-950/30" : "bg-white border-slate-200/70"}`}>
-                      <div className={`flex items-center justify-between pb-3.5 mb-5 border-b min-w-[500px] ${dk ? "border-purple-950/40" : "border-slate-100"}`}><h3 className={`text-[11px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-200" : "text-slate-800"}`}>Deal Pipeline Analytics</h3><div className={`font-mono text-[9px] tracking-wider uppercase ${dk ? "text-slate-500" : "text-slate-400"}`}>Live Activity Data</div></div>
+                      <div className={`flex items-center justify-between pb-3.5 mb-5 border-b min-w-[500px] ${dk ? "border-purple-950/40" : "border-slate-100"}`}><h3 className={`text-[11px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-200" : "text-slate-800"}`}>Pipeline Distribution Overview</h3><div className={`font-mono text-[9px] tracking-wider uppercase ${dk ? "text-slate-500" : "text-slate-400"}`}>Live Activity Data</div></div>
                       <div className="grid grid-cols-7 gap-3 min-w-[500px]">
                         {Object.entries(tM).map(([stVal, count]) => {
                           const maxTasks = Math.max(...Object.values(tM), 1);
@@ -542,7 +562,7 @@ export default function Home() {
                           return (
                             <div key={stVal} className={`border px-1 py-4.5 rounded-xl text-center flex flex-col justify-between items-center group transition-colors ${dk ? "bg-[#0b0819]/50 border-purple-950/20" : "bg-slate-50 border-slate-200/40"}`}>
                               <span className={`text-[9px] font-bold tracking-wider uppercase truncate w-full font-mono ${dk ? "text-slate-500 group-hover:text-slate-300" : "text-slate-400 group-hover:text-slate-600"}`}>{stVal.replace("_", " ")}</span>
-                              <div className={`w-2.5 h-28 my-3.5 rounded-full relative flex items-end justify-center border shadow-inner ${dk ? "bg-[#110d24] border-purple-950/50" : "bg-slate-200/60 border-slate-200/40"}`}>
+                              <div className={`w-2 h-28 my-3.5 rounded-full relative flex items-end justify-center border shadow-inner ${dk ? "bg-[#110d24] border-purple-950/50" : "bg-slate-200/60 border-slate-200/40"}`}>
                                 <div style={{ height: `${Math.max(pct, count > 0 ? 10 : 0)}%` }} className={`w-full rounded-full transition-all duration-500 ease-out ${color}`}></div>
                               </div>
                               <span className={`text-xs font-mono font-bold block ${dk ? "text-slate-300" : "text-slate-700"}`}>{count}</span>
@@ -578,7 +598,7 @@ export default function Home() {
 
                   <div className="space-y-6">
                     <div className={`border shadow-2xs rounded-xl p-5 flex flex-col h-[235px] transition-colors ${dk ? "bg-[#110d24] border-purple-950/30" : "bg-white border-slate-200/70"}`}>
-                      <div className={`pb-3 border-b mb-3 flex items-center justify-between ${dk ? "border-purple-950/40" : "border-slate-100"}`}><h3 className={`text-[11px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-200" : "text-slate-800"}`}>Upcoming Milestones</h3><Calendar className={`w-3.5 h-3.5 ${dk ? "text-slate-500" : "text-slate-400"}`} /></div>
+                      <div className={`pb-3 border-b mb-3 flex items-center justify-between ${dk ? "border-purple-950/40" : "border-slate-100"}`}><h3 className={`text-[11px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-200" : "text-slate-800"}`}>Upcoming Deadlines</h3><Calendar className={`w-3.5 h-3.5 ${dk ? "text-slate-500" : "text-slate-400"}`} /></div>
                       <div className="space-y-2 flex-1 overflow-y-auto pr-0.5">
                         {tk.filter(t => t.status !== "Completed").length === 0 ? (
                           <div className={`text-center text-[10px] font-mono py-10 border border-dashed rounded-xl uppercase tracking-wider ${dk ? "border-purple-950/60 text-slate-500 bg-[#0b0819]/30" : "border-slate-200 text-slate-400 bg-slate-50/50"}`}>No Pending Targets</div>
@@ -598,7 +618,7 @@ export default function Home() {
                     </div>
 
                     <div className={`border shadow-2xs rounded-xl p-5 flex flex-col h-[235px] transition-colors ${dk ? "bg-[#110d24] border-purple-950/30" : "bg-white border-slate-200/70"}`}>
-                      <div className={`pb-3 border-b mb-3 ${dk ? "border-purple-950/40" : "border-slate-100"}`}><h3 className={`text-[11px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-200" : "text-slate-800"}`}>Structural Templates</h3></div>
+                      <div className={`pb-3 border-b mb-3 ${dk ? "border-purple-950/40" : "border-slate-100"}`}><h3 className={`text-[11px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-200" : "text-slate-800"}`}>Structural Blueprints</h3></div>
                       <div className="space-y-2 flex-1 overflow-y-auto pr-0.5">
                         {bp.length === 0 ? <div className={`text-center text-[10px] font-mono py-10 border border-dashed rounded-xl uppercase tracking-wider ${dk ? "border-purple-950/60 text-slate-500 bg-[#0b0819]/30" : "border-slate-200 text-slate-400 bg-slate-50/50"}`}>No Blueprint Configuration Data</div> : bp.map(b => (
                           <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`border p-3 rounded-xl flex items-center justify-between gap-3 group shadow-3xs ${dk ? "bg-[#0b0819]/60 border-purple-950/40 hover:border-purple-900/60" : "bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-slate-300"} ${rl !== "viewer" ? "cursor-pointer" : ""}`}>
@@ -712,7 +732,7 @@ export default function Home() {
                 </div>
 
                 <div className={`border shadow-2xs rounded-xl p-5 h-[560px] flex flex-col transition-colors ${dk ? "bg-[#110d24] border-purple-950/30" : "bg-white border-slate-200/70"}`}>
-                  <h3 className={`text-[11px] font-bold uppercase tracking-widest pb-3 border-b mb-4 flex-shrink-0 font-mono ${dk ? "border-purple-950/40 text-slate-200" : "border-slate-100 text-slate-800"}`}>Operational Data Metrics Output</h3>
+                  <h3 className={`text-[11px] font-bold uppercase tracking-widest pb-3 border-b mb-4 flex-shrink-0 font-mono ${dk ? "border-purple-950/40 text-slate-200" : "border-slate-100 text-slate-800"}`}>Data Frame Clusters</h3>
                   {su ? (
                     <div className="flex-1 flex flex-col overflow-hidden">
                       <div className={`border p-5 rounded-xl mb-4 flex-shrink-0 shadow-3xs ${dk ? "bg-[#0b0819]/60 border-purple-950/40" : "bg-slate-50 border-slate-200/60"}`}>
@@ -753,7 +773,7 @@ export default function Home() {
                         </div>
 
                         <div>
-                          <p className={`text-[10px] font-bold uppercase mb-2.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Telemetry Traces</p>
+                          <p className={`text-[10px] font-bold uppercase mb-2.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Telemetry Access Traces</p>
                           {ln.filter(l => l.email === su).length === 0 ? (
                             <div className={`text-center text-[10px] font-mono py-5 border border-dashed rounded-xl uppercase tracking-wider ${dk ? "border-purple-950/60 text-slate-500 bg-[#0b0819]/30" : "border-slate-200 text-slate-400 bg-slate-50/50"}`}>No Traces Registered</div>
                           ) : ln.filter(l => l.email === su).map(l => (
@@ -832,7 +852,7 @@ export default function Home() {
                               <tr key={l.id} className={`transition-colors duration-150 ${dk ? "hover:bg-purple-950/10" : "hover:bg-slate-50/50"}`}>
                                 <td className={`py-3.5 tracking-wide font-medium ${dk ? "text-slate-300" : "text-slate-700"}`}>{l.email}</td>
                                 <td className="py-3.5">
-                                  <span className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-widest px-2 py-0.5 rounded border font-mono ${l.action === "LOGIN" ? (dk ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-emerald-50 text-emerald-600 border-emerald-200") : (dk ? "bg-amber-950/20 text-amber-400 border-amber-900/30" : "bg-amber-50 text-amber-600 border-amber-200")}`}>
+                                  <span className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-widest px-2 py-0.5 rounded border font-mono ${l.action === "LOGIN" ? (dk ? "bg-emerald-950/30 text-emerald-400 border-emerald-900/40" : "bg-emerald-50 text-emerald-600 border-emerald-200") : (dk ? "bg-amber-950/30 text-amber-400 border-amber-900/30" : "bg-amber-50 text-amber-600 border-amber-200")}`}>
                                     {l.action === "LOGIN" ? <ArrowDownLeft className="w-2.5 h-2.5" /> : <ArrowUpRight className="w-2.5 h-2.5" />}
                                     {l.action}
                                   </span>
@@ -943,7 +963,7 @@ export default function Home() {
                 <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Operation Title Specification</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`} placeholder="e.g., Run Integration Diagnostics" /></div>
                 <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Execution Progress Status</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`}>{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
                 <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Allocate Operator Node</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`}><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u?.email}>{u?.email}</option>)}</select></div>
-                <div className="grid grid-cols-2 gap-3 pt-1"><button type="button" onClick={() => sbp("task")} className={`border text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-3xs ${dk ? "bg-[#0b0819] border-purple-950/50 text-slate-300 hover:bg-[#151032]" : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"}`}><Copy className="w-4 h-4" /> Save Template</button><button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all shadow-sm shadow-indigo-600/10">Commit Task</button></div>
+                <div className="grid grid-cols-2 gap-3 pt-1"><button type="button" onClick={() => sbp("task")} className={`border text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-3xs ${dk ? "bg-[#0b0819] border-purple-950/50 text-slate-300 hover:bg-[#151032]" : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"}`}><Copy className="w-4 h-4" /> Save Template</button><button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all shadow-sm shadow-purple-600/10">Commit Task</button></div>
               </form>
             ) : md === "client" ? (
               <form onSubmit={ac} className="p-5 space-y-4">
