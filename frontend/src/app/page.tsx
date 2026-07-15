@@ -467,8 +467,8 @@ export default function Home() {
         <div className="p-5 overflow-y-auto flex-1 space-y-6">
           <div className="flex items-center justify-between px-1">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-xl bg-purple-600 flex items-center justify-center text-white shadow-sm shadow-purple-600/30">
-                <Layers className="w-4 h-4" />
+              <div className="w-6.5 h-6.5 rounded-lg bg-indigo-600 flex items-center justify-center text-white shadow-sm shadow-indigo-600/30">
+                <Layers className="w-3.5 h-3.5" />
               </div>
               <span className={`font-bold text-xs uppercase tracking-widest font-mono ${dk ? "text-slate-100" : "text-slate-800"}`}>Clerias Desk</span>
             </div>
@@ -489,7 +489,7 @@ export default function Home() {
           <nav className="space-y-0.5">
             {lk.map(l => (
               <button key={l.id} onClick={() => { setTb(l.id); setMo(false); }} className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 border ${tb === l.id ? (dk ? "bg-purple-500/10 border-purple-500/20 text-purple-400 font-bold" : "bg-purple-50 border-purple-100 text-purple-600 shadow-3xs") : (dk ? "text-slate-400 border-transparent hover:bg-purple-950/30 hover:text-slate-200" : "text-slate-500 border-transparent hover:bg-slate-50 hover:text-slate-800")}`}>
-                <l.icon className={`w-4 h-4 ${tb === l.id ? "text-purple-500" : (dk ? "text-slate-500" : "text-slate-400")}`} />{l.label}
+                <l.icon className={`w-4 h-4 ${tb === l.id ? "text-purple-500" : (dk ? "text-slate-505" : "text-slate-400")}`} />{l.label}
               </button>
             ))}
           </nav>
@@ -524,7 +524,7 @@ export default function Home() {
                     { t: "User Authorization Class", v: ld ? "..." : rl.toUpperCase(), border: "border-t-4 border-t-fuchsia-500" }
                   ].map((c, i) => (
                     <div key={i} className={`border shadow-2xs p-5 rounded-xl relative overflow-hidden transition-colors ${dk ? "bg-[#110d24] border-purple-950/30" : "bg-white border-slate-200/70"} ${c.border}`}>
-                      <h3 className={`text-[9px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-500" : "text-slate-400"}` Ram}>{c.t}</h3>
+                      <h3 className={`text-[9px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-500" : "text-slate-400"}`}>{c.t}</h3>
                       <p className={`text-xl font-bold mt-1.5 tracking-tight ${dk ? "text-slate-100" : "text-slate-800"}`}>{c.v}</p>
                     </div>
                   ))}
@@ -601,7 +601,7 @@ export default function Home() {
                       <div className={`pb-3 border-b mb-3 ${dk ? "border-purple-950/40" : "border-slate-100"}`}><h3 className={`text-[11px] font-bold uppercase tracking-widest font-mono ${dk ? "text-slate-200" : "text-slate-800"}`}>Structural Templates</h3></div>
                       <div className="space-y-2 flex-1 overflow-y-auto pr-0.5">
                         {bp.length === 0 ? <div className={`text-center text-[10px] font-mono py-10 border border-dashed rounded-xl uppercase tracking-wider ${dk ? "border-purple-950/60 text-slate-500 bg-[#0b0819]/30" : "border-slate-200 text-slate-400 bg-slate-50/50"}`}>No Blueprint Configuration Data</div> : bp.map(b => (
-                          <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`border p-3 rounded-xl flex items-center justify-between gap-3 group shadow-3xs ${dk ? "bg-[#0b0819]/60 border-purple-950/40 hover:border-purple-900/60" : "bg-slate-50 border-slate-200 p-3 hover:bg-slate-100 hover:border-slate-300"}\` ${rl !== "viewer" ? "cursor-pointer" : ""}`}>
+                          <div key={b.id} onClick={() => { if(rl !== "viewer") abp(b); }} className={`border p-3 rounded-xl flex items-center justify-between gap-3 group shadow-3xs ${dk ? "bg-[#0b0819]/60 border-purple-950/40 hover:border-purple-900/60" : "bg-slate-50 border-slate-200 hover:bg-slate-100 hover:border-slate-300"} ${rl !== "viewer" ? "cursor-pointer" : ""}`}>
                             <span className={`text-xs font-semibold tracking-wide ${dk ? "text-slate-300" : "text-slate-700"}`}>{b.name}</span>
                             {(rl === "admin" || rl === "operator") && <button onClick={(e) => dbp(b.id, e)} className={`p-0.5 transition-colors ${dk ? "text-slate-500 hover:text-rose-400" : "text-slate-400 hover:text-rose-500"}`}><Trash2 className="w-3.5 h-3.5" /></button>}
                           </div>
@@ -753,7 +753,7 @@ export default function Home() {
                         </div>
 
                         <div>
-                          <p className={`text-[10px] font-bold uppercase mb-2.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Telemetry Access Traces</p>
+                          <p className={`text-[10px] font-bold uppercase mb-2.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Telemetry Traces</p>
                           {ln.filter(l => l.email === su).length === 0 ? (
                             <div className={`text-center text-[10px] font-mono py-5 border border-dashed rounded-xl uppercase tracking-wider ${dk ? "border-purple-950/60 text-slate-500 bg-[#0b0819]/30" : "border-slate-200 text-slate-400 bg-slate-50/50"}`}>No Traces Registered</div>
                           ) : ln.filter(l => l.email === su).map(l => (
@@ -832,7 +832,7 @@ export default function Home() {
                               <tr key={l.id} className={`transition-colors duration-150 ${dk ? "hover:bg-purple-950/10" : "hover:bg-slate-50/50"}`}>
                                 <td className={`py-3.5 tracking-wide font-medium ${dk ? "text-slate-300" : "text-slate-700"}`}>{l.email}</td>
                                 <td className="py-3.5">
-                                  <span className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-widest px-2 py-0.5 rounded border font-mono ${l.action === "LOGIN" ? (dk ? "bg-emerald-950/30 text-emerald-400 border-emerald-900/40" : "bg-emerald-50 text-emerald-600 border-emerald-200") : (dk ? "bg-amber-950/30 text-amber-400 border-amber-900/40" : "bg-amber-50 text-amber-600 border-amber-200")}`}>
+                                  <span className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-widest px-2 py-0.5 rounded border font-mono ${l.action === "LOGIN" ? (dk ? "bg-emerald-50 text-emerald-600 border-emerald-200" : "bg-emerald-50 text-emerald-600 border-emerald-200") : (dk ? "bg-amber-950/20 text-amber-400 border-amber-900/30" : "bg-amber-50 text-amber-600 border-amber-200")}`}>
                                     {l.action === "LOGIN" ? <ArrowDownLeft className="w-2.5 h-2.5" /> : <ArrowUpRight className="w-2.5 h-2.5" />}
                                     {l.action}
                                   </span>
@@ -943,7 +943,7 @@ export default function Home() {
                 <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Operation Title Specification</label><input required type="text" value={tf.title} onChange={e => setTf({...tf, title: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`} placeholder="e.g., Run Integration Diagnostics" /></div>
                 <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Execution Progress Status</label><select value={tf.status} onChange={e => setTf({...tf, status: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`}>{["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></div>
                 <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Allocate Operator Node</label><select value={tf.as} onChange={e => setTf({...tf, as: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`}><option value="">Unassigned</option>{us.map(u => <option key={u.id} value={u?.email}>{u?.email}</option>)}</select></div>
-                <div className="grid grid-cols-2 gap-3 pt-1"><button type="button" onClick={() => sbp("task")} className={`border text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-3xs ${dk ? "bg-[#0b0819] border-purple-950/50 text-slate-300 hover:bg-[#151032]" : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"}`}><Copy className="w-4 h-4" /> Save Template</button><button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all shadow-sm shadow-purple-600/10">Commit Task</button></div>
+                <div className="grid grid-cols-2 gap-3 pt-1"><button type="button" onClick={() => sbp("task")} className={`border text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl flex items-center justify-center gap-2 transition-all shadow-3xs ${dk ? "bg-[#0b0819] border-purple-950/50 text-slate-300 hover:bg-[#151032]" : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"}`}><Copy className="w-4 h-4" /> Save Template</button><button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all shadow-sm shadow-indigo-600/10">Commit Task</button></div>
               </form>
             ) : md === "client" ? (
               <form onSubmit={ac} className="p-5 space-y-4">
@@ -965,9 +965,9 @@ export default function Home() {
               </form>
             ) : (
               <form onSubmit={cu} className="p-5 space-y-4">
-                <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>User Profile Access Email</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`} placeholder="name@domain.com" /></div>
-                <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Secure Access Passkey</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`} placeholder="••••••••••••" /></div>
-                <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Access Role Configuration</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-purple-500 shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`}>{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
+                <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>User Profile Access Email</label><input required type="email" value={uf.em} onChange={e => setUf({...uf, em: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`} placeholder="name@domain.com" /></div>
+                <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Secure Access Passkey</label><input required type="password" value={uf.pw} onChange={e => setUf({...uf, pw: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`} placeholder="••••••••••••" /></div>
+                <div><label className={`block text-[10px] font-bold uppercase mb-1.5 font-mono ${dk ? "text-slate-400" : "text-slate-500"}`}>Access Role Configuration</label><select value={uf.rl} onChange={e => setUf({...uf, rl: e.target.value})} className={`w-full border rounded-xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white shadow-inner ${dk ? "bg-[#0b0819] border-purple-950/60 text-slate-100" : "bg-slate-50 border-slate-200 text-slate-800"}`}>{["admin", "operator", "accounts", "viewer"].map(s => <option key={s} value={s}>{s.toUpperCase()}</option>)}</select></div>
                 <button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 text-white text-[10px] font-bold tracking-widest uppercase py-3 rounded-xl transition-all mt-1 shadow-sm shadow-purple-600/10">Create Operator Profile</button>
               </form>
             )}
