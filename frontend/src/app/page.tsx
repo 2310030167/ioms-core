@@ -604,12 +604,12 @@ export default function Home() {
                           </div>
                           <div>
                             <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Resolved</p>
-                            <p className="text-base font-bold text-emerald-600 mt-0.5">{tk.filter(t => t.assigned_to === au?.email && t.status === "Completed").length}</p>
+                            <p className="text-base font-bold text-emerald-400 mt-0.5">{tk.filter(t => t.assigned_to === au?.email && t.status === "Completed").length}</p>
                           </div>
                         </div>
                         <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-xl shadow-3xs text-center">
                           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest font-mono">Committed Hours Quantum</p>
-                          <p className="text-base font-bold text-fuchsia-600 mt-0.5">{wl.filter(w => w.email === au?.email).reduce((acc, c) => acc + (c.hours || 0), 0)} Hours</p>
+                          <p className="text-base font-bold text-fuchsia-400 mt-0.5">{wl.filter(w => w.email === au?.email).reduce((acc, c) => acc + (c.hours || 0), 0)} Hours</p>
                         </div>
                       </div>
                       <div className="flex-1 overflow-y-auto space-y-4 pr-1">
@@ -647,7 +647,7 @@ export default function Home() {
                           </div>
                           <div>
                             <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-2 font-mono">System Blockers / Dependencies</label>
-                            <textarea value={lf.bl} onChange={e => setLf({...lf, blockers: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all resize-none shadow-3xs" placeholder="Specify system bounds (or None)..." />
+                            <textarea value={lf.bl} onChange={e => setLf({...lf, bl: e.target.value})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all resize-none shadow-3xs" placeholder="Specify system bounds (or None)..." />
                           </div>
                         </div>
                         <div className="space-y-3.5 flex flex-col justify-between">
@@ -879,7 +879,7 @@ export default function Home() {
                                     {["Todo", "In_Progress", "Testing", "Completed", "Blocked"].map(s => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
                                   </select>
                                 </td>
-                                {rl === "admin" && <td className="py-3.5 text-right"><button onClick={() => setCf({ id: t.id, type: "task", name: t.title })} className="text-slate-400 hover:text-rose-400 p-1 transition-colors"><Trash2 className="w-4 h-4" /></button></td>}
+                                {rl === "admin" && <td className="py-3.5 text-right"><button onClick={() => setCf({ id: t.id, type: "task", name: t.title })} className="text-slate-400 hover:text-rose-500 p-1 transition-colors"><Trash2 className="w-4 h-4" /></button></td>}
                               </tr>
                             ))}
                           </tbody>
